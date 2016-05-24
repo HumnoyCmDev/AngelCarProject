@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    android:orientation="horizontal"
+    android:padding="3dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/custom_view_ui_post_time"
+            android:layout_gravity="end"
+            android:layout_marginRight="40dp"
+            android:textSize="10sp"
+            android:text="20/08/2016 20:30 น."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="@dimen/fuel_nozzle_width"
+            android:layout_height="@dimen/fuel_nozzle_height"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/fuel_nozzle_right" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right">
+
+            <RelativeLayout
+                android:background="@drawable/background_item_post"
+                android:id="@+id/custom_view_ui_post_background"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="2dp"
+                android:layout_marginRight="20dp">
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right">
+
+                    <com.github.siyamed.shapeimageview.CircularImageView
+                        android:id="@+id/custom_view_ui_post_image_product"
+                        android:layout_width="@dimen/image_product_size"
+                        android:layout_height="@dimen/image_product_size"
+                        android:src="@drawable/simple_product"
+                        app:siBorderColor="@android:color/black"
+                        app:siBorderWidth="1dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="15dp"
+                        android:paddingTop="2dp">
+
+                        <TextView
+                            android:id="@+id/custom_view_ui_post_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="รถเหมือนใหม่ สภาพสวย ใช้งานน้อย"
+                            android:textSize="14sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/custom_view_ui_post_details"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="HN Developer"
+                            android:textSize="13sp" />
+                        <TextView
+                            android:textColor="@android:color/white"
+                            android:id="@+id/custom_view_ui_post_details2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:text="HN Developer"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp">
+
+        <com.github.siyamed.shapeimageview.CircularImageView
+            android:id="@+id/custom_view_ui_post_icon_profile"
+            android:layout_width="@dimen/icon_profile_size"
+            android:layout_height="@dimen/icon_profile_size"
+            android:src="@drawable/ic_hndeveloper" />
+    </FrameLayout>
+
+
+</LinearLayout>

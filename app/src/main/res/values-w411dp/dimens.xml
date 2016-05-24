@@ -1,0 +1,20 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="fab_margin_right">16dp</dimen>
+    <dimen name="fab_margin_bottom">70dp</dimen>
+    <dimen name="tablayout_height">62dp</dimen>
+    <dimen name="image_profile_size">64dp</dimen>
+    <dimen name="padding_5dp">5dp</dimen>
+    <dimen name="chat_item_message_display_name_font_size">15sp</dimen>
+    <dimen name="chat_item_message_message_font_size">14sp</dimen>
+    <dimen name="list_view_item_chat_image_profile_size">48dp</dimen>
+    <dimen name="list_view_item_chat_padding_layout">10dp</dimen>
+    <dimen name="list_view_item_post_Image_size">64dp</dimen>
+    <dimen name="text_all_page">14sp</dimen>
+    <dimen name="post_all_marginleft_icon">8dp</dimen>
+    <dimen name="post_all_edit_width">270dp</dimen>
+    <dimen name="post_all_edit_width_register">180dp</dimen>
+
+</resources>

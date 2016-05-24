@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="UIMessage">
+        <attr name="cls_colorCardMessage" format="color"/>
+        <!--<attr name="cardElevation" format="dimension"/>-->
+        <!--<attr name="contentPadding" format="dimension"/>-->
+        <!--<attr name="cardCornerRadius" format="dimension"/>-->
+        <attr name="cls_textColor" format="color"/>
+        <attr name="cls_textSize" format="dimension"/>
+        <attr name="cls_text" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="AngelCarPost">
+        <attr name="cls_post_position" format="enum">
+            <enum name="Left" value="0"/>
+            <enum name="Right" value="1"/>
+        </attr>
+        <attr name="cls_post_colorBackground" format="color"/>
+        <attr name="cls_post_colorTitle" format="color"/>
+        <attr name="cls_post_colorDetail" format="color"/>
+        <attr name="cls_post_textTitle" format="string"/>
+        <attr name="cls_post_textDetails" format="string"/>
+        <attr name="cls_post_radius" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="AngelCarMessage">
+        <attr name="cls_msg_position" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1"/>
+        </attr>
+        <attr name="cls_msg_colorBackground" format="color"/>
+        <attr name="cls_msg_colorMessage" format="color"/>
+        <attr name="cls_msg_radius" format="dimension"/>
+        <attr name="cls_msg_message" format="string"/>
+    </declare-styleable>
+
+
+   <!-- <declare-styleable name="AngelCarHashTag">
+        <attr name="cls_ht_colorBackground" format="color"/>
+        <attr name="cls_ht_textColor" format="color"/>
+        <attr name="cls_ht_radius" format="dimension"/>
+        <attr name="cls_ht_drawableLeft" format="integer"/>
+        <attr name="cls_ht_drawablePadding" format="dimension"/>
+
+    </declare-styleable>-->
+
+</resources>

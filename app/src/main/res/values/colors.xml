@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimaryDark">#292929</color>
+    <color name="colorPrimary">#292929</color>
+    <color name="colorAccent">#FFB13D</color>
+
+    <color name="colorDarkItem">#696969</color>
+    <color name="colorListFeed">#FCF4D5</color>
+    <color name="colorFAbButton">#292929</color>
+
+
+    <color name="overlay_color">#80000000</color>
+    <color name="colorSelectorNormal">#FFC11E</color>
+    <color name="colorSelectorPress">#adffc11e</color>
+    <color name="colorHint">#f7f7f7</color>
+    <color name="colorHint2">#DADADA</color>
+    <color name="colorTextCount">#3F51B5</color>
+</resources>

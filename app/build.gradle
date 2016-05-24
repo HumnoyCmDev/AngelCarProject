@@ -1,0 +1,80 @@
+//buildscript {
+//    repositories {
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+//    }
+//}
+
+apply plugin: 'com.android.application'
+//apply plugin: 'com.neenbedankt.android-apt'
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "com.dollarandtrump.angelcar"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
+}
+
+def versionSupportLibrary = "23.4.0"
+def versionServices = "8.4.0"
+def versionParceler = "1.0.4"
+def versionRetrofit = "2.0.2"
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile 'junit:junit:4.12'
+    compile project(':angelcarlibrary')
+    compile project(':Indicator')
+
+    compile "com.android.support:appcompat-v7:${versionSupportLibrary}"
+    compile "com.android.support:design:${versionSupportLibrary}"
+    compile "com.android.support:cardview-v7:${versionSupportLibrary}"
+    compile "com.google.android.gms:play-services-gcm:${versionServices}"
+    compile "com.squareup.retrofit2:retrofit:${versionRetrofit}"
+    compile "com.squareup.retrofit2:converter-gson:${versionRetrofit}"
+    compile "com.squareup.retrofit2:adapter-rxjava:${versionRetrofit}"
+    compile "org.parceler:parceler-api:${versionParceler}"
+    provided "org.parceler:parceler:${versionParceler}"
+    compile 'com.google.code.gson:gson:2.5'
+    compile 'com.etsy.android.grid:library:1.0.5'
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+//    apt 'com.jakewharton:butterknife-compiler:8.0.1'
+// EventBus
+    compile 'com.squareup:otto:1.3.8'
+    compile 'com.github.siyamed:android-shape-imageview:0.9.3@aar'
+//Glide
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.0'
+    compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.3.0'
+//Banner
+    compile "com.android.support:support-v4:${versionSupportLibrary}"
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.flyco.banner:FlycoBanner_Lib:2.0.2@aar'
+    compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.0.2@aar'
+//RxAndroid
+    compile 'io.reactivex:rxandroid:1.1.0'
+//    compile 'io.reactivex:rxjava:1.1.3'
+//Zoom Image
+    compile 'com.davemorrissey.labs:subsampling-scale-image-view:3.5.0'
+//fab
+    compile 'com.github.clans:fab:1.6.3'
+}
+//apply plugin: 'com.google.gms.google-services'

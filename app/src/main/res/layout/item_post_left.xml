@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <com.hndev.library.view.AngelCarPost
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/item_post"
+        app:cls_post_position="Left"
+        app:cls_post_textTitle="Title Title Title Title Title Title Title Title Title Title"
+        app:cls_post_textDetails="DetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailssssssssssssDetailss"
+        app:cls_post_colorBackground="@color/colorAccent"
+        app:cls_post_colorTitle="#c4000000"
+        app:cls_post_colorDetail="#363636"
+        app:cls_post_radius="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

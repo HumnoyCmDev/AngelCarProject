@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/rlAnim"
+    android:orientation="vertical"
+    android:background="#FFF6E8">
+
+
+
+   <FrameLayout
+       android:background="@color/colorAccent"
+       android:id="@+id/testAnim"
+       android:text="HH"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content" >
+
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="ช่วยเหลือ"
+           android:textSize="40dp"
+           android:textStyle="bold"
+           android:layout_centerInParent="true"/>
+       </FrameLayout>
+
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText2"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/btnCheckEdit"/>
+
+        <Button
+            android:layout_margin="20dp"
+            android:id="@+id/button"
+            android:text="Photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal" />
+
+        <ImageView
+            android:background="@color/colorAccent"
+            android:src="@drawable/simple_product"
+            android:scaleType="centerCrop"
+            android:id="@+id/ivPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+
+
+
+        <Button
+            android:layout_marginTop="20dp"
+            android:id="@+id/button_upload3"
+            android:text="upload-Okhttp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:id="@+id/button_upload"
+            android:text="upload-Retrofit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
+    </ScrollView>
+</LinearLayout>

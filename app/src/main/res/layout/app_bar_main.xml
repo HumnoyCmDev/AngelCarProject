@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.dollarandtrump.angelcar.activity.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+            <!--android:background="?attr/colorPrimary"-->
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_top"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:titleTextColor="@android:color/white"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:titleTextAppearance="@style/Toolbar.TitleText"/>
+
+        <com.flyco.tablayout.CommonTabLayout
+            android:id="@+id/tl_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+
+            app:tl_textsize="13sp"
+            app:tl_textBold="true"
+            app:tl_indicator_corner_radius="1.5dp"
+            app:tl_indicator_height="3dp"
+            app:tl_indicator_width="10dp"
+            app:tl_indicator_style="TRIANGLE"
+
+            app:tl_indicator_color="@color/colorAccent"
+            app:tl_textSelectColor="@color/colorAccent"
+            app:tl_textUnselectColor="@android:color/white"
+            app:tl_underline_color="@color/colorAccent"
+            app:tl_underline_height="1dp"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/activity_main_contener" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/menu_fab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        fab:menu_icon="@drawable/ic_post_small"
+        fab:menu_colorNormal="@color/colorFAbButton"
+        fab:menu_colorPressed="@color/colorDarkItem"
+        fab:menu_labels_ellipsize="end"
+        fab:menu_labels_singleLine="true"
+        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_labels_position="left">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_ac_Deposit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini_dis"
+            fab:fab_size="mini"
+            fab:fab_label="ฝากขาย" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_ac_Dealer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini_dis"
+            fab:fab_size="mini"
+            fab:fab_label="ขายให้เต้นรถ" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_ac_PostSell"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorDarkItem"
+            fab:fab_size="mini"
+            fab:fab_label="ขายเอง" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+</android.support.design.widget.CoordinatorLayout>

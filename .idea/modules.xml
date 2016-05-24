@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/AngelCarProject.iml" filepath="$PROJECT_DIR$/AngelCarProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Indicator/Indicator.iml" filepath="$PROJECT_DIR$/Indicator/Indicator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/angelcarlibrary/angelcarlibrary.iml" filepath="$PROJECT_DIR$/angelcarlibrary/angelcarlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <ViewStub
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/stub_dateTime"
+        android:inflatedId="@+id/layout_view_date_time"
+        android:layout="@layout/view_date_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!--android:padding="5dp"-->
+
+        <com.github.siyamed.shapeimageview.CircularImageView
+            android:id="@+id/custom_view_ui_angelcar_icon_profile"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_hndeveloper" />
+
+        <LinearLayout
+            android:id="@+id/custom_view_ui_angelcar_background"
+            android:layout_marginLeft="5dp"
+            android:padding="2dp"
+            android:orientation="horizontal"
+            android:background="@drawable/background_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/custom_view_ui_angelcar_message"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:text="HiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHiHi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+        <com.github.siyamed.shapeimageview.RoundedImageView
+            android:visibility="gone"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/custom_view_ui_angelcar_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/simple_product"
+            app:siRadius="4dp"/>
+
+    </LinearLayout>
+
+    <!--<TextView-->
+        <!--android:layout_marginLeft="50dp"-->
+        <!--android:text="เห็นแล้ว"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+</LinearLayout>

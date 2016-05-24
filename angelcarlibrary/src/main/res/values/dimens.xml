@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="icon_profile_size">42dp</dimen>
+    <dimen name="fuel_nozzle_width">30dp</dimen>
+    <dimen name="fuel_nozzle_height">20dp</dimen>
+    <dimen name="card_radius">30dp</dimen>
+    <dimen name="image_product_size">57dp</dimen>
+    <dimen name="group_text_padding_left">18dp</dimen>
+    <dimen name="group_text_padding_top">10dp</dimen>
+</resources>

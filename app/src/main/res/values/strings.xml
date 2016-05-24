@@ -1,0 +1,101 @@
+<resources>
+    <string name="app_name">AngelCar</string>
+    <string name="hello_world">Hello world!</string>
+    <!--Tab Layout String-->
+    <string name="tab_home"></string>
+    <string name="tab_finance"></string>
+    <string name="tab_help"></string>
+    <string name="tab_notice"></string>
+    <string name="tab_filter"></string>
+    <string name="sample_test_text_chat">Mr Sukphisit\'s passion is authentic Thai food, the way it has been prepared for generations, preferably without modern . Below is an excerpt from his latest column which appeared in Sunday\'s.......</string>
+    <string name="sample_test_text_chat2">Mr Sukphisit\'s passion is authentic Thai food, the way it has been...</string>
+    <string name="message_hint">เขียนข้อความ...</string>
+    <string name="post_notice">การลงประกาศรถมือสองสมาชิกทั่วไป สามารถลงประกาศได้ไม่เกิน 3 คัน หากผู้ใช้งานต้องการลงมากกว่าที่กำหนด ท่านสามารถลงทะเบียนเป็นสถานะ “เต้นท์รถ” ได้โดยไม่มีค่าใช้จ่ายครับ</string>
+    <string name="all">All</string>
+    <string name="pre">Previous</string>
+    <string name="next">Next</string>
+    
+    <string name="baseUrlImg_thumbnail">http://angelcar.com/ios/data/gadata/thumbnailcarimages/</string>
+    <string name="baseUrlImg_full">http://angelcar.com/ios/data/gadata/carimages/</string>
+
+    <string-array name="province">
+        <item>ราชบุรี</item>
+        <item>เพชรบูรณ์</item>
+        <item>พิจิตร</item>
+        <item>พิษณุโลก</item>
+        <item>สุโขทัย</item>
+        <item>ตาก</item>
+        <item>กำแพงเพชร</item>
+        <item>อุทัยธานี</item>
+        <item>นครสวรรค์</item>
+        <item>แม่ฮ่องสอน</item>
+        <item>เชียงราย</item>
+        <item>พะเยา</item>
+        <item>น่าน</item>
+        <item>แพร่</item>
+        <item>อุตรดิตถ์</item>
+        <item>ลำปาง</item>
+        <item>ลำพูน</item>
+        <item>เชียงใหม่</item>
+        <item>มุกดาหาร</item>
+        <item>นครพนม</item>
+        <item>สกลนคร</item>
+        <item>กาฬสินธุ์</item>
+        <item>ร้อยเอ็ด</item>
+        <item>มหาสารคาม</item>
+        <item>หนองคาย</item>
+        <item>เลย</item>
+        <item>อุดรธานี</item>
+        <item>ขอนแก่น</item>
+        <item>หนองบัวลำภู</item>
+        <item>อำนาจเจริญ</item>
+        <item>ชัยภูมิ</item>
+        <item>ยโสธร</item>
+        <item>อุบลราชธานี</item>
+        <item>ศรีสะเกษ</item>
+        <item>สุรินทร์</item>
+        <item>บุรีรัมย์</item>
+        <item>นครราชสีมา</item>
+        <item>สระแก้ว์</item>
+        <item>นครนายก</item>
+        <item>ปราจีนบุรี</item>
+        <item>ฉะเชิงเทรา</item>
+        <item>ตราด</item>
+        <item>จันทบุรี</item>
+        <item>ระยอง</item>
+        <item>ชลบุรี</item>
+        <item>สระบุรี</item>
+        <item>ชัยนาท</item>
+        <item>สิงห์บุรี</item>
+        <item>ลพบุรี</item>
+        <item>อ่างทอง</item>
+        <item>พระนครศรีอยุธยา</item>
+        <item>ปทุมธานี</item>
+        <item>นนทบุรี</item>
+        <item>สมุทรปราการ</item>
+        <item>กรุงเทพมหานคร</item>
+        <item>กาญจนบุรี</item>
+        <item>สุพรรณบุรี</item>
+        <item>นครปฐม</item>
+        <item>สมุทรสาคร</item>
+        <item>สมุทรสงคราม</item>
+        <item>เพชรบุรี</item>
+        <item>ประจวบครีขันธ์</item>
+        <item>นครศรีธรรมราช</item>
+        <item>กระบี่</item>
+        <item>พังงา</item>
+        <item>ภูเก็ต</item>
+        <item>สุราษฎร์ธานี</item>
+        <item>ระนอง</item>
+        <item>ชุมพร</item>
+        <item>สงขลา</item>
+        <item>สตูล</item>
+        <item>ตรัง</item>
+        <item>พัทลุง</item>
+        <item>ปัตตานี</item>
+        <item>ยะลา</item>
+        <item>นราธิวาส</item>
+        <item>บึงกาฬ</item>
+    </string-array>
+
+</resources>

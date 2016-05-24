@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        app:reverseLayout="true"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical" />
+
+    <LinearLayout
+        android:id="@+id/group_chat"
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:layout_weight="0.1"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="5dp">
+
+        <Button
+            android:layout_marginLeft="5dp"
+            android:background="@drawable/ic_person_add"
+            android:id="@+id/message_button_personnel"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
+
+        <Button
+            android:layout_marginLeft="7dp"
+            android:background="@drawable/ic_camera"
+            android:id="@+id/message_button_image"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
+
+        <EditText
+            android:textSize="15sp"
+            android:padding="5dp"
+            android:background="@null"
+            android:layout_marginLeft="5dp"
+            android:hint="@string/message_hint"
+            android:textColorHint="#BDBDBD"
+            android:id="@+id/input_chat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <Button
+            android:padding="5dp"
+            android:background="@drawable/ic_send_message"
+            android:id="@+id/message_button_send"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#EEEEEE"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:id="@+id/mainLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--root Photo-->
+        <LinearLayout
+            android:id="@+id/contentPhoto1"
+            android:padding="2dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="90dp">
+
+
+                <ImageView
+                    android:id="@+id/post_photo_1"
+                    style="@style/PhotoListStyle" />
+
+                <ImageView
+                    android:id="@+id/post_photo_2"
+                    style="@style/PhotoListStyle" />
+
+                <ImageView
+                    android:id="@+id/post_photo_3"
+                    style="@style/PhotoListStyle" />
+
+                <ImageView
+                    android:id="@+id/post_photo_4"
+                    style="@style/PhotoListStyle" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/contentPhoto2"
+            android:padding="2dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="90dp">
+
+                <ImageView
+                    android:id="@+id/post_photo_5"
+                    style="@style/PhotoListStyle" />
+
+                <ImageView
+                    android:id="@+id/post_photo_6"
+                    style="@style/PhotoListStyle" />
+
+                <ImageView
+                    android:id="@+id/post_photo_7"
+                    style="@style/PhotoListStyle" />
+
+                <ImageView
+                    android:id="@+id/post_photo_8"
+                    style="@style/PhotoListStyle" />
+
+
+        </LinearLayout>
+
+        <!--root Details-->
+
+        <android.support.v7.widget.CardView xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:cardCornerRadius="5dp"
+            app:contentPadding="10dp"
+            app:cardElevation="4dp"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <TextView
+                android:freezesText="true"
+                android:textColor="@android:color/holo_red_light"
+                android:background="@drawable/shape_rectangle_bg_topic"
+                android:id="@+id/tvTopicCar"
+                android:padding="10dp"
+                android:gravity="center"
+                android:text="Toyota fortuner 1.2v ปี 2016"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:layout_marginBottom="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="70dp" />
+
+
+            <LinearLayout
+                android:layout_marginTop="3dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
+                    <ToggleButton
+                        android:checked="false"
+                        android:text=""
+                        android:textOff=""
+                        android:textOn=""
+                        android:id="@+id/fragment_all_post_tgGear"
+                        android:background="@drawable/selector_gear_toggle_button"
+                        android:layout_width="74dp"
+                        android:layout_height="36dp" />
+
+                        <EditText
+                            android:text="กข-131"
+                            android:hint="เลขทะเบียน"
+                            android:inputType="text"
+                            android:id="@+id/fragment_all_post_etRegister"
+                            android:background="@drawable/background_edit_register"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:textColorHint="#BDBDBD"
+                            />
+
+                </LinearLayout>
+
+
+                    <EditText
+                        android:text="0935202355"
+                        android:hint="เบอร์โทร..."
+                        android:background="@drawable/background_edit_phone"
+                        android:inputType="phone|text"
+                        android:maxLength="14"
+                        android:id="@+id/fragment_all_post_etTelephone"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:textColorHint="#BDBDBD"/>
+
+                    <Spinner
+                        android:background="@drawable/background_province"
+                        android:id="@+id/spinnerProvince"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"/>
+
+                    <EditText
+                        android:text="Auttpon Reungsa"
+                        android:id="@+id/fragment_all_post_etName"
+                        android:background="@drawable/background_edit_name"
+                        android:hint="ชื่อ-นามสกุล"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:textColorHint="#BDBDBD"/>
+
+                    <EditText
+                        android:text="2000000"
+                        android:inputType="numberDecimal"
+                        android:digits="0123456789.,"
+                        android:id="@+id/fragment_all_post_etPrice"
+                        android:background="@drawable/background_edit_price"
+                        android:hint="กรุณาระบุราคา"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:textColorHint="#BDBDBD" />
+
+                    <EditText
+                        android:text="รถน้อย วิ่งน้อย ขับน้อย ขับยาว"
+                        android:id="@+id/fragment_all_post_etTopic"
+                        android:background="@drawable/background_edit_topic"
+                        android:hint="ระบุข้อความ สั้นๆ..."
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:textColorHint="#BDBDBD"/>
+
+                <EditText
+                    android:text="สนใจ ติดต่อ 093-xxx-xxxx\n อยากขายยยยย ติดต่อมาๆๆๆๆๆ"
+                    android:scrollbars="vertical"
+                    android:textSize="18sp"
+                    android:id="@+id/fragment_all_post_etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="135dp"
+                    android:background="@drawable/background_edit_detail"
+                    android:gravity="left"
+                    android:hint="ระบุข้อความทั้งหมด..."
+                    android:textColorHint="#BDBDBD" />
+
+
+            </LinearLayout>
+
+                <Button
+                    android:layout_marginTop="5dp"
+                    android:layout_gravity="bottom"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="@android:color/white"
+                    android:id="@+id/fragment_all_post_ButtonPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_menu_bottom"
+                    android:text="ลงประกาศขาย" />
+
+        </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

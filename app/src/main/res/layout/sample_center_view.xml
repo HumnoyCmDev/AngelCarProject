@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#001938"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <ScrollView
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <!--Main Group-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+            <android.support.design.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.dollarandtrump.angelcar.banner.ImageBanner
+                    android:id="@+id/detailImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="207dp"
+                    app:bb_barColor="#88000000"
+                    app:bb_delay="2"
+                    app:bb_period="10"
+                    app:bb_scale="0.5625"/>
+
+                <ToggleButton
+                    android:elevation="3dp"
+                    android:id="@+id/button_follow"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/selector_button_follow"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
+                    android:layout_marginRight="10dp"
+                    app:layout_anchor="@id/detailImage"
+                    app:layout_anchorGravity="left|bottom"/>
+
+
+
+                <com.dollarandtrump.angelcar.view.ListHashTag
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+
+            </android.support.design.widget.CoordinatorLayout>
+
+
+
+                <!--ListView-->
+                <ListView
+                    android:id="@+id/list_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:cacheColorHint="@android:color/transparent"
+                    android:divider="@null"
+                    android:footerDividersEnabled="true"
+                    android:headerDividersEnabled="true"
+                    android:listSelector="@android:color/transparent"
+                    android:stackFromBottom="true"
+                    android:transcriptMode="alwaysScroll">
+
+                </ListView>
+
+                <LinearLayout
+                    android:id="@+id/group_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <Button
+                        android:id="@+id/message_button_personnel"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="5dp"
+                        android:background="@drawable/ic_person_add" />
+
+                    <Button
+                        android:id="@+id/message_button_image"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_marginLeft="7dp"
+                        android:background="@drawable/ic_camera" />
+
+                    <EditText
+                        android:id="@+id/input_chat"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="@string/message_hint"
+                        android:padding="5dp"
+                        android:textColorHint="#BDBDBD"
+                        android:textSize="15sp" />
+
+                    <Button
+                        android:id="@+id/message_button_send"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:background="@drawable/ic_send_message"
+                        android:padding="5dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </ScrollView>
+
+</LinearLayout>
+
