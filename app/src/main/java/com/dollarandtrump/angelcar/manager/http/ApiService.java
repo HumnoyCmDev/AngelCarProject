@@ -55,7 +55,7 @@ public interface ApiService {
 
     //Insert Post Car
     @FormUrlEncoded
-    @POST("android/api/android/api/insertpost.php")
+    @POST("android/api/insertpost.php")
     Call<LogFromServerDao> postCar
     (
             @Field("shopref") String shopPref, // 1

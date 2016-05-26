@@ -22,13 +22,16 @@ import rx.schedulers.Schedulers;
  */
 public class SampleRx {
     public static void main(String[] str) {
+        List<String> words = new ArrayList<String>();
+        words.add("b");
+        words.add("c");
+        words.add("a");
+        words.add("d");
 
-        Set< String > numbers = new HashSet< String >();
-        numbers.add("aa");
-        numbers.add("aa");
-        numbers.add("cc");
-        numbers.add("bb");
-        System.out.println(numbers.toString());
+        Collections.sort(words);
+
+        for (String s : words)
+            System.out.println(s);
 
     }
 

@@ -10,6 +10,8 @@ import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.hndev.library.view.AngelCarHashTag;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,16 +33,24 @@ public class ShopHashTagAdapter extends RecyclerView.Adapter<ShopHashTagAdapter.
     public void setDao(PostCarCollectionDao dao) {
         this.dao = dao;
         if(dao != null && dao.getListCar() != null &&dao.getListCar().size() > 0){
-            List<String> _brand = new LinkedList<>();
+            /*Collections.sort(this.dao.getListCar(), new Comparator<PostCarDao>() {
+                @Override
+                public int compare(PostCarDao lhs, PostCarDao rhs) {
+                    return lhs.getCarName().compareTo(rhs.getCarName());
+                }
+            });*/
+           /* List<String> _brand = new LinkedList<>();
             for (PostCarDao d : dao.getListCar()){
                 _brand.add(d.getCarName());
-            }
-            brand = new ArrayList<>(findDuplicates(_brand));
+            }*/
+//            this.dao.sortBrand();
+            brand = this.dao.findDuplicates();
         }
 
 
     }
-    public Set<String> findDuplicates(List<String> listContainingDuplicates) {
+
+   /* public Set<String> findDuplicates(List<String> listContainingDuplicates) {
         Set<String> setToReturn = new HashSet<String>();
 //        Set<String> set1 = new HashSet<String>();
         for (String yourInt : listContainingDuplicates) {
@@ -49,7 +59,8 @@ public class ShopHashTagAdapter extends RecyclerView.Adapter<ShopHashTagAdapter.
 //            }
         }
         return setToReturn;
-    }
+    }*/
+
     public void setOnItemClickHashTagListener(OnItemClickHashTagListener onItemClickHashTagListener){
         this.onItemClickHashTagListener = onItemClickHashTagListener;
     }
@@ -76,7 +87,8 @@ public class ShopHashTagAdapter extends RecyclerView.Adapter<ShopHashTagAdapter.
             holder.carHashTag.setColorUnSelected("#F44336");
 //            holder.carHashTag.setEnabled(true);
         }else {
-            if (dao != null && dao.getListCar() != null) {
+            if (dao != null && dao.getListCar() != null
+                    && brand != null && brand.size() > 0) {
 //                PostCarDao item = dao.getListCar().get(position-1);
                 holder.carHashTag.setText(brand.get(position-1));
                 holder.carHashTag.setColorSelected("#2196F3");
@@ -90,7 +102,7 @@ public class ShopHashTagAdapter extends RecyclerView.Adapter<ShopHashTagAdapter.
 //        if (dao == null) return 1;
 //        if (dao.getListCar() == null) return 1;
 //        return dao.getListCar().size()+1;
-        return (brand != null ? brand.size() : 1) +1;
+        return (brand != null ? brand.size()+1 : 1);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -104,7 +116,7 @@ public class ShopHashTagAdapter extends RecyclerView.Adapter<ShopHashTagAdapter.
                     Log.i("ShopAdapter", "Selected : "+isSelected);
 //                    notifyDataSetChanged();
 
-                    if (onItemClickHashTagListener != null)
+                    if (onItemClickHashTagListener != null && brand != null && brand.size() > 0)
                         onItemClickHashTagListener
                                 .onItemClick(isSelected,getAdapterPosition(),
                                         brand.get(getAdapterPosition()-1));

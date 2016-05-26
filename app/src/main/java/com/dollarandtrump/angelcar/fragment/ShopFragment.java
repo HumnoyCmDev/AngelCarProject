@@ -33,6 +33,8 @@ import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.view.ListHashTag;
+import com.dollarandtrump.angelcar.view.snappy.SnappyLinearLayoutManager;
+import com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView;
 import com.github.clans.fab.FloatingActionMenu;
 
 import org.parceler.Parcels;
@@ -72,10 +74,14 @@ public class ShopFragment extends Fragment {
 
     @Bind(R.id.listHashTag) ListHashTag listHashTag;
 
+    @Bind(R.id.snappy) SnappyRecyclerView snappy;
+
     private GridLayoutManager manager;
     private ShopAdapter adapter;
     private PostCarCollectionDao dao;
     private Subscription subscription;
+
+    private ShopHashTagAdapter shopHashTag;
 
     Cache daoCacheManager = new Cache();
     int last = -100;
@@ -83,7 +89,6 @@ public class ShopFragment extends Fragment {
     boolean controlRecycler = true;
     boolean control = true;
 
-    ShopHashTagAdapter shopHashTag;
 
     public ShopFragment() {
         super();
@@ -135,6 +140,11 @@ public class ShopFragment extends Fragment {
             }
         });
 
+
+        snappy.setLayoutManager(new SnappyLinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        snappy.setAdapter(headerShopAdapter);
+
+
         manager = new GridLayoutManager(getActivity(),3);
         recyclerCar.setLayoutManager(manager);
         adapter = new ShopAdapter();
@@ -163,14 +173,14 @@ public class ShopFragment extends Fragment {
                 if (verticalOffset < last && !control){
                     //scrollUp
                     if (verticalOffset < -100) {
-                    Log.i(TAG, "onScrolled: scrollUp");
+//                    Log.i(TAG, "onScrolled: scrollUp");
                         hidePicProfile();
                         control = true;
                     }
                 }else if(verticalOffset > last && control){
                     //scrollDown
                     if (verticalOffset >= -200) {
-                    Log.i(TAG, "onScrolled: scrollDown");
+//                    Log.i(TAG, "onScrolled: scrollDown");
                         showPicProfile();
                         control = false;
                     }
@@ -221,8 +231,8 @@ public class ShopFragment extends Fragment {
 
 //        //Sample Rx android
             Observable<ShopCollectionDao> rxCall = HttpManager.getInstance().getService()
-//                    .observableLoadShop(userRef, shopRef)
-                    .observableLoadShop("2016050200001", "68")
+                    .observableLoadShop(userRef, shopRef)
+//                    .observableLoadShop("2016050200001", "68")
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());
             subscription = rxCall.subscribe(shopCollectionDaoAction1);
@@ -440,7 +450,7 @@ public class ShopFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return 5;//itemPic.size();
+            return 15;//itemPic.size();
         }
 
         @Override

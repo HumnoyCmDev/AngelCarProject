@@ -11,15 +11,14 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,55 +38,42 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private Context context;
 //    private final String BASE_URL_THUMBNAIL ="http://angelcar.com/ios/data/gadata/thumbnailcarimages/";
     private RecyclerOnItemClickListener recyclerOnItemClickListener;
-//    ArrayList<String> newCarName;
 
+    private List<Integer> positionHeader;
+//    private List<String> listNameHeader;
+//    private int deletePosition = 0;
 
     public boolean isHeader(int position) {
-//        return false;
-        return position == 0 || position == 4 || position == 6 ;
+        for (int i : positionHeader){
+            if (i == position) return true;
+        }
+        return false ;
     }
 
     @Override
     public int getItemCount() {
-//        if (dao == null) return 5;
-//        if (dao.getListCar() == null) return 5;
-//        return dao.getListCar().size()+5;
-        return 5+3;
+        if (dao == null) return 0;
+        if (dao.getListCar() == null) return 0;
+//        if (positionHeader != null)
+//        return dao.getListCar().size()+positionHeader.size();
+        return dao.getListCar().size();
     }
 
     public void setDao(PostCarCollectionDao dao) {
         this.dao = dao;
+//        this.dao.sortBrand();
+        positionHeader = this.dao.findPositionHeader();
+//        listNameHeader = this.dao.findDuplicates();
 
-        if ((this.dao != null && this.dao.getListCar() != null)
-                && this.dao.getListCar().size() > 0){
-            Collections.sort(this.dao.getListCar(), new Comparator<PostCarDao>() {
-                @Override
-                public int compare(PostCarDao lhs, PostCarDao rhs) {
-                    return lhs.getCarName().compareTo(rhs.getCarName());
-                }
-            });
-        }
-
-
-        // หาตำแหน่งหัวข้อยี่ห้อ
-        if(dao != null && dao.getListCar() != null &&dao.getListCar().size() > 0){
-            List<String> carName = new ArrayList<>();
-            for (PostCarDao d : dao.getListCar()){
-                carName.add(d.getCarName());
+        /*add position Header to Dao*/
+        if (this.dao != null && this.dao.getListCar() != null &&
+                positionHeader != null) {
+            for (int i = 0; i < positionHeader.size(); i++) {
+                this.dao.getListCar().add(positionHeader.get(i), new PostCarDao());
             }
-            ArrayList<String> newCarName = new ArrayList<>(findDuplicates(carName));
-            Log.i("ShopAdapter", "size :"+newCarName.size());
-            Log.i("ShopAdapter", "size :"+dao.getListCar().size());
-//            for (int i = 0; i < newCarName.size(); i++) {
-//                for (int j = 0; j < dao.getListCar().size(); j++) {
-//                    if (newCarName.get(i)
-//                            .contains(dao.getListCar().get(j).getCarName())){
-//
-//
-//                    }
-//                }
-//            }
         }
+
+
     }
 
     public void setOnclickListener(RecyclerOnItemClickListener recyclerOnItemClickListener){
@@ -103,7 +89,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_VIEW_TYPE_HEADER){
             View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_line_brand,parent,false);
+                    .inflate(R.layout.item_shop_line_separator,parent,false);
             return new HeaderViewHolder(v);
         }
 
@@ -113,18 +99,32 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         return new ViewHolder(v);
     }
 
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        // coding
-//        if (holder.getItemViewType() == ITEM_VIEW_TYPE_ITEM) {
-//            ViewHolder viewHolder = (ViewHolder) holder;
-//            PostCarDao item = dao.getListCar().get(position-1);
-//            Glide.with(context)
-//                    .load(item.getCarImageThumbnailPath())
-//                    .placeholder(R.drawable.loading)
-//                    .into(viewHolder.shopImage);
-//            viewHolder.carName.setText(item.getCarName());
-//        }
+
+
+        if (holder.getItemViewType() == ITEM_VIEW_TYPE_HEADER){
+            HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
+            viewHolder.tvTitleHeader.setText(
+                    dao.getListCar().get(position+1).getCarName());
+        }
+
+        if (holder.getItemViewType() == ITEM_VIEW_TYPE_ITEM) {
+            ViewHolder viewHolder = (ViewHolder) holder;
+
+                PostCarDao item = dao.getListCar()
+                        .get(position);
+                Glide.with(context)
+                        .load(item.getCarImageThumbnailPath())
+                        .placeholder(R.drawable.loading)
+                        .into(viewHolder.shopImage);
+                viewHolder.carName.setText(item.getCarName());
+
+
+
+        }
+
     }
 
     @Override
@@ -132,17 +132,6 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (planetFilter == null)
             planetFilter = new PlanetFilter(this,dao.getListCar());
         return planetFilter;
-    }
-
-    public Set<String> findDuplicates(List<String> listContainingDuplicates) {
-         Set<String> setToReturn = new HashSet<String>();
-//         Set<String> set1 = new HashSet<String>();
-        for (String yourInt : listContainingDuplicates) {
-//            if (!set1.add(yourInt)) {
-                setToReturn.add(yourInt);
-//            }
-        }
-        return setToReturn;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -156,23 +145,36 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             itemView.setOnClickListener(this);
         }
 
+        //todo Check Place Item
         @Override
         public void onClick(View v) {
             if (recyclerOnItemClickListener != null) {
-                if (v instanceof ImageView) { // setting
-                    recyclerOnItemClickListener
-                            .OnClickSettingListener(v, getAdapterPosition());
-                } else { // item
-                    recyclerOnItemClickListener
-                            .OnClickItemListener(v,getAdapterPosition());
+                if (!findPlaceHeader(getAdapterPosition())) {
+                    if (v instanceof ImageView) { // setting
+                        recyclerOnItemClickListener
+                                .OnClickSettingListener(v, getAdapterPosition());
+                    } else { // item
+                        recyclerOnItemClickListener
+                                .OnClickItemListener(v, getAdapterPosition());
+                    }
                 }
+
             }
+        }
+
+        public boolean findPlaceHeader(int position){
+            for (int i : positionHeader){
+                if (i == position) return true;
+            }
+            return false;
         }
     }
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder{
+        @Bind(R.id.tv_line_separator) TextView tvTitleHeader;
         public HeaderViewHolder(View itemView) {
             super(itemView);
+            ButterKnife.bind(this,itemView);
         }
     }
 

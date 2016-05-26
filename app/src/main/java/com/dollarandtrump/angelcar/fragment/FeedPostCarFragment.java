@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.BounceInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -28,6 +26,7 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.FeedPostCarAdapter;
 import com.dollarandtrump.angelcar.R;
@@ -100,6 +99,7 @@ public class FeedPostCarFragment extends Fragment {
     private InformationCarModel copyInformLoadMore;
     private MutableInteger lastPositionInteger;
     private boolean isLoadingMore = false;
+    private boolean isStopLoadingMore = false; // หยุดการ LoadMore
     private PostCarManager carManager;
     private FeedPostCarAdapter adapter;
 
@@ -191,6 +191,7 @@ public class FeedPostCarFragment extends Fragment {
 
 
     private void refreshData(){
+        isStopLoadingMore = false;
         if (carManager.getCount() == 0)
             reloadData();
         else
@@ -222,18 +223,22 @@ public class FeedPostCarFragment extends Fragment {
     }
 
     private void loadMoreData(){
-        if (isLoadingMore)
-            return;
+//        if (isStopLoadingMore) return;
+        if (isStopLoadingMore || isLoadingMore) return;
+
         isLoadingMore = true;
         adapter.setLoading(true);
+        Log.i(TAG, "LoadMore1 : "+ isStopLoadingMore +" load = "+isLoadingMore);
         Call<PostCarCollectionDao> callLoadingMore = HttpManager.getInstance()
                 .getService().loadMorePostCar(carManager.lastDateDao());
         callLoadingMore.enqueue(new PostCarCallback(PostCarCallback.MODE_LOAD_MORE));
+
     }
 
     private void loadMoreFilterData(){
-        if (isLoadingMore)
-            return;
+//        if (isStopLoadingMore) return;
+        if (isStopLoadingMore || isLoadingMore) return;
+
         isLoadingMore = true;
         adapter.setLoading(true);
         if (copyInformLoadMore == null) return;
@@ -482,7 +487,7 @@ public class FeedPostCarFragment extends Fragment {
                 reloadData();
                 return;
             }
-
+            isStopLoadingMore = false;
             refreshData();
         }
     };
@@ -689,6 +694,10 @@ public class FeedPostCarFragment extends Fragment {
                     }
                 } else if (mode == MODE_LOAD_MORE) {
                     carManager.appendDataToBottomPosition(dao);
+                    if (dao.getListCar() == null){
+                        isStopLoadingMore = true;
+                    }
+
                 } else {
                     carManager.setDao(dao);
                 }
@@ -710,6 +719,7 @@ public class FeedPostCarFragment extends Fragment {
 
 
             } else {
+                isStopLoadingMore = true;
                 clearLoadingMoreFlagIfCapable(mode);
                 Log.i(TAG, "onResponse: " + response.errorBody().toString());
             }
@@ -717,6 +727,7 @@ public class FeedPostCarFragment extends Fragment {
 
         @Override
         public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
+            isStopLoadingMore = true;
             mSwipeRefresh.setRefreshing(false);
             adapter.setLoading(false);
             clearLoadingMoreFlagIfCapable(mode);
@@ -724,8 +735,10 @@ public class FeedPostCarFragment extends Fragment {
         }
 
         private void clearLoadingMoreFlagIfCapable(int mode){
-            if (mode == MODE_LOAD_MORE)
+            if (mode == MODE_LOAD_MORE) {
                 isLoadingMore = false;
+                Log.i(TAG, "clearLoadingMoreFlagIfCapable:");
+            }
         }
     }
 
@@ -745,11 +758,15 @@ public class FeedPostCarFragment extends Fragment {
                     carManager.setDao(response.body());
                 }else if (mode == 1){
                     carManager.appendDataToBottomPosition(response.body());
+                    if (response.body().getListCar() == null){
+                        isStopLoadingMore = true;
+                    }
                 }
                 adapter.setDao(carManager.getDao());
                 adapter.notifyDataSetChanged();
             } else {
                 adapter.setLoading(false);
+                isStopLoadingMore = true;
                 Log.e(TAG, "onResponse: " + response.errorBody().toString());
             }
         }
@@ -757,6 +774,7 @@ public class FeedPostCarFragment extends Fragment {
         @Override
         public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
+            isStopLoadingMore = true;
             adapter.setLoading(false);
         }
     }
