@@ -1,5 +1,8 @@
 package com.dollarandtrump.angelcar.dao;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -12,25 +15,26 @@ import java.util.Date;
 /**
  * Created by humnoy on 10/3/59.
  */
-@Parcel
-public class PostCarDao implements Serializable {
-    @SerializedName("carid")            @Expose int carId;
-    @SerializedName("shopref")          @Expose String shopRef;
-    @SerializedName("brand_name")       @Expose String carName;
-    @SerializedName("sub_name")         @Expose String carSub;
-    @SerializedName("type_name")        @Expose String carSubDetail;
-    @SerializedName("cardetail")        @Expose String carDetail;
-    @SerializedName("caryear")          @Expose int carYear;
-    @SerializedName("carprice")         @Expose String carPrice;
-    @SerializedName("carstatus")        @Expose String carStatus;
-    @SerializedName("gear")             @Expose int gear;
-    @SerializedName("plate")            @Expose String plate;
-    @SerializedName("name")             @Expose String name;
-    @SerializedName("province_id")      @Expose int provinceId;
-    @SerializedName("province_name")    @Expose String province;
-    @SerializedName("telnumber")        @Expose String phone;
-    @SerializedName("carmodify")        @Expose Date carModifyTime;
-    @SerializedName("carimagepath")     @Expose String carImagePath;
+@Parcel(value = Parcel.Serialization.BEAN, analyze = PostCarDao.class)
+@Table(name = "PostCar")
+public class PostCarDao extends Model implements Serializable {
+   @Column(name = "CarId")          @SerializedName("carid")            @Expose int carId;
+   @Column(name = "ShopRef")        @SerializedName("shopref")          @Expose String shopRef;
+   @Column(name = "BrandName")      @SerializedName("brand_name")       @Expose String carName;
+   @Column(name = "CarSub")         @SerializedName("sub_name")         @Expose String carSub;
+   @Column(name = "CarSubDetail")   @SerializedName("type_name")        @Expose String carSubDetail;
+   @Column(name = "CarDetail")      @SerializedName("cardetail")        @Expose String carDetail;
+   @Column(name = "CarYear")        @SerializedName("caryear")          @Expose int carYear;
+   @Column(name = "CarPrice")       @SerializedName("carprice")         @Expose String carPrice;
+   @Column(name = "CarStatus")      @SerializedName("carstatus")        @Expose String carStatus;
+   @Column(name = "Gear")           @SerializedName("gear")             @Expose int gear;
+   @Column(name = "Plate")          @SerializedName("plate")            @Expose String plate;
+   @Column(name = "Name")           @SerializedName("name")             @Expose String name;
+   @Column(name = "ProvinceId")     @SerializedName("province_id")      @Expose int provinceId;
+   @Column(name = "ProvinceName")   @SerializedName("province_name")    @Expose String province;
+   @Column(name = "TelNumber")      @SerializedName("telnumber")        @Expose String phone;
+   @Column(name = "DateModifyTime") @SerializedName("carmodify")        @Expose Date carModifyTime;
+   @Column(name = "CarImagePath")   @SerializedName("carimagepath")     @Expose String carImagePath;
 
     public int getProvinceId() {
         return provinceId;

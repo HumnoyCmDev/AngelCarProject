@@ -2,7 +2,6 @@ package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,7 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,14 +29,12 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private static final int ITEM_VIEW_TYPE_ITEM = 1;
 
     private PostCarCollectionDao dao;
+    private PostCarCollectionDao originalDao;
     private Filter planetFilter;
     private Context context;
-//    private final String BASE_URL_THUMBNAIL ="http://angelcar.com/ios/data/gadata/thumbnailcarimages/";
     private RecyclerOnItemClickListener recyclerOnItemClickListener;
 
     private List<Integer> positionHeader;
-//    private List<String> listNameHeader;
-//    private int deletePosition = 0;
 
     public boolean isHeader(int position) {
         for (int i : positionHeader){
@@ -61,6 +54,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     public void setDao(PostCarCollectionDao dao) {
         this.dao = dao;
+        originalDao = dao;
 //        this.dao.sortBrand();
         positionHeader = this.dao.findPositionHeader();
 //        listNameHeader = this.dao.findDuplicates();
@@ -106,8 +100,9 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_HEADER){
             HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
+
             viewHolder.tvTitleHeader.setText(
-                    dao.getListCar().get(position+1).getCarName());
+                    dao.getListCar().get(position+1).getCarName().toUpperCase());
         }
 
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_ITEM) {
@@ -132,6 +127,11 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (planetFilter == null)
             planetFilter = new PlanetFilter(this,dao.getListCar());
         return planetFilter;
+    }
+
+    public void reSetDao(){
+        if (originalDao != null && originalDao.getListCar() != null)
+            setDao(originalDao);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -181,12 +181,12 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     /******************
      *Inner Class Zone*
      ******************/
-    private class PlanetFilter extends Filter {
+    public class PlanetFilter extends Filter {
         private ShopAdapter shopAdapter;
         private  List<PostCarDao> originalDao;
         private  List<PostCarDao> daoFilterList;
 
-        public PlanetFilter(ShopAdapter shopAdapter,  List<PostCarDao> originalDao) {
+        public PlanetFilter(ShopAdapter shopAdapter, List<PostCarDao> originalDao) {
             this.shopAdapter = shopAdapter;
             this.originalDao = originalDao;
             daoFilterList = new ArrayList<>();

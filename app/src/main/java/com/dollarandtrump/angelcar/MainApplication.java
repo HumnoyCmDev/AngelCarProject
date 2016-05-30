@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar;
 
 import android.app.Application;
 
+import com.activeandroid.ActiveAndroid;
 import com.dollarandtrump.angelcar.manager.Contextor;
 
 
@@ -15,6 +16,7 @@ public class MainApplication extends Application{
         super.onCreate();
 
         Contextor.getInstance().init(getApplicationContext());
+        ActiveAndroid.initialize(this);
 
     }
 

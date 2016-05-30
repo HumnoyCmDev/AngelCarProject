@@ -19,10 +19,12 @@ import java.util.Set;
 /**
  * Created by humnoy on 10/3/59.
  */
+
+
 @Parcel
 public class PostCarCollectionDao implements Serializable {
-    @SerializedName("rows") @Expose List<PostCarDao> listCar;
 
+    @SerializedName("rows") @Expose List<PostCarDao> listCar;
 
     public List<PostCarDao> getListCar() {
         return listCar;
@@ -30,14 +32,6 @@ public class PostCarCollectionDao implements Serializable {
 
     public void setListCar(List<PostCarDao> rows) {
         this.listCar = rows;
-//        if ((this.listCar != null)
-//                && this.listCar.size() > 0) {
-//            listBrand = new ArrayList<>();
-//            for (PostCarDao d : this.listCar){
-//                listBrand.add(d.getCarName());
-//            }
-//        }
-
     }
 
     /*--------*/
@@ -96,8 +90,10 @@ public class PostCarCollectionDao implements Serializable {
             if (listBrand.size() > 0) {
                 Set<String> setToReturn = new HashSet<String>();
                 for (String s : listBrand) {
-                    setToReturn.add(s);
-//                    Log.d("PostDao", "findDuplicates: "+s);
+                    if (s != null) {
+                        setToReturn.add(s);
+                        Log.d("PostDao", "findDuplicates: " + s);
+                    }
                 }
                 return new ArrayList<>(setToReturn);
             }

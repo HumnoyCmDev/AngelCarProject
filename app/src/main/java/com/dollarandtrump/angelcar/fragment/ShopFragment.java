@@ -18,6 +18,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
@@ -36,6 +39,7 @@ import com.dollarandtrump.angelcar.view.ListHashTag;
 import com.dollarandtrump.angelcar.view.snappy.SnappyLinearLayoutManager;
 import com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView;
 import com.github.clans.fab.FloatingActionMenu;
+import com.hndev.library.view.AngelCarHashTag;
 
 import org.parceler.Parcels;
 
@@ -155,12 +159,27 @@ public class ShopFragment extends Fragment {
 
 
         shopHashTag = new ShopHashTagAdapter();
-        shopHashTag.setDao(dao);
+//        shopHashTag.setDao(dao);
         listHashTag.setAdapter(shopHashTag);
         shopHashTag.setOnItemClickHashTagListener(new ShopHashTagAdapter.OnItemClickHashTagListener() {
             @Override
             public void onItemClick(boolean isSelected, int position, String brand) {
-                adapter.getFilter().filter(brand);
+                if (isSelected && position != 0) {
+                     adapter.setDao(findPostCar(brand));
+                     adapter.notifyDataSetChanged();
+                }else{
+                    adapter.setDao(queryPostCar());
+                    adapter.notifyDataSetChanged();
+                }
+                for (int i = 0; i < listHashTag.getChildCount(); i++) {
+                    if (i != position) {
+                        if (listHashTag.getChildAt(i) instanceof AngelCarHashTag) {
+                            AngelCarHashTag v = (AngelCarHashTag) listHashTag.getChildAt(i);
+                            v.hideChildSubCar();
+                            Log.d(TAG, "onItemClick: "+i);
+                        }
+                    }
+                }
             }
         });
 
@@ -174,14 +193,14 @@ public class ShopFragment extends Fragment {
                     //scrollUp
                     if (verticalOffset < -100) {
 //                    Log.i(TAG, "onScrolled: scrollUp");
-                        hidePicProfile();
+//                        hidePicProfile();
                         control = true;
                     }
                 }else if(verticalOffset > last && control){
                     //scrollDown
                     if (verticalOffset >= -200) {
 //                    Log.i(TAG, "onScrolled: scrollDown");
-                        showPicProfile();
+//                        showPicProfile();
                         control = false;
                     }
 
@@ -246,12 +265,57 @@ public class ShopFragment extends Fragment {
     private void initData(ShopCollectionDao shopCollectionDao){
         initProfile(shopCollectionDao.getProfileDao());
         dao.setListCar(shopCollectionDao.getPostCarDao());
+        save2db(dao);
+
+        /*Query PostCar*/
+        //Todo HashTag
+        shopHashTag.setDao(queryFindBrandDuplicates());
+        shopHashTag.setChildBrand(queryPostCar().getListCar());
+        shopHashTag.notifyDataSetChanged();
+
         adapter.setDao(dao);
         adapter.notifyDataSetChanged();
 
-        //Todo HashTag
-        shopHashTag.setDao(dao);
-        shopHashTag.notifyDataSetChanged();
+    }
+
+    private void save2db(PostCarCollectionDao dao){
+        new Delete().from(PostCarDao.class).execute();
+        //TODO SAVE To DB
+        ActiveAndroid.beginTransaction();
+        try {
+            for (PostCarDao d : dao.getListCar()){
+                    d.save();
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        }
+        finally {
+            ActiveAndroid.endTransaction();
+        }
+    }
+
+    private PostCarCollectionDao queryPostCar(){//all
+        List<PostCarDao> model = new Select().from(PostCarDao.class)
+                .orderBy("BrandName ASC").execute();
+        PostCarCollectionDao newDao = new PostCarCollectionDao();
+        newDao.setListCar(model);
+        return newDao;
+    }
+
+    private PostCarCollectionDao queryFindBrandDuplicates(){
+        List<PostCarDao> model = new Select().from(PostCarDao.class)
+                .groupBy("BrandName").having("COUNT(BrandName) > 0")
+                .orderBy("BrandName ASC").execute();
+        PostCarCollectionDao newDao = new PostCarCollectionDao();
+        newDao.setListCar(model);
+        return newDao;
+    }
+
+    private PostCarCollectionDao findPostCar(String brandName){
+        List<PostCarDao> model = new Select().from(PostCarDao.class)
+                .where("BrandName LIKE ?",brandName).execute();
+        PostCarCollectionDao newDao = new PostCarCollectionDao();
+        newDao.setListCar(model);
+        return newDao;
     }
 
     private void initProfile(ProfileDao profileDao){

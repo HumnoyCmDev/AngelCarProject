@@ -217,8 +217,7 @@ public class FeedPostCarFragment extends Fragment {
     private void reloadData() {
         loadCountCar();
         //load Post
-        Call<PostCarCollectionDao> call =
-                HttpManager.getInstance().getService().loadPostCar();
+        Call<PostCarCollectionDao> call = HttpManager.getInstance().getService().loadPostCar();
         call.enqueue(new PostCarCallback(PostCarCallback.MODE_RELOAD));
     }
 

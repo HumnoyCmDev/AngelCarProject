@@ -99,7 +99,8 @@
         <activity android:name=".activity.SingleViewImageActivity"/>
         <activity android:name=".activity.EditPostActivity"/>
 
-
+        <meta-data android:name="AA_DB_NAME" android:value="AngelCar.db" />
+        <meta-data android:name="AA_DB_VERSION" android:value="5" />
     </application>
 
 </manifest>

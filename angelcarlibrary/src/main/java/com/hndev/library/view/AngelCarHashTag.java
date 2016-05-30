@@ -13,6 +13,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -71,42 +72,6 @@ public class AngelCarHashTag extends BaseCustomViewGroup {
         hashTagGroupBrand = (LinearLayout) findViewById(R.id.custom_view_hash_tag_group_brand);
         tvHashTag = (TextView) findViewById(R.id.custom_view_hash_tag_brand);
 
-
-        /*LayoutParams pmGroup = new LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-
-        LinearLayout content = new LinearLayout(getContext());
-        content.setOrientation(LinearLayout.HORIZONTAL);
-        content.setLayoutParams(pmGroup);
-
-
-        hashTagGroupBrand = new LinearLayout(getContext());
-        hashTagGroupBrand.setLayoutParams(pmGroup);
-        hashTagGroupBrand.setOrientation(LinearLayout.HORIZONTAL);
-        hashTagGroupBrand.setGravity(Gravity.CENTER_VERTICAL);
-
-        tvHashTag = new TextView(getContext());
-        tvHashTag.setText("Honda");
-        tvHashTag.setPadding(20,16,20,16);
-        tvHashTag.setTextColor(Color.BLACK);
-        tvHashTag.setTypeface(null, Typeface.BOLD);
-        tvHashTag.setGravity(Gravity.CENTER);
-        LayoutParams param = new LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
-        param.setMargins(15,15,15,15);
-        tvHashTag.setLayoutParams(param);
-
-        content.addView(tvHashTag);
-        content.addView(hashTagGroupBrand);
-
-        addView(content);*/
-
-//        addView(tvHashTag);
-//        addView(hashTagGroupBrand);
-
         gradientDrawable = new GradientDrawable();
         gradientDrawable.setColor(Color.parseColor("#FFB13D"));
         gradientDrawable.setCornerRadius(dp2px(15f));
@@ -115,27 +80,35 @@ public class AngelCarHashTag extends BaseCustomViewGroup {
         }else {
             tvHashTag.setBackgroundDrawable(gradientDrawable);
         }
-        hashTagGroupBrand.addView(createViewHasTag("AngelCar",15f,"#FFB13D"));
-        hashTagGroupBrand.addView(createViewHasTag("AngelCar",15f,"#FFB13D"));
+//        hashTagGroupBrand.addView(createViewHasTag("AngelCar1",15f,"#FFB13D"));
+//        hashTagGroupBrand.addView(createViewHasTag("AngelCar",15f,"#FFB13D"));
         hashTagGroupBrand.setVisibility(GONE);
     }
 
+    public void addChildCarSub(String carSub){
+        hashTagGroupBrand.addView(createViewHasTag(carSub,10f,"#9E9E9E"));
+    }
+
     public TextView createViewHasTag(String brand,float radius,String color){
-        TextView tvHashTag = new TextView(getContext());
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.custom_veiw_childe_brand_hashtag,null);
+        TextView tvHashTag = (TextView) v.findViewById(R.id.customViewChildBrandHashTag);
         tvHashTag.setText(brand);
-        tvHashTag.setPadding(dp2px(3),dp2px(3),dp2px(3),dp2px(3));
-        tvHashTag.setTextColor(Color.BLACK);
-//        tvHashTag.setTypeface(null, Typeface.BOLD);
-        tvHashTag.setGravity(Gravity.CENTER);
-        LayoutParams param = new LayoutParams(
+//        TextView tvHashTag = new TextView(getContext());
+//        tvHashTag.setText(brand);
+//        tvHashTag.setPadding(dp2px(4),dp2px(4),dp2px(4),dp2px(4));
+//        tvHashTag.setTextColor(Color.BLACK);
+////        tvHashTag.setTypeface(null, Typeface.BOLD);
+//        tvHashTag.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-//        param.setMargins(15,15,15,15);
+        param.setMargins(2,2,2,2);
         tvHashTag.setLayoutParams(param);
+//        tvHashTag.setLayoutParams(param);
 
         GradientDrawable gradientDrawable = new GradientDrawable();
         gradientDrawable.setColor(Color.parseColor(color));
-        gradientDrawable.setCornerRadius(dp2px(radius));
+        gradientDrawable.setCornerRadius(radius);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
             tvHashTag.setBackground(gradientDrawable);
         }else {
@@ -212,26 +185,34 @@ public class AngelCarHashTag extends BaseCustomViewGroup {
             @Override
             public void onClick(View v) {
                 if (!isSelected) {
-                    setColorBackground(colorSelected);
-//                    setCornerRadius(5f);
-                    hashTagGroupBrand.setVisibility(VISIBLE);
-                    Animation anim = AnimationUtils
-                            .loadAnimation(getContext(),R.anim.hash_tag_slide_left_in);
-                    hashTagGroupBrand.startAnimation(anim);
-                    isSelected = true;
+                    showChildSubCar();
                 }else {
-                    setColorBackground(colorUnSelected);
-//                    setCornerRadius(radius);
-                    hashTagGroupBrand.setVisibility(GONE);
-                    Animation anim = AnimationUtils
-                            .loadAnimation(getContext(),R.anim.hash_tag_slide_right_out);
-                    hashTagGroupBrand.startAnimation(anim);
-                    isSelected = false;
+                    hideChildSubCar();
                 }
                 onClickHashTagListener.onClickItem(isSelected);
             }
         });
 
+    }
+
+    public void hideChildSubCar() {
+        setColorBackground(colorUnSelected);
+//                    setCornerRadius(radius);
+        hashTagGroupBrand.setVisibility(GONE);
+        Animation anim = AnimationUtils
+                .loadAnimation(getContext(), R.anim.hash_tag_slide_right_out);
+        hashTagGroupBrand.startAnimation(anim);
+        isSelected = false;
+    }
+
+    public void showChildSubCar() {
+        setColorBackground(colorSelected);
+//                    setCornerRadius(5f);
+        hashTagGroupBrand.setVisibility(VISIBLE);
+        Animation anim = AnimationUtils
+                .loadAnimation(getContext(), R.anim.hash_tag_slide_left_in);
+        hashTagGroupBrand.startAnimation(anim);
+        isSelected = true;
     }
 
     @Override
