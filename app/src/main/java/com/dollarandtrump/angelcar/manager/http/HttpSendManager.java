@@ -87,7 +87,7 @@ public class HttpSendManager {
                 .subscribe(subscriber);
     }
 
-    public static void
+//    public static void
 
 //    private String requestOkHttp(){
 //

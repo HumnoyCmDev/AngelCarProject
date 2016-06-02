@@ -1,6 +1,10 @@
 [
     {
-        "merged": "D:\\Android Project\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\release\\drawable\\vpi__tab_indicator.xml",
-        "source": "D:\\Android Project\\AngelCarProject\\Indicator\\src\\main\\res\\drawable\\vpi__tab_indicator.xml"
+        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/release/drawable/vpi__tab_indicator.xml",
+        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable/vpi__tab_indicator.xml"
+    },
+    {
+        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/D:\\Android Project\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\release\\drawable\\vpi__tab_indicator.xml",
+        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/D:\\Android Project\\AngelCarProject\\Indicator\\src\\main\\res\\drawable\\vpi__tab_indicator.xml"
     }
 ]
