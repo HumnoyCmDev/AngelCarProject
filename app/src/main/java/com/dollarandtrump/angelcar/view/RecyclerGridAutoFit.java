@@ -54,4 +54,8 @@ public class RecyclerGridAutoFit extends RecyclerView{
             manager.setSpanCount(spanCount);
         }
     }
+
+    public void setColumnWidth(int columnWidth) {
+        this.columnWidth = columnWidth;
+    }
 }
