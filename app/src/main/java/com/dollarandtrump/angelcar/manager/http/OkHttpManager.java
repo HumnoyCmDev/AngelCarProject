@@ -35,7 +35,7 @@ public class OkHttpManager {
         this.request = sendMessageBuilder.request;
     }
 
-    public OkHttpManager(UploadFileBuilder uploadFileBuilder) {
+    public OkHttpManager(UploadFileMessageBuilder uploadFileMessageBuilder) {
 
     }
      //Deprecated
@@ -95,19 +95,19 @@ public class OkHttpManager {
 
     }
 
-    public static class UploadFileBuilder {
+    public static class UploadFileMessageBuilder {
         private String urlMessage = "http://angelcar.com/ga_chatcar.php?operation=new&message=%s";
         private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
         private OkHttpClient okHttpClient ;
-        private static final String TAG = "UploadFileBuilder";
+        private static final String TAG = "UploadFile";
 
-        public UploadFileBuilder(String id,String messageFromUser,String messageBy) {
+        public UploadFileMessageBuilder(String id, String messageFromUser, String messageBy) {
             okHttpClient = new OkHttpClient();
             urlMessage = String.format(urlMessage,id+"||"+messageFromUser+"||%s||"+messageBy);
-            Log.i(TAG, "UploadFileBuilder: "+urlMessage);
+            Log.i(TAG, "UploadFile: "+urlMessage);
         }
 
-        public UploadFileBuilder putImage(final File fileImage){
+        public UploadFileMessageBuilder putImage(final File fileImage){
 
             new AsyncTask<Void,Void,String>(){
 

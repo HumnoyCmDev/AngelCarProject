@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -129,21 +130,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_CODE_ASK_PERMISSIONS:
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // Permission Granted
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Toast.makeText(MainActivity.this,"RequestPermission ::"+requestCode,Toast.LENGTH_LONG).show();
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
 //                    dialogConfirmFragment();
-//                } else {
-//                    // Permission Denied
-//                }
-//                break;
-//            default:
-//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        }
-//    }
+                } else {
+                    // Permission Denied
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     private void initInstance() {
         boolean first = Registration.getInstance().isFirstApp();

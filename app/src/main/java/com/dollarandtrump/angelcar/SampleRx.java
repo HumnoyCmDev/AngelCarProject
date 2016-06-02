@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,6 +16,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
 /**
@@ -22,16 +24,63 @@ import rx.schedulers.Schedulers;
  */
 public class SampleRx {
     public static void main(String[] str) {
-        List<String> words = new ArrayList<String>();
-        words.add("b");
-        words.add("c");
-        words.add("a");
-        words.add("d");
+//       List<Integer> integers = new ArrayList<>();
+//        integers.add(1);
+//        integers.add(2);
+//        integers.add(3);
+//        integers.add(4);
+//        Observable.just(integers).subscribe(new Subscriber<List<Integer>>() {
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//
+//            }
+//
+//            @Override
+//            public void onNext(List<Integer> integers) {
+//                System.out.println(integers.size());
+//            }
+//        });
 
-        Collections.sort(words);
+        Observable<Integer> odds = Observable.just(1, 3, 5);
+        Observable<String> evens = Observable.just("ewr","wer","dfgd");
 
-        for (String s : words)
-            System.out.println(s);
+        Observable<String> s = Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                        subscriber.onNext("sdfsdfsdfsdfsdf");
+            }
+        });
+
+        Observable<String> z = Observable.zip(odds, evens, s, new Func3<Integer, String, String, String>() {
+            @Override
+            public String call(Integer integer, String s, String s2) {
+                return null;
+            }
+        });
+
+        Observable.merge(odds,evens,s)
+                .subscribe(new Subscriber<Serializable>() {
+                    @Override
+                    public void onCompleted() {
+                        System.out.print("Completed");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        System.out.print(e.toString());
+                    }
+
+                    @Override
+                    public void onNext(Serializable serializable) {
+                        System.out.println("Next");
+                    }
+                });
+
 
     }
 

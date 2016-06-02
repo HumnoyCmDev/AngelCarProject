@@ -188,7 +188,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
             File imgFile = new File(picturePath);
             Toast.makeText(DetailCarActivity.this,imgFile.getPath(),Toast.LENGTH_SHORT).show();
 
-                    new OkHttpManager.UploadFileBuilder(String.valueOf(postCarDao.getCarId())
+                    new OkHttpManager.UploadFileMessageBuilder(String.valueOf(postCarDao.getCarId())
                             ,messageFromUser,MESSAGE_BY)
                             .putImage(imgFile);
 
