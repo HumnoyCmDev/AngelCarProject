@@ -44,7 +44,7 @@ public class YearDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_year_grid_layout,container,false);
         ButterKnife.bind(this,view);
-//        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return view;
     }
 

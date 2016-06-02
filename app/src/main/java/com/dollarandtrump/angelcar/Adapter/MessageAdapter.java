@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.github.siyamed.shapeimageview.CircularImageView;
@@ -73,7 +74,7 @@ public class MessageAdapter extends BaseAdapter{
         }
         MessageDao message = getItem(position);
 
-        Picasso.with(parent.getContext())
+        Glide.with(parent.getContext())
                 .load(message.getUserProfileImage())
                 .error(R.drawable.ic_hndeveloper)
                 .into(holder.icon);

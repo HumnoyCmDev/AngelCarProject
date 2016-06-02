@@ -3,7 +3,6 @@ package com.dollarandtrump.angelcar.manager;
 import android.content.Context;
 
 import com.dollarandtrump.angelcar.manager.Contextor;
-import com.dollarandtrump.angelcar.utils.T;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -6,7 +6,7 @@ import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CountCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
-import com.dollarandtrump.angelcar.dao.LogFromServerDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
@@ -40,7 +40,7 @@ public interface ApiService {
     Call<MessageCollectionDao> waitMessage(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=reqofficer")
-    Call<LogFromServerDao> regOfficer(@Query("message") String message);
+    Call<Results> regOfficer(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=viewclient")
     Call<MessageCollectionDao> messageClient(@Query("message") String message);
@@ -56,7 +56,7 @@ public interface ApiService {
     //Insert Post Car
     @FormUrlEncoded
     @POST("android/api/insertpost.php")
-    Call<LogFromServerDao> postCar
+    Call<Results> postCar
     (
             @Field("shopref") String shopPref, // 1
             @Field("brandref") int brand, // toyota **ตัด
@@ -75,7 +75,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("android/api/android/api/insertpost.php")
-    Observable<LogFromServerDao> observablePostCar
+    Observable<Results> observablePostCar
             (
                     @Field("shopref") String shopPref, // 1
                     @Field("brandref") int brand, // toyota **ตัด
@@ -125,11 +125,11 @@ public interface ApiService {
 
     //GET Delete Chat
     @GET("android/api/deletechat.php")
-    Call<LogFromServerDao> deleteChatList(@Query("userref") String userRef);
+    Call<Results> deleteChatList(@Query("userref") String userRef);
 
     //GET Add or Delete Follow
     @GET("android/api/controlfollow.php")
-    Call<LogFromServerDao> follow(@Query("status") String status, @Query("carref") String carRef, @Query("shopref") String shopRef);
+    Call<Results> follow(@Query("status") String status, @Query("carref") String carRef, @Query("shopref") String shopRef);
 
     //GET Follow Car Model
     @GET("android/api/getfollowmodel.php")
@@ -173,4 +173,9 @@ public interface ApiService {
 
     @GET("android/api/filtercar.php")
     Call<PostCarCollectionDao> loadFilterFeed(@QueryMap Map<String,String> queryMap);
+
+    //Edit Shop
+    @GET("ios/api/cls_shop.php?operation=edit")
+    Observable<Results> editShopObservable(@Query("message") String message);
+
 }

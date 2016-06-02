@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import com.dollarandtrump.angelcar.Adapter.FollowAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.LogFromServerDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -129,7 +129,7 @@ public class FollowActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             //Delete Follow -server
-                            Call<LogFromServerDao> callDelete = HttpManager.getInstance().getService()
+                            Call<Results> callDelete = HttpManager.getInstance().getService()
                                     .follow("delete",String.valueOf(dao.getListCar().get(position).getCarId()),
                                             Registration.getInstance().getShopRef());
                             callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -146,9 +146,9 @@ public class FollowActivity extends AppCompatActivity {
         }
     };
 
-    Callback<LogFromServerDao> callbackAddOrRemoveFollow = new Callback<LogFromServerDao>() {
+    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
         @Override
-        public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+        public void onResponse(Call<Results> call, Response<Results> response) {
             if (response.isSuccessful()) {
                 Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -161,7 +161,7 @@ public class FollowActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<LogFromServerDao> call, Throwable t) {
+        public void onFailure(Call<Results> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };

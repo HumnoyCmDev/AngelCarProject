@@ -24,6 +24,7 @@ import com.activeandroid.query.Select;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
@@ -31,6 +32,9 @@ import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
 import com.dollarandtrump.angelcar.dialog.DetailAlertDialog;
+import com.dollarandtrump.angelcar.dialog.FilterBrandDialog;
+import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
+import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.manager.Cache;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -38,7 +42,11 @@ import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.view.ListHashTag;
 import com.dollarandtrump.angelcar.view.snappy.SnappyLinearLayoutManager;
 import com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView;
+import com.dollarandtrump.daogenerator.DaoSession;
+import com.dollarandtrump.daogenerator.PostCarDB;
+import com.dollarandtrump.daogenerator.PostCarDBDao;
 import com.github.clans.fab.FloatingActionMenu;
+import com.github.siyamed.shapeimageview.CircularImageView;
 import com.hndev.library.view.AngelCarHashTag;
 
 import org.parceler.Parcels;
@@ -62,12 +70,13 @@ import rx.schedulers.Schedulers;
  * โดย Humnoy Android Developer
  * ลงวันที่ 11/16/2014. เวลา 11:42
  ***************************************/
+//TODO Error Api 23 (Database ActiveAndroid)
 @SuppressWarnings("unused")
 public class ShopFragment extends Fragment {
     private static final String TAG = "ShopFragment";
 
     @Bind(R.id.recycler_car) RecyclerView recyclerCar;
-    @Bind(R.id.pictureShopProfile) ImageView shopProfilePicture;
+    @Bind(R.id.pictureShopProfile) CircularImageView shopProfilePicture;
     @Bind(R.id.tvShopName) TextView shopName;
     @Bind(R.id.tvShopNumber) TextView shopNumber;
     @Bind(R.id.tvShopDescription) TextView shopDescription;
@@ -92,6 +101,11 @@ public class ShopFragment extends Fragment {
     int lastRecycler = 0;
     boolean controlRecycler = true;
     boolean control = true;
+
+    /*GreenDao*/
+   /* MainApplication application;
+    DaoSession mDaoSession;
+    PostCarDBDao mPostCarDBDao;*/
 
 
     public ShopFragment() {
@@ -125,6 +139,8 @@ public class ShopFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         dao = new PostCarCollectionDao();
+      /*  application = (MainApplication) getActivity().getApplication();
+        mDaoSession = application.getDaoSession();*/
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -182,9 +198,6 @@ public class ShopFragment extends Fragment {
                 }
             }
         });
-
-
-
 
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -267,6 +280,33 @@ public class ShopFragment extends Fragment {
         dao.setListCar(shopCollectionDao.getPostCarDao());
         save2db(dao);
 
+        /*GreenDao*/
+       /* mPostCarDBDao = mDaoSession.getPostCarDBDao();
+        mPostCarDBDao.deleteAll();
+        //insert
+        for (PostCarDao d : dao.getListCar()){
+            PostCarDB mPostCarDB = new PostCarDB();
+            mPostCarDB.setCarId(d.getCarId());
+            mPostCarDB.setShopRef(d.getShopRef());
+            mPostCarDB.setBrandName(d.getCarName());
+            mPostCarDB.setCarSub(d.getCarSub());
+            mPostCarDB.setCarSubDetail(d.getCarSubDetail());
+            mPostCarDB.setCarDetail(d.getCarDetail());
+            mPostCarDB.setCarYear(d.getCarYear());
+            mPostCarDB.setCarPrice(d.getCarPrice());
+            mPostCarDB.setCarStatus(d.getCarStatus());
+            mPostCarDB.setGear(d.getGear());
+            mPostCarDB.setPlate(d.getPlate());
+            mPostCarDB.setName(d.getName());
+            mPostCarDB.setProvinceId(d.getProvinceId());
+            mPostCarDB.setProvinceName(d.getProvince());
+            mPostCarDB.setTelNumber(d.getPhone());
+            mPostCarDB.setDateModifyTime(d.getCarModifyTime());
+            mPostCarDB.setCarImagePath(d.getCarImagePath());
+            mPostCarDBDao.insert(mPostCarDB);
+        }*/
+
+
         /*Query PostCar*/
         //Todo HashTag
         shopHashTag.setDao(queryFindBrandDuplicates());
@@ -275,7 +315,6 @@ public class ShopFragment extends Fragment {
 
         adapter.setDao(dao);
         adapter.notifyDataSetChanged();
-
     }
 
     private void save2db(PostCarCollectionDao dao){
@@ -322,7 +361,7 @@ public class ShopFragment extends Fragment {
         //TODO Image Profile
         Glide.with(this).load("http://cls.paiyannoi.me/profileimages/default.png")
                 .placeholder(com.hndev.library.R.drawable.loading)
-                .bitmapTransform(new CropCircleTransformation(getActivity()))
+//                .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .into(shopProfilePicture);
 
         shopName.setText(profileDao.getShopName());
@@ -373,9 +412,48 @@ public class ShopFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.pictureShopProfile)
+    @OnClick({R.id.fab_editShop})
     public void clickProfile(){
-        shopHashTag.notifyDataSetChanged();
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        Fragment fragment = getChildFragmentManager().findFragmentByTag("ShopEditDialog");
+        if (fragment != null){
+            ft.remove(fragment);
+        }
+//        ft.addToBackStack(null);
+        ShopEditDialog dialog = new ShopEditDialog();
+        Bundle args = new Bundle();
+        args.putString("shopName", shopName.getText().toString());
+        args.putString("shopDescription",shopDescription.getText().toString());
+        args.putString("shopNumber",shopNumber.getText().toString());
+        args.putString("logoShop","http://cls.paiyannoi.me/profileimages/default.png");
+        dialog.setArguments(args);
+        dialog.show(getChildFragmentManager(),"ShopEditDialog");
+        dialog.setEditShopCallback(new ShopEditDialog.EditShopCallback() {
+            @Override
+            public void onSuccess() {
+                loadData();
+            }
+
+            @Override
+            public void onFail() {
+
+            }
+        });
+
+        if (menuFab.isOpened()){
+            menuFab.close(true);
+        }
+    }
+
+    @OnClick(R.id.fab_upLoadCover)
+    public void upLoadCover(){
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        Fragment fragment = getFragmentManager().findFragmentByTag("ShopUpLoadDialog");
+        if (fragment != null){
+            ft.remove(fragment);
+        }
+        ShopUpLoadDialog upLoadDialog = new ShopUpLoadDialog();
+        upLoadDialog.show(getChildFragmentManager(),"ShopUpLoadDialog");
     }
 
 

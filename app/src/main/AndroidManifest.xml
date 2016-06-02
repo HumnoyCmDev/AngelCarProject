@@ -99,8 +99,14 @@
         <activity android:name=".activity.SingleViewImageActivity"/>
         <activity android:name=".activity.EditPostActivity"/>
 
+        <activity android:name=".activity.SimpleGalleryActivity"/>
+
         <meta-data android:name="AA_DB_NAME" android:value="AngelCar.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="5" />
+        <meta-data android:name="AA_DB_VERSION" android:value="5" /><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

@@ -101,6 +101,8 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_HEADER){
             HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
+            if (dao.getListCar() != null &&
+                    dao.getListCar().get(position+1).getCarName() != null)
             viewHolder.tvTitleHeader.setText(
                     dao.getListCar().get(position+1).getCarName().toUpperCase());
         }
@@ -115,8 +117,6 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                         .placeholder(R.drawable.loading)
                         .into(viewHolder.shopImage);
                 viewHolder.carName.setText(item.getCarName());
-
-
 
         }
 

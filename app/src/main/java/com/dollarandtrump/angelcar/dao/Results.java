@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * โดย humnoy Android Developer
  * ลงวันที่ 2/3/59. เวลา 09:26
  ***************************************/
-public class LogFromServerDao {
+public class Results {
     /*
     *Message ตอบกลับจาก Server ผลลัพที่ได้เป็น Json
     *@เพื่อเช็ค Status การทำงาน

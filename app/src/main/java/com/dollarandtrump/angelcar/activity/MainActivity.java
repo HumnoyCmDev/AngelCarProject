@@ -6,8 +6,11 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -32,9 +35,12 @@ import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
+import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.fragment.FeedPostCarFragment;
 import com.dollarandtrump.angelcar.fragment.RegistrationAlertFragment;
+import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
+import com.dollarandtrump.angelcar.manager.bus.ActivityResultBus;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
@@ -46,6 +52,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import java.text.SimpleDateFormat;
@@ -112,7 +119,15 @@ public class MainActivity extends AppCompatActivity {
             Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(accountName);
             call.enqueue(callbackRegistrationEmail);
         }
+
+        if (requestCode == ShopUpLoadDialog.REQUEST_CODE && resultCode == RESULT_OK){
+           // requestCode ShopUpLoadDialog
+           Log.i(TAG, "onActivityResult: "+requestCode+" , "+resultCode);
+           BusProvider.getInstance()
+                   .post(new ActivityResultEvent(requestCode,resultCode,data));
+        }
     }
+
 
 //    @Override
 //    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

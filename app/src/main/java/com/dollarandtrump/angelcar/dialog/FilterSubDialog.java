@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -70,6 +71,7 @@ public class FilterSubDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.list_view_layout,container,false);
         ButterKnife.bind(this,view);
         initInstance(savedInstanceState);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return view;
     }
 

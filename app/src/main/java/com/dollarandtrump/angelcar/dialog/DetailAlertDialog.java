@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -89,6 +90,7 @@ public class DetailAlertDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_detail,container,false);
         initInstances(view, savedInstanceState);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return view;
     }
 

@@ -38,7 +38,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.LogFromServerDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.manager.Cache;
 import com.dollarandtrump.angelcar.manager.Contextor;
@@ -259,7 +259,7 @@ public class PostFragment extends Fragment {
             return;
         }
 
-            Call<LogFromServerDao> call = HttpManager.getInstance().getService().postCar(shopPref,
+            Call<Results> call = HttpManager.getInstance().getService().postCar(shopPref,
                     carModel.getBrandDao().getBrandId(),
                     carModel.getSubDao().getSubId(),
                     carModel.getSubDetailDao().getSubId(),
@@ -376,7 +376,7 @@ public class PostFragment extends Fragment {
         // เช็คกรณี หากมีรูปอยู่แล้ว กดอีกครั้งให้ลบออก
         if (filesPhotoList.containsKey(id_photo)){
             filesPhotoList.remove(id_photo);
-            photo.get(id_photo).setImageResource(R.drawable.photo);
+            photo.get(id_photo).setImageResource(R.drawable.ic_photo);
         }else{
             if (!checkPermissionApi23()){ //ต่ำกว่า Android 23
                 intentLoadPictureExternalStore();
@@ -501,12 +501,12 @@ public class PostFragment extends Fragment {
         return null;
     }
 
-    /*********
+    /*************
     *Listener Zone
-    **********/
-    Callback<LogFromServerDao> postCallback = new Callback<LogFromServerDao>() {
+    **************/
+    Callback<Results> postCallback = new Callback<Results>() {
         @Override
-        public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+        public void onResponse(Call<Results> call, Response<Results> response) {
             if (response.isSuccessful()) {
                 // upload picture
                 uploadPicture(response.body().getSuccess(),filesPhotoList, responseCallbackUpFile);
@@ -524,7 +524,7 @@ public class PostFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<LogFromServerDao> call, Throwable t) {
+        public void onFailure(Call<Results> call, Throwable t) {
             Toast.makeText(Contextor.getInstance().getContext(),
                     t.toString(), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onFailure: ",t);

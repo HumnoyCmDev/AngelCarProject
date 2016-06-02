@@ -187,7 +187,8 @@
             android:src="@drawable/ic_hndeveloper"
             android:id="@+id/pictureShopProfile"
             android:layout_width="64dp"
-            android:layout_height="64dp" />
+            android:layout_height="64dp"
+            app:siBorderWidth="1dp"/>
 
 
     <com.github.clans.fab.FloatingActionMenu
@@ -207,7 +208,7 @@
         app:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_ac_Deposit"
+            android:id="@+id/fab_editShop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_post_mini"
@@ -217,6 +218,7 @@
             app:fab_label="แก้ไขข้อมูล" />
 
         <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_upLoadCover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_shop_upload"

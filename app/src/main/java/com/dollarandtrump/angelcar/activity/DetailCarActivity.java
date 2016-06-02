@@ -20,14 +20,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.dollarandtrump.angelcar.Adapter.ChatAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.banner.ImageBanner;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
-import com.dollarandtrump.angelcar.dao.LogFromServerDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
@@ -39,11 +37,7 @@ import com.dollarandtrump.angelcar.manager.WaitMessageSynchronous;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.OkHttpManager;
-import com.dollarandtrump.angelcar.utils.ViewFindUtils;
 import com.dollarandtrump.angelcar.view.HeaderChatCar;
-import com.flyco.banner.anim.select.ZoomInEnter;
-import com.flyco.banner.transform.DepthTransformer;
-import com.flyco.banner.widget.Banner.base.BaseBanner;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -215,13 +209,13 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         Snackbar.make(listView,"Follow :"+isFollow,Snackbar.LENGTH_LONG).show();
         if (isFollow) {
             //Add Follow
-            Call<LogFromServerDao> callAddFollow = HttpManager.getInstance().getService()
+            Call<Results> callAddFollow = HttpManager.getInstance().getService()
                     .follow("add",String.valueOf(postCarDao.getCarId()),
                     Registration.getInstance().getShopRef());
             callAddFollow.enqueue(callbackAddOrRemoveFollow);
         }else {
             //Delete Follow
-            Call<LogFromServerDao> callDelete = HttpManager.getInstance().getService()
+            Call<Results> callDelete = HttpManager.getInstance().getService()
                     .follow("delete",String.valueOf(postCarDao.getCarId()),
                     Registration.getInstance().getShopRef());
             callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -310,13 +304,13 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
 //    public void onFollowClick(){
 //        if (buttonFollow.isChecked()) {
 //            //Add Follow
-//            Call<LogFromServerDao> callAddFollow = HttpManager.getInstance().getService()
+//            Call<Results> callAddFollow = HttpManager.getInstance().getService()
 //                    .follow("add",String.valueOf(postCarDao.getCarId()),
 //                    Registration.getInstance().getShopRef());
 //            callAddFollow.enqueue(callbackAddOrRemoveFollow);
 //        }else {
 //            //Delete Follow
-//            Call<LogFromServerDao> callDelete = HttpManager.getInstance().getService()
+//            Call<Results> callDelete = HttpManager.getInstance().getService()
 //                    .follow("delete",String.valueOf(postCarDao.getCarId()),
 //                    Registration.getInstance().getShopRef());
 //            callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -339,11 +333,11 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     DialogInterface.OnClickListener listenerDialogConfirm = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-                Call<LogFromServerDao> call =
+                Call<Results> call =
                         HttpManager.getInstance().getService().regOfficer(postCarDao.getCarId()+"||"+messageFromUser);
-                call.enqueue(new Callback<LogFromServerDao>() {
+                call.enqueue(new Callback<Results>() {
                     @Override
-                    public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+                    public void onResponse(Call<Results> call, Response<Results> response) {
                         if (response.isSuccessful()){
                             Toast.makeText(DetailCarActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
                         }else {
@@ -356,7 +350,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
                     }
 
                     @Override
-                    public void onFailure(Call<LogFromServerDao> call, Throwable t) {
+                    public void onFailure(Call<Results> call, Throwable t) {
                         Log.e(TAG, "onFailure: ", t);
                     }
                 });
@@ -419,9 +413,9 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         }
     };
 
-    Callback<LogFromServerDao> callbackAddOrRemoveFollow = new Callback<LogFromServerDao>() {
+    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
         @Override
-        public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+        public void onResponse(Call<Results> call, Response<Results> response) {
             if (response.isSuccessful()) {
                 Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -434,7 +428,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         }
 
         @Override
-        public void onFailure(Call<LogFromServerDao> call, Throwable t) {
+        public void onFailure(Call<Results> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };

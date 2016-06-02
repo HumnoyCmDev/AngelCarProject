@@ -15,26 +15,94 @@ import java.util.Date;
 /**
  * Created by humnoy on 10/3/59.
  */
-@Parcel(value = Parcel.Serialization.BEAN, analyze = PostCarDao.class)
+@Parcel(value = Parcel.Serialization.FIELD, analyze = PostCarDao.class)
 @Table(name = "PostCar")
 public class PostCarDao extends Model implements Serializable {
-   @Column(name = "CarId")          @SerializedName("carid")            @Expose int carId;
-   @Column(name = "ShopRef")        @SerializedName("shopref")          @Expose String shopRef;
-   @Column(name = "BrandName")      @SerializedName("brand_name")       @Expose String carName;
-   @Column(name = "CarSub")         @SerializedName("sub_name")         @Expose String carSub;
-   @Column(name = "CarSubDetail")   @SerializedName("type_name")        @Expose String carSubDetail;
-   @Column(name = "CarDetail")      @SerializedName("cardetail")        @Expose String carDetail;
-   @Column(name = "CarYear")        @SerializedName("caryear")          @Expose int carYear;
-   @Column(name = "CarPrice")       @SerializedName("carprice")         @Expose String carPrice;
-   @Column(name = "CarStatus")      @SerializedName("carstatus")        @Expose String carStatus;
-   @Column(name = "Gear")           @SerializedName("gear")             @Expose int gear;
-   @Column(name = "Plate")          @SerializedName("plate")            @Expose String plate;
-   @Column(name = "Name")           @SerializedName("name")             @Expose String name;
-   @Column(name = "ProvinceId")     @SerializedName("province_id")      @Expose int provinceId;
-   @Column(name = "ProvinceName")   @SerializedName("province_name")    @Expose String province;
-   @Column(name = "TelNumber")      @SerializedName("telnumber")        @Expose String phone;
-   @Column(name = "DateModifyTime") @SerializedName("carmodify")        @Expose Date carModifyTime;
-   @Column(name = "CarImagePath")   @SerializedName("carimagepath")     @Expose String carImagePath;
+
+    @SerializedName("carid")
+    @Expose
+    @Column(name = "CarId")
+    int carId;
+
+    @SerializedName("shopref")
+    @Expose
+    @Column(name = "ShopRef")
+    String shopRef;
+
+    @SerializedName("brand_name")
+    @Expose
+    @Column(name = "BrandName")
+    String carName;
+
+    @SerializedName("sub_name")
+    @Expose
+    @Column(name = "CarSub")
+    String carSub;
+
+    @SerializedName("type_name")
+    @Expose
+    @Column(name = "CarSubDetail")
+    String carSubDetail;
+
+    @SerializedName("cardetail")
+    @Expose
+    @Column(name = "CarDetail")
+    String carDetail;
+
+    @SerializedName("caryear")
+    @Expose
+    @Column(name = "CarYear")
+    int carYear;
+
+    @SerializedName("carprice")
+    @Expose
+    @Column(name = "CarPrice")
+    String carPrice;
+
+    @SerializedName("carstatus")
+    @Expose
+    @Column(name = "CarStatus")
+    String carStatus;
+
+    @SerializedName("gear")
+    @Expose
+    @Column(name = "Gear")
+    int gear;
+
+    @SerializedName("plate")
+    @Expose
+    @Column(name = "Plate")
+    String plate;
+
+    @SerializedName("name")
+    @Expose
+    @Column(name = "Name")
+    String name;
+
+    @SerializedName("province_id")
+    @Expose
+    @Column(name = "ProvinceId")
+    int provinceId;
+
+    @SerializedName("province_name")
+    @Expose
+    @Column(name = "ProvinceName")
+    String province;
+
+    @SerializedName("telnumber")
+    @Expose
+    @Column(name = "TelNumber")
+    String phone;
+
+    @SerializedName("carmodify")
+    @Expose
+    @Column(name = "DateModifyTime")
+    Date carModifyTime;
+
+    @SerializedName("carimagepath")
+    @Expose
+    @Column(name = "CarImagePath")
+    String carImagePath;
 
     public int getProvinceId() {
         return provinceId;

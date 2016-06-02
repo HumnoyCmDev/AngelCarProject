@@ -6,7 +6,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.dollarandtrump.angelcar.interfaces.WaitMessageOnBackground;
-import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ

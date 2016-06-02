@@ -8,8 +8,9 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.Window;
 
-import com.dollarandtrump.angelcar.dao.LogFromServerDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 
 import java.io.IOException;
@@ -47,10 +48,10 @@ public class DeleteChatDialog extends DialogFragment {
                 .setPositiveButton("delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        Call<LogFromServerDao> call = HttpManager.getInstance().getService().deleteChatList(messageFromUser);
-                        call.enqueue(new Callback<LogFromServerDao>() {
+                        Call<Results> call = HttpManager.getInstance().getService().deleteChatList(messageFromUser);
+                        call.enqueue(new Callback<Results>() {
                             @Override
-                            public void onResponse(Call<LogFromServerDao> call, Response<LogFromServerDao> response) {
+                            public void onResponse(Call<Results> call, Response<Results> response) {
                                 if(response.isSuccessful()){
                                     Log.i("DialogFragment", "onResponse: "+response.body().getSuccess());
                                 }else {
@@ -63,7 +64,7 @@ public class DeleteChatDialog extends DialogFragment {
                             }
 
                             @Override
-                            public void onFailure(Call<LogFromServerDao> call, Throwable t) {
+                            public void onFailure(Call<Results> call, Throwable t) {
                                 Log.e("DialogFragment", "onFailure: ", t);
                             }
                         });
@@ -75,6 +76,7 @@ public class DeleteChatDialog extends DialogFragment {
 
                     }
                 });
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return builder.create();
     }
 }
