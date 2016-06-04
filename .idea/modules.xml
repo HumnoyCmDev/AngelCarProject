@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/Indicator/Indicator.iml" filepath="$PROJECT_DIR$/Indicator/Indicator.iml" />
       <module fileurl="file://$PROJECT_DIR$/angelcarlibrary/angelcarlibrary.iml" filepath="$PROJECT_DIR$/angelcarlibrary/angelcarlibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/daogenerator/daogenerator.iml" filepath="$PROJECT_DIR$/daogenerator/daogenerator.iml" />
     </modules>
   </component>
 </project>

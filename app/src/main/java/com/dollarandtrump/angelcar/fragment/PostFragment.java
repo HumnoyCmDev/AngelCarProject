@@ -45,6 +45,7 @@ import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.hndev.library.view.Transformtion.ScalingUtilities;
@@ -73,6 +74,7 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
 import rx.Subscription;
 
 /***************************************
@@ -509,7 +511,31 @@ public class PostFragment extends Fragment {
         public void onResponse(Call<Results> call, Response<Results> response) {
             if (response.isSuccessful()) {
                 // upload picture
-                uploadPicture(response.body().getSuccess(),filesPhotoList, responseCallbackUpFile);
+//                uploadPicture(response.body().getSuccess(),filesPhotoList, responseCallbackUpFile);
+
+                List<File> fileList = new ArrayList<>();
+                for (int i = 0; i < filesPhotoList.size(); i++) {
+                    fileList.add(filesPhotoList.get(i));
+                }
+                
+                HttpUploadManager.uploadFilePostCar(fileList, response.body().getSuccess(),
+                        new Subscriber<String>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.i(TAG, "onCompleted: ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: ",e );
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        Log.i(TAG, "onNext: "+s);
+                    }
+                });
+
                 Toast.makeText(Contextor.getInstance().getContext(),
                         "Completed"+response.body().getSuccess(), Toast.LENGTH_SHORT).show();
             } else {

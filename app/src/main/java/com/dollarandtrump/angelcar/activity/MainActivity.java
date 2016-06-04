@@ -2,15 +2,11 @@ package com.dollarandtrump.angelcar.activity;
 
 import android.Manifest;
 import android.accounts.AccountManager;
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -28,20 +24,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.activeandroid.Model;
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
-import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
+import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
-import com.dollarandtrump.angelcar.fragment.FeedPostCarFragment;
+import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.fragment.RegistrationAlertFragment;
 import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.ActivityResultBus;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
@@ -53,12 +44,9 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
-import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -126,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
            Log.i(TAG, "onActivityResult: "+requestCode+" , "+resultCode);
            BusProvider.getInstance()
                    .post(new ActivityResultEvent(requestCode,resultCode,data));
+        }
+
+        if (requestCode == ShopEditDialog.REQUEST_CODE && resultCode == RESULT_OK){
+            BusProvider.getInstance()
+                    .post(new ActivityResultEvent(requestCode,resultCode,data));
         }
     }
 
@@ -261,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void scrollingShowAndHide(FeedPostCarFragment.Scrolling scrolling){
-        if (scrolling.getScroll() == FeedPostCarFragment.Scrolling.SCROLL_UP){
+    public void scrollingShowAndHide(FeedPostFragment.Scrolling scrolling){
+        if (scrolling.getScroll() == FeedPostFragment.Scrolling.SCROLL_UP){
             showFabButton();
         }else {
             hideFabButton();

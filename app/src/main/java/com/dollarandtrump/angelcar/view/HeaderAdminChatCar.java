@@ -8,7 +8,10 @@ import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -52,11 +55,13 @@ public class HeaderAdminChatCar extends BaseCustomViewGroup {
 
     private void initInflate() {
         inflate(getContext(), R.layout.custom_view_chat_message_admin, this);
+
     }
 
     private void initInstances() {
         ic_Profile = (ImageView) findViewById(R.id.custom_view_header_chat_ic);
         detail = (TextView) findViewById(R.id.custom_view_chat_header_ad_tvDetail);
+
 
         String d = AngelCarUtils.textFormatHtml("#FF0000","Tip: ")+"แชทกับผู้ขายเพื่อต่อรองราคาได้ทันทีและกด <img src ='ic_custom_header_person.png'> " +
                 "เพื่อสอบถามยอดจัดจากธนาคาร";
@@ -71,6 +76,7 @@ public class HeaderAdminChatCar extends BaseCustomViewGroup {
                 LevelListDrawable d = new LevelListDrawable();
                 Drawable empty = getResources().getDrawable(id);
                 d.addLevel(0, 0, empty);
+                assert empty != null;
                 d.setBounds(0, 0, empty.getIntrinsicWidth(), empty.getIntrinsicHeight());
                 return d;
             }

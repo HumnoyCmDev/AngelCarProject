@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
-import com.dollarandtrump.angelcar.fragment.FeedPostCarFragment;
+import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
 
@@ -88,7 +88,7 @@ public class FilterSubDialog extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CarSubDao result = dao.getCarSubDao().get(position);
                 Intent intent = getActivity().getIntent();
-                intent.putExtra(FeedPostCarFragment.ARG_SUB, Parcels.wrap(result));
+                intent.putExtra(FeedPostFragment.ARG_SUB, Parcels.wrap(result));
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
                 dismiss();
             }

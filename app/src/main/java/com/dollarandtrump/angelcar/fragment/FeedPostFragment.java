@@ -26,7 +26,6 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.FeedPostCarAdapter;
 import com.dollarandtrump.angelcar.R;
@@ -63,7 +62,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class FeedPostCarFragment extends Fragment {
+public class FeedPostFragment extends Fragment {
 
 //    public static final String SAVE_STATE_GAO = "SAVE_STATE_GAO";
     public static final int REQUEST_CODE_BRAND = 1;
@@ -94,7 +93,7 @@ public class FeedPostCarFragment extends Fragment {
     @Bind(R.id.etPriceStart) EditText etPriceStart;
     @Bind(R.id.etPriceEnd) EditText etPriceEnd;
 
-    private static final String TAG = "FeedPostCarFragment";
+    private static final String TAG = "FeedPostFragment";
     private InformationCarModel informationCarModel;
     private InformationCarModel copyInformLoadMore;
     private MutableInteger lastPositionInteger;
@@ -105,14 +104,14 @@ public class FeedPostCarFragment extends Fragment {
 
     private boolean isFilter = false;
 
-    public FeedPostCarFragment() {
+    public FeedPostFragment() {
         super();
     }
 
-    public static FeedPostCarFragment newInstance() {
+    public static FeedPostFragment newInstance() {
 //        Bundle args = new Bundle();
 //        fragment.setArguments(args);
-        return new FeedPostCarFragment();
+        return new FeedPostFragment();
     }
     @Override
 

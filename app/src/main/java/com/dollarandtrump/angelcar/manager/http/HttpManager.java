@@ -3,6 +3,7 @@ package com.dollarandtrump.angelcar.manager.http;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -26,6 +27,9 @@ public class HttpManager {
 
     private HttpManager() {
         Gson gson = new GsonBuilder()
+//                .serializeNulls()
+//                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+                .excludeFieldsWithoutExposeAnnotation()
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();
        builder = new Retrofit.Builder()

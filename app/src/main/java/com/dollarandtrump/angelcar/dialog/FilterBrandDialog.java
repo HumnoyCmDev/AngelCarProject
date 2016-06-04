@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarBrandDao;
-import com.dollarandtrump.angelcar.fragment.FeedPostCarFragment;
+import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 
 import org.parceler.Parcels;
@@ -70,7 +70,7 @@ public class FilterBrandDialog extends DialogFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = getActivity().getIntent();
                 CarBrandDao model = dao.getBrandDao().get(position);
-                intent.putExtra(FeedPostCarFragment.ARG_BRAND, Parcels.wrap(model));
+                intent.putExtra(FeedPostFragment.ARG_BRAND, Parcels.wrap(model));
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
                 dismiss();
             }

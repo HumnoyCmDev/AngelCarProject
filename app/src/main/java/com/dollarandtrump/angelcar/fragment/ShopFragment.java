@@ -1,5 +1,6 @@
 package com.dollarandtrump.angelcar.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,15 +25,14 @@ import com.activeandroid.query.Select;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
-import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
+import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
 import com.dollarandtrump.angelcar.dialog.DetailAlertDialog;
-import com.dollarandtrump.angelcar.dialog.FilterBrandDialog;
 import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.manager.Cache;
@@ -42,26 +42,23 @@ import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.view.ListHashTag;
 import com.dollarandtrump.angelcar.view.snappy.SnappyLinearLayoutManager;
 import com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView;
-import com.dollarandtrump.daogenerator.DaoSession;
-import com.dollarandtrump.daogenerator.PostCarDB;
-import com.dollarandtrump.daogenerator.PostCarDBDao;
 import com.github.clans.fab.FloatingActionMenu;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.hndev.library.view.AngelCarHashTag;
 
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -81,13 +78,14 @@ public class ShopFragment extends Fragment {
     @Bind(R.id.tvShopNumber) TextView shopNumber;
     @Bind(R.id.tvShopDescription) TextView shopDescription;
     @Bind(R.id.appBarLayout) AppBarLayout appBarLayout;
-    @Bind(R.id.recyclerHeaderShop) RecyclerView recyclerHeaderShop;
-
+    @Bind(R.id.recyclerImageHeaderShop) RecyclerView recyclerImageHeaderShop;
+    @Bind(R.id.tvViewShop) TextView viewShop;
+    @Bind(R.id.imageShopBackground) ImageView imgShopBg;
     @Bind(R.id.menu_fab) FloatingActionMenu menuFab;
 
     @Bind(R.id.listHashTag) ListHashTag listHashTag;
 
-    @Bind(R.id.snappy) SnappyRecyclerView snappy;
+//    @Bind(R.id.snappy) SnappyRecyclerView snappy;
 
     private GridLayoutManager manager;
     private ShopAdapter adapter;
@@ -95,12 +93,14 @@ public class ShopFragment extends Fragment {
     private Subscription subscription;
 
     private ShopHashTagAdapter shopHashTag;
-
-    Cache daoCacheManager = new Cache();
+    private String urlShopLogo;
+    private ImageHeaderAdapter imageHeaderAdapter;
+//    Cache daoCacheManager = new Cache();
     int last = -100;
     int lastRecycler = 0;
     boolean controlRecycler = true;
     boolean control = true;
+    private List<String> listImageBg;
 
     /*GreenDao*/
    /* MainApplication application;
@@ -150,19 +150,20 @@ public class ShopFragment extends Fragment {
         menuFab.setClosedOnTouchOutside(true);
 
         //Header Shop
-        recyclerHeaderShop.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        HeaderShopAdapter headerShopAdapter = new HeaderShopAdapter();
-        recyclerHeaderShop.setAdapter(headerShopAdapter);
-        headerShopAdapter.setOnItemClickListener(new HeaderShopAdapter.HeaderShop() {
+        recyclerImageHeaderShop.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        imageHeaderAdapter = new ImageHeaderAdapter();
+        recyclerImageHeaderShop.setAdapter(imageHeaderAdapter);
+        imageHeaderAdapter.setOnItemClickListener(new ImageHeaderAdapter.HeaderShop() {
             @Override
             public void OnClickItemListener(View view, int position) {
-                Log.i(TAG, "OnClickItemListener: "+position);
+                if (listImageBg != null)
+                    initProfileShopBg(listImageBg,position);
             }
         });
 
 
-        snappy.setLayoutManager(new SnappyLinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        snappy.setAdapter(headerShopAdapter);
+//        snappy.setLayoutManager(new SnappyLinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+//        snappy.setAdapter(imageHeaderAdapter);
 
 
         manager = new GridLayoutManager(getActivity(),3);
@@ -206,14 +207,14 @@ public class ShopFragment extends Fragment {
                     //scrollUp
                     if (verticalOffset < -100) {
 //                    Log.i(TAG, "onScrolled: scrollUp");
-//                        hidePicProfile();
+                        hidePicProfile();
                         control = true;
                     }
                 }else if(verticalOffset > last && control){
                     //scrollDown
                     if (verticalOffset >= -200) {
 //                    Log.i(TAG, "onScrolled: scrollDown");
-//                        showPicProfile();
+                        showPicProfile();
                         control = false;
                     }
 
@@ -267,7 +268,7 @@ public class ShopFragment extends Fragment {
 //                    .observableLoadShop("2016050200001", "68")
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());
-            subscription = rxCall.subscribe(shopCollectionDaoAction1);
+        subscription = rxCall.subscribe(shopCollectionDaoObserver);
 //        }else {
 //            ShopCollectionDao shopCollectionDao = daoCacheManager.load("shop", ShopCollectionDao.class);
 //            initData(shopCollectionDao);
@@ -279,33 +280,6 @@ public class ShopFragment extends Fragment {
         initProfile(shopCollectionDao.getProfileDao());
         dao.setListCar(shopCollectionDao.getPostCarDao());
         save2db(dao);
-
-        /*GreenDao*/
-       /* mPostCarDBDao = mDaoSession.getPostCarDBDao();
-        mPostCarDBDao.deleteAll();
-        //insert
-        for (PostCarDao d : dao.getListCar()){
-            PostCarDB mPostCarDB = new PostCarDB();
-            mPostCarDB.setCarId(d.getCarId());
-            mPostCarDB.setShopRef(d.getShopRef());
-            mPostCarDB.setBrandName(d.getCarName());
-            mPostCarDB.setCarSub(d.getCarSub());
-            mPostCarDB.setCarSubDetail(d.getCarSubDetail());
-            mPostCarDB.setCarDetail(d.getCarDetail());
-            mPostCarDB.setCarYear(d.getCarYear());
-            mPostCarDB.setCarPrice(d.getCarPrice());
-            mPostCarDB.setCarStatus(d.getCarStatus());
-            mPostCarDB.setGear(d.getGear());
-            mPostCarDB.setPlate(d.getPlate());
-            mPostCarDB.setName(d.getName());
-            mPostCarDB.setProvinceId(d.getProvinceId());
-            mPostCarDB.setProvinceName(d.getProvince());
-            mPostCarDB.setTelNumber(d.getPhone());
-            mPostCarDB.setDateModifyTime(d.getCarModifyTime());
-            mPostCarDB.setCarImagePath(d.getCarImagePath());
-            mPostCarDBDao.insert(mPostCarDB);
-        }*/
-
 
         /*Query PostCar*/
         //Todo HashTag
@@ -358,15 +332,29 @@ public class ShopFragment extends Fragment {
     }
 
     private void initProfile(ProfileDao profileDao){
+        String strViewShop = profileDao.getShopView()+" View | "+profileDao.getShopFollow()+" Follow";
+        viewShop.setText(strViewShop);
         //TODO Image Profile
-        Glide.with(this).load("http://cls.paiyannoi.me/profileimages/default.png")
+        urlShopLogo = profileDao.getUrlShopLogo();
+        Glide.with(this).load(urlShopLogo)
                 .placeholder(com.hndev.library.R.drawable.loading)
-//                .bitmapTransform(new CropCircleTransformation(getActivity()))
+                .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .into(shopProfilePicture);
 
         shopName.setText(profileDao.getShopName());
         shopDescription.setText(profileDao.getShopDescription());
         shopNumber.setText(profileDao.getShopNumber());
+
+        listImageBg = profileDao.getProfilePath();
+        initProfileShopBg(listImageBg,0);
+        imageHeaderAdapter.setUrlPath(profileDao.getProfilePath());
+        imageHeaderAdapter.notifyDataSetChanged();
+    }
+
+    private void initProfileShopBg(List<String> listImageBg,int id){
+        Glide.with(this).load("http://angelcar.com/ios/data/clsdata/"+listImageBg.get(id))
+//                .placeholder(com.hndev.library.R.drawable.loading)
+                .into(imgShopBg);
     }
 
     public void intentEditPost(PostCarDao modelCar) {
@@ -384,31 +372,31 @@ public class ShopFragment extends Fragment {
             shopProfilePicture.startAnimation(animation);
         }
 
-        if (recyclerHeaderShop.getVisibility() == View.GONE){
+        if (recyclerImageHeaderShop.getVisibility() == View.GONE){
             Animation animationHeader = AnimationUtils.loadAnimation(
                     Contextor.getInstance().getContext(),
                     R.anim.activity_slide_left_in);
-            recyclerHeaderShop.setVisibility(View.VISIBLE);
-            recyclerHeaderShop.startAnimation(animationHeader);
+            recyclerImageHeaderShop.setVisibility(View.VISIBLE);
+            recyclerImageHeaderShop.startAnimation(animationHeader);
         }
     }
 
     private void hidePicProfile(){
         if (shopProfilePicture.getVisibility() == View.VISIBLE) {
-            Animation animation = AnimationUtils.loadAnimation(
-                    Contextor.getInstance().getContext(),
-                    R.anim.shop_zoom_face_out);
+//            Animation animation = AnimationUtils.loadAnimation(
+//                    Contextor.getInstance().getContext(),
+//                    R.anim.shop_zoom_face_out);
             shopProfilePicture.setVisibility(View.GONE);
-            shopProfilePicture.startAnimation(animation);
+//            shopProfilePicture.startAnimation(animation);
 
         }
 
-        if (recyclerHeaderShop.getVisibility() == View.VISIBLE){
+        if (recyclerImageHeaderShop.getVisibility() == View.VISIBLE){
             Animation animationHeader = AnimationUtils.loadAnimation(
                     Contextor.getInstance().getContext(),
                     R.anim.activity_slide_right_out);
-            recyclerHeaderShop.setVisibility(View.GONE);
-            recyclerHeaderShop.startAnimation(animationHeader);
+            recyclerImageHeaderShop.setVisibility(View.GONE);
+            recyclerImageHeaderShop.startAnimation(animationHeader);
         }
     }
 
@@ -425,7 +413,7 @@ public class ShopFragment extends Fragment {
         args.putString("shopName", shopName.getText().toString());
         args.putString("shopDescription",shopDescription.getText().toString());
         args.putString("shopNumber",shopNumber.getText().toString());
-        args.putString("logoShop","http://cls.paiyannoi.me/profileimages/default.png");
+        args.putString("logoShop",urlShopLogo);
         dialog.setArguments(args);
         dialog.show(getChildFragmentManager(),"ShopEditDialog");
         dialog.setEditShopCallback(new ShopEditDialog.EditShopCallback() {
@@ -456,6 +444,13 @@ public class ShopFragment extends Fragment {
         upLoadDialog.show(getChildFragmentManager(),"ShopUpLoadDialog");
     }
 
+    @OnClick(R.id.pictureShopProfile)
+    public void viewPictureShop(){
+        Intent intent = new Intent(getActivity(),
+                SingleViewImageActivity.class);
+        intent.putExtra(SingleViewImageActivity.ARGS_PICTURE, urlShopLogo);
+        getActivity().startActivity(intent);
+    }
 
     @Override
     public void onStart() {
@@ -532,14 +527,23 @@ public class ShopFragment extends Fragment {
 //        }
 //    };
 
-    Action1<ShopCollectionDao> shopCollectionDaoAction1 = new Action1<ShopCollectionDao>() {
+    Observer<ShopCollectionDao> shopCollectionDaoObserver = new Observer<ShopCollectionDao>() {
         @Override
-        public void call(ShopCollectionDao shopCollectionDao) {
+        public void onCompleted() {
+            Log.i(TAG, "onCompleted: ");
+        }
+
+        @Override
+        public void onError(Throwable e) {
+            Log.e(TAG, "onError: ", e);
+        }
+
+        @Override
+        public void onNext(ShopCollectionDao shopCollectionDao) {
             initData(shopCollectionDao);
             // save cache Dao
-            boolean b = daoCacheManager.save("shop", shopCollectionDao);
-            Log.i(TAG, "Call Success: Rx android  "+b);
-
+//            boolean b = daoCacheManager.save("shop", shopCollectionDao);
+//            Log.i(TAG, "Call Success: Rx android  "+b);
         }
     };
 
@@ -576,9 +580,10 @@ public class ShopFragment extends Fragment {
      *Inner Class Zone*
      ******************/
 
-    public static class HeaderShopAdapter extends RecyclerView.Adapter<HeaderShopAdapter.ViewHolder>{
+    public static class ImageHeaderAdapter extends RecyclerView.Adapter<ImageHeaderAdapter.ViewHolder>{
 
-        private List<String> itemPic = new ArrayList<>();
+        private List<String> urlPath;
+        private Context mContext;
 
         public interface HeaderShop{
             void OnClickItemListener(View view,int position);
@@ -586,17 +591,24 @@ public class ShopFragment extends Fragment {
 
         private HeaderShop itemClickListener;
 
+
+        public void setUrlPath(List<String> urlPath) {
+            this.urlPath = urlPath;
+        }
+
         public void setOnItemClickListener(HeaderShop itemClickListener){
             this.itemClickListener = itemClickListener;
         }
 
         @Override
         public int getItemCount() {
-            return 15;//itemPic.size();
+            if (urlPath == null) return 0;
+            return urlPath.size();
         }
 
         @Override
-        public HeaderShopAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ImageHeaderAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            mContext = parent.getContext();
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_picture_header_shop,parent,false);
             ViewHolder vh = new ViewHolder(view);
@@ -605,7 +617,10 @@ public class ShopFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-
+            Glide.with(mContext)
+                    .load("http://angelcar.com/ios/data/clsdata/"+urlPath.get(position))
+                    .bitmapTransform(new RoundedCornersTransformation(mContext,15,5))
+                    .into(holder.headerShopImage);
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

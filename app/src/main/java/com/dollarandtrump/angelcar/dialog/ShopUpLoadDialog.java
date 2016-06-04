@@ -5,9 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -24,12 +21,14 @@ import android.view.Window;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.activity.SimpleGalleryActivity;
 import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
-import com.dollarandtrump.angelcar.manager.bus.ActivityResultBus;
+import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
+import com.dollarandtrump.angelcar.manager.http.SendMessageManager;
+import com.dollarandtrump.angelcar.model.ShopImageModel;
+import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.squareup.otto.Subscribe;
 
 
@@ -39,6 +38,8 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Subscriber;
 
 
 /**
@@ -47,12 +48,18 @@ import butterknife.ButterKnife;
  * @AngelCarProject
  */
 public class ShopUpLoadDialog extends DialogFragment {
+    private static final String TAG = "ShopUpLoad";
+
     public final static int REQUEST_CODE = 899;
     @Bind(R.id.recyclerShopAllPicture)
     RecyclerView recyclerShop;
 
-    List<File> listPicture;
+
+//    List<File> listPicture;
     ShopUpLoadAdapter adapter;
+    ShopImageModel imageModel;
+    List<ShopImageModel.ImageModel> imageModelList;
+    int index = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,7 +68,7 @@ public class ShopUpLoadDialog extends DialogFragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        listPicture = new ArrayList<>();
+//        listPicture = new ArrayList<>();
         BusProvider.getInstance().register(this);
     }
 
@@ -78,19 +85,25 @@ public class ShopUpLoadDialog extends DialogFragment {
     private void initInstance(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
 
+        imageModel = new ShopImageModel();
+        imageModelList = new ArrayList<>();
+
         adapter = new ShopUpLoadAdapter();
         recyclerShop.setAdapter(adapter);
         adapter.setOnItemClickListener(new ShopUpLoadAdapter.OnItemClickListener() {
             @Override
             public void onItemClickSelect() {
-//                Intent i = new Intent(getContext(), SimpleGalleryActivity.class);
-//                startActivity(i);
+                if (imageModel != null && imageModel.getImageModels() != null){
+                    if (imageModel.getImageModels().size() > 3)
+                        return;
+                }
                 intentLoadPictureExternalStore();
             }
 
             @Override
             public void onItemClickDelete(int position) {
-                listPicture.remove(position);
+//                listPicture.remove(position);
+                imageModel.getImageModels().remove(position);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -99,21 +112,6 @@ public class ShopUpLoadDialog extends DialogFragment {
     }
 
     private void intentLoadPictureExternalStore() {
-//        if (!checkPermission()) return;
-//
-//        Intent pictureChooseIntent;
-//
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-//            pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//            pictureChooseIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-//        } else {
-//            pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
-//        }
-//        pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-//        pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-//        pictureChooseIntent.setType("image/*");
-//        getActivity().startActivityForResult(pictureChooseIntent, REQUEST_CODE);
         Intent i = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         getActivity().startActivityForResult(i, REQUEST_CODE);
@@ -132,24 +130,42 @@ public class ShopUpLoadDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data != null)
-            Log.i("ShopUp", "onActivityResult: data not null");
-
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && null != data) {
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Uri selectedImage = data.getData();
-            Cursor cursor = getActivity().getContentResolver()
-                    .query(selectedImage, filePathColumn, null, null, null);
-            assert cursor != null;
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String picturePath = cursor.getString(columnIndex);
-            cursor.close();
-            // add path
-            listPicture.add(new File(picturePath));
-            adapter.setListPicture(listPicture);
+            String picturePath = AngelCarUtils.getFilesPath(getContext(),data);
+            ShopImageModel.ImageModel model =
+                    new ShopImageModel.ImageModel();
+            model.setFileImage(new File(picturePath));
+            model.setIndex(String.valueOf(index));
+            imageModelList.add(model);
+            imageModel.setImageModels(imageModelList);
+            index++;
+//
+//            listPicture.add(new File(picturePath));
+            adapter.setListPicture(imageModel);
             adapter.notifyDataSetChanged();
         }
+
+    }
+
+    @OnClick(R.id.btnShopUpLoad)
+    public void shopUpLoad(){
+        HttpUploadManager.uploadFileShop(imageModel, Registration.getInstance().getShopRef(),
+                new Subscriber<String>() {
+            @Override
+            public void onCompleted() {
+                Log.i(TAG, "onCompleted: ");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Log.e(TAG, "onError: ", e);
+            }
+
+            @Override
+            public void onNext(String s) {
+                Log.i(TAG, "onNext: "+s);
+            }
+        });
 
     }
 
@@ -197,13 +213,13 @@ public class ShopUpLoadDialog extends DialogFragment {
      * Inner class zone*
      ******************/
     public static class ShopUpLoadAdapter extends RecyclerView.Adapter<ShopUpLoadAdapter.ViewHolder> {
-        List<File> listPicture;
+//        List<File> listPicture;
+        ShopImageModel imageModel;
         OnItemClickListener onItemClickListener;
         Context mContext;
 
-        public void setListPicture(List<File> listPicture) {
-            this.listPicture = listPicture;
-            Log.i("ShopUp", "setListPicture: " + listPicture.size());
+        public void setListPicture(ShopImageModel imageModel) {
+            this.imageModel = imageModel;
         }
 
         public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -228,7 +244,7 @@ public class ShopUpLoadDialog extends DialogFragment {
         public void onBindViewHolder(ShopUpLoadAdapter.ViewHolder holder, int position) {
             if (getItemViewType(position) == 1) {
                 Glide.with(mContext)
-                        .load(listPicture.get(position - 1))
+                        .load(imageModel.getImageModels().get(position - 1).getFileImage())
                         .placeholder(R.drawable.ic_image)
                         .into(holder.imageGallery);
             }
@@ -236,8 +252,10 @@ public class ShopUpLoadDialog extends DialogFragment {
 
         @Override
         public int getItemCount() {
-            if (listPicture == null) return 1;
-            return listPicture.size() + 1;
+            if (imageModel == null) return 1;
+            if (imageModel.getImageModels() == null) return 1;
+
+            return imageModel.getImageModels().size() + 1;
 
         }
 

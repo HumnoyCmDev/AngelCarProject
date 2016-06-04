@@ -3,6 +3,7 @@ package com.dollarandtrump.angelcar.dialog;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -11,43 +12,40 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
-import com.dollarandtrump.angelcar.dao.CarBrandDao;
 import com.dollarandtrump.angelcar.dao.Results;
-import com.dollarandtrump.angelcar.fragment.FeedPostCarFragment;
+import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
+import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
+import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.squareup.otto.Subscribe;
 
-import org.parceler.Parcels;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
  * Created by humnoy on 24/2/59.
  */
 public class ShopEditDialog extends DialogFragment {
-
+    public final static int REQUEST_CODE = 100;
     public interface EditShopCallback{
         void onSuccess();
         void onFail();
@@ -61,7 +59,7 @@ public class ShopEditDialog extends DialogFragment {
     EditShopCallback editShopCallback;
 
     String shopName, shopDescription,shopNumber , logoShop;
-
+    String picturePath = null;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +67,7 @@ public class ShopEditDialog extends DialogFragment {
     }
 
     private void init(Bundle savedInstanceState) {
+        BusProvider.getInstance().register(this);
         Bundle args = getArguments();
         if (args != null){
             shopName = args.getString("shopName");
@@ -105,6 +104,14 @@ public class ShopEditDialog extends DialogFragment {
 
     }
 
+
+    @OnClick(R.id.tvButtonUpLoadImage)
+    public void uploadImage(){
+        Intent i = new Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        getActivity().startActivityForResult(i, REQUEST_CODE);
+    }
+
     @OnClick(R.id.btnSaveShop)
     public void saveShop(){
 
@@ -137,13 +144,56 @@ public class ShopEditDialog extends DialogFragment {
                     editShopCallback.onSuccess();
             }
         });
+
+        // upload image profiles
+        if (picturePath != null) {
+            HttpUploadManager.uploadLogoShop(new File(picturePath), Registration.getInstance().getShopRef(), new Subscriber<String>() {
+                        @Override
+                        public void onCompleted() {
+                            Log.i("ShopEdit", "onCompleted: ");
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("ShopEdit", "onError: ", e);
+                        }
+
+                        @Override
+                        public void onNext(String s) {
+                            Log.i("ShopEdit", "onNext: "+s);
+                        }
+                    });
+        }
         dismiss();
+    }
+
+    @Subscribe
+    public void onActivityResultReceived(ActivityResultEvent event) {
+        int requestCode = event.getRequestCode();
+        int resultCode = event.getResultCode();
+        Intent data = event.getData();
+        onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && null != data) {
+            picturePath = AngelCarUtils.getFilesPath(getContext(),data);
+            Glide.with(this).load(new File(picturePath))
+                    .placeholder(com.hndev.library.R.drawable.loading)
+                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+                    .into(profileImage);
+        }
+
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        BusProvider.getInstance().unregister(this);
     }
 
     /******************

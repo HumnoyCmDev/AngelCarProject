@@ -27,7 +27,7 @@ android {
         }
     }
 
-    lintOptions {
+    /*lintOptions {
         checkReleaseBuilds false
     }
 
@@ -39,7 +39,7 @@ android {
                 srcDir 'src/main/java-gen'
             }
         }
-    }
+    }*/
 }
 
 def versionSupportLibrary = "23.4.0"
@@ -90,7 +90,7 @@ dependencies {
 //ActiveAndroid
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
 //GreenDao
-    compile 'org.greenrobot:greendao:2.2.1'
+//    compile 'org.greenrobot:greendao:2.2.1'
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }
 //apply plugin: 'com.google.gms.google-services'

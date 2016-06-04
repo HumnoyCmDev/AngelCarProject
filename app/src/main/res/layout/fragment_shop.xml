@@ -47,7 +47,7 @@
                         android:layout_height="50dp"/>
 
                     <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recyclerHeaderShop"
+                        android:id="@+id/recyclerImageHeaderShop"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="55dp"/>
@@ -55,7 +55,7 @@
                 </LinearLayout>
 
                 <TextView
-                    android:layout_gravity="right"
+                    android:layout_gravity="end"
                     android:textStyle="bold"
                     android:id="@+id/tvViewShop"
                     android:layout_margin="5dp"
@@ -159,11 +159,11 @@
             android:layout_height="wrap_content" />
 
 
-        <com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView
-            android:visibility="gone"
-            android:id="@+id/snappy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+        <!--<com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView-->
+            <!--android:visibility="gone"-->
+            <!--android:id="@+id/snappy"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"/>-->
 
 
     <android.support.v7.widget.RecyclerView
@@ -176,7 +176,7 @@
 
 
 
-        <com.github.siyamed.shapeimageview.CircularImageView
+    <com.github.siyamed.shapeimageview.CircularImageView
             app:layout_anchor="@id/appBarLayout"
             app:layout_anchorGravity="left|bottom"
             android:layout_marginLeft="10dp"

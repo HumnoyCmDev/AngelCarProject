@@ -1,6 +1,11 @@
 package com.dollarandtrump.angelcar.utils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.SpannableString;
 
@@ -70,5 +75,18 @@ public class AngelCarUtils {
         public void setDetail(String detail) {
             this.detail = detail;
         }
+    }
+
+    public static String getFilesPath(Context context,Intent data){
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Uri selectedImage = data.getData();
+        Cursor cursor = context.getContentResolver()
+                .query(selectedImage, filePathColumn, null, null, null);
+        assert cursor != null;
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        return picturePath;
     }
 }

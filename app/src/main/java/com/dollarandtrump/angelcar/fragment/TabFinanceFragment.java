@@ -23,7 +23,7 @@ public class TabFinanceFragment extends Fragment {
 
     @Bind(R.id.tabLayoutSegment) SegmentTabLayout segmentTabLayout;
 
-    ArrayList<Fragment> mFragments;
+//    ArrayList<Fragment> mFragments;
 
     public TabFinanceFragment() {
         super();
@@ -58,16 +58,18 @@ public class TabFinanceFragment extends Fragment {
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
 
-        mFragments = new ArrayList<>();
-        mFragments.add(FinanceFragment.newInstance());
-        mFragments.add(FinanceFragment.newInstance());
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-        String title[] = {"จัดไฟแนนซ์","รีไฟแนนซ์"};
-        segmentTabLayout.setTabData(title,getActivity(),R.id.fl_change,mFragments);
+        if (savedInstanceState == null) {
+//            String title[] = {"จัดไฟแนนซ์", "รีไฟแนนซ์"};
+//            mFragments = new ArrayList<>();
+//            mFragments.add(FinanceFragment.newInstance());
+//            mFragments.add(FinanceFragment.newInstance());
+//            segmentTabLayout.setTabData(title, getActivity(), R.id.fl_change, mFragments);
+        }
     }
 
     @Override
