@@ -107,8 +107,8 @@ public class DetailAlertDialog extends DialogFragment {
         // init
         tvTopicCar.setText(dao.toTopicCar());
         tvGear.setText(dao.getGear() == 1 ? "ออโต้" : "ธรรมดา");
-        tvTopic.setText(AngelCarUtils.subTopic(dao.getCarDetail()));
-        tvDetail.setText(AngelCarUtils.subDetail(dao.getCarDetail()));
+        tvTopic.setText(dao.getCarTitle());
+        tvDetail.setText(AngelCarUtils.convertLineUp(dao.getCarDetail()));
         tvName.setText(dao.getName());
         tvAddress.setText(dao.getProvince());
         tvPhone.setText(dao.getPhone());

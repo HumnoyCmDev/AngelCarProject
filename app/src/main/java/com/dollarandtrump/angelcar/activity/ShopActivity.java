@@ -22,7 +22,6 @@ import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
 import com.dollarandtrump.angelcar.dialog.DetailAlertDialog;
-import com.dollarandtrump.angelcar.manager.Cache;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 
@@ -52,8 +51,6 @@ public class ShopActivity extends AppCompatActivity {
     private PostCarCollectionDao dao;
     private Subscription subscription;
 
-//    private SharedPreferences preferences;
-    Cache daoCacheManager = new Cache();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +64,6 @@ public class ShopActivity extends AppCompatActivity {
     }
 
     private void loadData() {
-        if(!daoCacheManager.isFile("cacheShop")) {
             String userRef = Registration.getInstance().getUserId();
             String shopRef = Registration.getInstance().getShopRef();
             Log.i(TAG, "loadData: " + userRef + "," + shopRef);
@@ -82,12 +78,6 @@ public class ShopActivity extends AppCompatActivity {
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());
             subscription = rxCall.subscribe(shopCollectionDaoAction1);
-        }else {
-            ShopCollectionDao shopCollectionDao =
-                    daoCacheManager.load("cacheShop",ShopCollectionDao.class);
-            initData(shopCollectionDao);
-
-        }
     }
 
     private void initData(ShopCollectionDao shopCollectionDao){
@@ -202,7 +192,6 @@ public class ShopActivity extends AppCompatActivity {
             Log.i(TAG, "Call Success: Rx android");
             initData(shopCollectionDao);
             // save cache Dao
-            daoCacheManager.save("cacheShop",shopCollectionDao);
 //          preferences.edit().putBoolean("isUpdateShop",true).apply();
 
         }

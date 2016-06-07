@@ -11,7 +11,6 @@ import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 
 /***************************************
@@ -22,13 +21,11 @@ import java.util.LinkedList;
 public class PostCarManager {
 
     private PostCarCollectionDao dao;
-    private Cache cacheManager;
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public PostCarManager() {
-        cacheManager = new Cache();
         //Load Cache
         loadCache();
     }
@@ -170,18 +167,11 @@ public class PostCarManager {
         }
 
         //cache object
-        cacheManager.save("postDao",cacheDao);
-        Log.i("Manager", "saveCache: ");
     }
 
     private void loadCache(){
 //        load cache Object
-        if(cacheManager.isFile("postDao")) {
-            dao = cacheManager.load("postDao",PostCarCollectionDao.class);
-            Log.i("Manager", "loadCache: มีข้อมูลแครชไว้ ");
-        }else {
-            dao = new PostCarCollectionDao();
-        }
+
     }
 
 }

@@ -61,6 +61,13 @@ public class ShopUpLoadDialog extends DialogFragment {
     List<ShopImageModel.ImageModel> imageModelList;
     int index = 0;
 
+    public static ShopUpLoadDialog newInstance() {
+        Bundle args = new Bundle();
+        ShopUpLoadDialog fragment = new ShopUpLoadDialog();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

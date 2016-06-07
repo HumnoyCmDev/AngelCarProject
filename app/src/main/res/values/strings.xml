@@ -1,12 +1,19 @@
 <resources>
+
+    <string name="parse_app_id">boeV0hmc9cveTY8JlluVOOx3a7D1B0SUxLLsN3Fz</string>
+    <string name="parse_client_key">SiMuvGJiJRBriPlk5inBONiNrZV9zdtRkYzocWOt</string>
+
+    <!--<string name="parse_app_id">lrMUKmGBV5aIlokPHDKs1OfpPaF2j79dAkRjTStz</string>-->
+    <!--<string name="parse_client_key">Q6SJOUPubFiiTgZ370b9WE2ToLUASzTlATVxkZ07</string>-->
+
     <string name="app_name">AngelCar</string>
     <string name="hello_world">Hello world!</string>
     <!--Tab Layout String-->
-    <string name="tab_home"></string>
-    <string name="tab_finance"></string>
-    <string name="tab_help"></string>
-    <string name="tab_notice"></string>
-    <string name="tab_filter"></string>
+    <!--<string name="tab_home"></string>-->
+    <!--<string name="tab_finance"></string>-->
+    <!--<string name="tab_help"></string>-->
+    <!--<string name="tab_notice"></string>-->
+    <!--<string name="tab_filter"></string>-->
     <string name="sample_test_text_chat">Mr Sukphisit\'s passion is authentic Thai food, the way it has been prepared for generations, preferably without modern . Below is an excerpt from his latest column which appeared in Sunday\'s.......</string>
     <string name="sample_test_text_chat2">Mr Sukphisit\'s passion is authentic Thai food, the way it has been...</string>
     <string name="message_hint">เขียนข้อความ...</string>

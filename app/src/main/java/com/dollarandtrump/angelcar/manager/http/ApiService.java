@@ -62,6 +62,7 @@ public interface ApiService {
             @Field("brandref") int brand, // toyota **ตัด
             @Field("subref") int subBrand,
             @Field("typeref") int subDetailBrand,
+            @Field("cartitle") String carTitle, // ชื่อสั้นๆ
             @Field("cardetail") String carDetail, // ชื่อสั้นๆ
             @Field("caryear") int carYear, // ปีรถ
             @Field("carprice") String carPrice,// ราคารถ

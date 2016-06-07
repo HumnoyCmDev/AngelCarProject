@@ -129,7 +129,7 @@ public class HeaderChatCar extends BaseCustomViewGroup {
         DecimalFormat formatter = new DecimalFormat("#,###");
         String price = formatter.format(amount);
 
-        String topic = AngelCarUtils.subTopic(postCarDao.getCarDetail());
+        String topic = postCarDao.getCarTitle();
         title.setText(topic);
         String strTitle = postCarDao.getCarName() + " " +
                 postCarDao.getCarSub() + " " + postCarDao.getCarSubDetail();

@@ -44,9 +44,15 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
+import com.parse.FindCallback;
+import com.parse.ParseAnalytics;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -96,6 +102,22 @@ public class MainActivity extends AppCompatActivity {
         fabAcDealer.setEnabled(false);
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
+
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Installation");
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null){
+                    for (ParseObject ob : objects){
+                        Log.i(TAG, "done: "+ob.getString("appName"));
+                        Log.i(TAG, "done: "+ob.getObjectId());
+                    }
+                }else {
+                    Log.e(TAG, "done: ", e);
+                }
+            }
+        });
 
     }
 

@@ -80,8 +80,8 @@ public class FollowAdapter extends BaseAdapter {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-            String topic = AngelCarUtils.subTopic(postItem.getCarDetail());
-            String detail = AngelCarUtils.subDetail(postItem.getCarDetail());
+            String topic = postItem.getCarTitle();
+            String detail = AngelCarUtils.convertLineUp(postItem.getCarDetail());
             String carName = postItem.getCarName();
             holder.angelCarPost.setPictureProfile("http://cls.paiyannoi.me/profileimages/default.png");
             holder.angelCarPost.setPictureProduct(postItem.getCarImageThumbnailPath());
@@ -100,8 +100,8 @@ public class FollowAdapter extends BaseAdapter {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-            String topic = AngelCarUtils.subTopic(postItem.getCarDetail());
-            String detail = AngelCarUtils.subDetail(postItem.getCarDetail());
+            String topic = postItem.getCarTitle();
+            String detail = AngelCarUtils.convertLineUp(postItem.getCarDetail());
             String carName = postItem.getCarName();
             holder.angelCarPost.setPictureProduct(postItem.getCarImageThumbnailPath());
             holder.angelCarPost.setTitle(topic);

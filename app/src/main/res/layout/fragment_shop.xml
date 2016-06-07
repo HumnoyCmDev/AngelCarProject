@@ -50,7 +50,7 @@
                         android:id="@+id/recyclerImageHeaderShop"
                         android:layout_weight="1"
                         android:layout_width="0dp"
-                        android:layout_height="55dp"/>
+                        android:layout_height="55dp" />
 
                 </LinearLayout>
 
@@ -86,93 +86,114 @@
 
     </android.support.design.widget.AppBarLayout>
 
+<!--<android.support.v4.widget.SwipeRefreshLayout-->
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+    <!--android:id="@+id/swipeRefreshShop"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
-    <LinearLayout
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical"
-        android:gravity="center"
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:descendantFocusability="beforeDescendants"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <RelativeLayout
-            android:padding="5dp"
-            android:background="@color/colorDarkItem"
+        <LinearLayout
+            android:orientation="vertical"
+            android:gravity="center"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:layout_centerHorizontal="true"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:id="@+id/tvShopName"
-                android:textColor="@android:color/white"
-                android:text="CEO CLS Development"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:padding="5dp"
+                android:background="@color/colorDarkItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_centerHorizontal="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/tvShopName"
+                    android:textColor="@android:color/white"
+                    android:text="CEO CLS Development"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:gravity="center"
+                    android:background="@drawable/shape_bg_user_id"
+                    android:layout_below="@id/tvShopName"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:id="@+id/tvShopNumber"
+                    android:textColor="@android:color/black"
+                    android:text="581 - 959 - 004"
+                    android:layout_width="147dp"
+                    android:layout_height="24dp"/>
+
+                <TextView
+                    android:layout_marginTop="5dp"
+                    android:layout_below="@id/tvShopNumber"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:id="@+id/tvShopDescription"
+                    android:textColor="@android:color/white"
+                    android:text="รถมือสองสสสส"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </RelativeLayout>
+
+            <com.dollarandtrump.angelcar.view.ListHashTag
+                android:id="@+id/listHashTag"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-            <TextView
-                android:layout_marginTop="5dp"
-                android:gravity="center"
-                android:background="@drawable/shape_bg_user_id"
-                android:layout_below="@id/tvShopName"
-                android:layout_centerHorizontal="true"
-                android:textSize="13sp"
-                android:textStyle="bold"
-                android:id="@+id/tvShopNumber"
-                android:textColor="@android:color/black"
-                android:text="581 - 959 - 004"
-                android:layout_width="147dp"
-                android:layout_height="24dp"/>
+            <View
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#9B9B9B" />
 
             <TextView
-                android:layout_marginTop="5dp"
-                android:layout_below="@id/tvShopNumber"
-                android:layout_centerHorizontal="true"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:id="@+id/tvShopDescription"
-                android:textColor="@android:color/white"
-                android:text="รถมือสองสสสส"
+                android:layout_gravity="center"
+                android:textSize="14sp"
+                android:textColor="#4A4A4A"
+                android:text="เลือกดูรถตามแบรนได้จากเมนูด้านบน"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-
-        </RelativeLayout>
-
-        <com.dollarandtrump.angelcar.view.ListHashTag
-            android:id="@+id/listHashTag"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <View
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="#9B9B9B" />
-
-        <TextView
-            android:layout_gravity="center"
-            android:textSize="14sp"
-            android:textColor="#4A4A4A"
-            android:text="เลือกดูรถตามแบรนได้จากเมนูด้านบน"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+                android:layout_height="wrap_content" />
 
 
-        <!--<com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView-->
+            <!--<com.dollarandtrump.angelcar.view.snappy.SnappyRecyclerView-->
             <!--android:visibility="gone"-->
             <!--android:id="@+id/snappy"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"/>-->
 
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_car"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            <android.support.v7.widget.RecyclerView
+                android:clipToPadding="false"
+                android:id="@+id/recycler_car"
+                android:layout_margin="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
 
-    </LinearLayout>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+
+
+
+<!--</android.support.v4.widget.SwipeRefreshLayout>-->
+
 
 
 

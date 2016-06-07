@@ -19,6 +19,7 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.datatype.MutableInteger;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.T;
 import com.hndev.library.view.AngelCarPost;
 
 import java.text.DecimalFormat;
@@ -122,22 +123,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-            String topic = AngelCarUtils.subTopic(postCarDao.getCarDetail());
-            holder.angelCarPost.setPictureProfile("http://cls.paiyannoi.me/profileimages/default.png");
-            holder.angelCarPost.setPictureProduct(postCarDao.getCarImageThumbnailPath());
-            holder.angelCarPost.setTitle(topic);
-
-        double amount = Double.parseDouble(postCarDao.getCarPrice());
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        String price = formatter.format(amount);
-        String strTitle = postCarDao.getCarName() + " " +
-                postCarDao.getCarSub() + " " + postCarDao.getCarSubDetail();
-        String strDetail = ""+ AngelCarUtils.textFormatHtml("#ff0000",""+postCarDao.getCarYear())+
-                " ราคา "+ AngelCarUtils.textFormatHtml("#ff0000", price) +" บาท";
-        holder.angelCarPost.setDetails(strTitle);
-        holder.angelCarPost.setDetails2Html(strDetail);
-
-        holder.angelCarPost.setTime(dateFormat.format(postCarDao.getCarModifyTime()));
+        initPost(holder,postCarDao,"#ff0000","#ff0000");
         return view;
     }
 
@@ -150,39 +136,44 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-            String topic = AngelCarUtils.subTopic(postCarDao.getCarDetail());
-            holder.angelCarPost.setPictureProfile("http://cls.paiyannoi.me/profileimages/default.png");
-            holder.angelCarPost.setPictureProduct(postCarDao.getCarImageThumbnailPath());
-            holder.angelCarPost.setTitle(topic);
-
-        double amount = Double.parseDouble(postCarDao.getCarPrice());
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        String price = formatter.format(amount);
-        String strTitle = postCarDao.getCarName() + " " +
-                postCarDao.getCarSub() + " " + postCarDao.getCarSubDetail();
-        String strDetail = "ปี "+ AngelCarUtils.textFormatHtml("#FFB13D",""+postCarDao.getCarYear())+
-                " ราคา "+ AngelCarUtils.textFormatHtml("#FFB13D", price) +" บาท";
-        holder.angelCarPost.setDetails(strTitle);
-        holder.angelCarPost.setDetails2Html(strDetail);
-
-        holder.angelCarPost.setTime(dateFormat.format(postCarDao.getCarModifyTime()));
-
+        initPost(holder,postCarDao,"#FFB13D","#FFB13D");
         return view;
     }
 
-    public class ViewHolderItemLeft {
-        @Bind(R.id.item_post) AngelCarPost angelCarPost;
+    public class ViewHolderItemLeft extends ViewHolderPost{
         public ViewHolderItemLeft(View v) {
-            ButterKnife.bind(this,v);
+            super(v);
         }
     }
 
-    public class ViewHolderItemRight {
-        @Bind(R.id.item_post) AngelCarPost angelCarPost;
+    public class ViewHolderItemRight extends ViewHolderPost{
         public ViewHolderItemRight(View v) {
-            ButterKnife.bind(this,v);
+            super(v);
         }
     }
+
+
+
+    private void initPost(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2){
+        String topic = dao.getCarTitle();
+        holderPost.angelCarPost.setPictureProfile("http://angelcar.com/ios/data/clsdata/"+dao.getShopLogo());
+        holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
+        holderPost.angelCarPost.setTitle(topic);
+        double amount = Double.parseDouble(dao.getCarPrice());
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        String price = formatter.format(amount);
+        String strTitle = dao.getCarName() + " " +
+                dao.getCarSub() + " " + dao.getCarSubDetail();
+        String strDetail = "ปี "+ AngelCarUtils.textFormatHtml(color1,""+dao.getCarYear())+
+                " ราคา "+ AngelCarUtils.textFormatHtml(color2, price) +" บาท";
+        holderPost.angelCarPost.setDetails(strTitle);
+        holderPost.angelCarPost.setDetails2Html(strDetail);
+        holderPost.angelCarPost.setTime(dateFormat.format(dao.getCarModifyTime()));
+    }
+
+//    private  <T extends ViewHolderPost> T ViewHolder(T t){
+//        return t;
+//    }
 
     @Override
     public Filter getFilter() {
@@ -195,6 +186,13 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
     /************
     *Inner Class*
     *************/
+
+    public abstract class ViewHolderPost {
+        @Bind(R.id.item_post) protected AngelCarPost angelCarPost;
+        public ViewHolderPost(View v) {
+            ButterKnife.bind(this,v);
+        }
+    }
 
     private class PlanetFilter extends Filter {
 

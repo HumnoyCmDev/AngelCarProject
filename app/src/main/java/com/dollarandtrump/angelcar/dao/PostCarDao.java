@@ -49,6 +49,11 @@ public class PostCarDao extends Model implements Serializable {
     @Column(name = "CarDetail")
     String carDetail;
 
+    @SerializedName("cartitle")
+    @Expose
+    @Column(name = "CarTitle")
+    String carTitle;
+
     @SerializedName("caryear")
     @Expose
     @Column(name = "CarYear")
@@ -103,6 +108,19 @@ public class PostCarDao extends Model implements Serializable {
     @Expose
     @Column(name = "CarImagePath")
     String carImagePath;
+
+    @SerializedName("shoplogo")
+    @Expose
+    @Column(name = "ShopLogo")
+    String shopLogo;
+
+    public String getShopLogo() {
+        return shopLogo;
+    }
+
+    public void setShopLogo(String shopLogo) {
+        this.shopLogo = shopLogo;
+    }
 
     public int getProvinceId() {
         return provinceId;
@@ -248,19 +266,12 @@ public class PostCarDao extends Model implements Serializable {
         this.province = province;
     }
 
-    public String toMessage(){
-        String titleCar = String.format("<p><b><u><i><h3>%s</h3></i></u></b><p>",
-                (getCarName()+" "+getCarSub()+" "+getCarSubDetail()+" ปี "+getCarYear()));
-        String topic = String.format("<p><b>%s</b></p><p>%s<b>",
-                AngelCarUtils.subTopic(getCarDetail()), AngelCarUtils.subDetail(getCarDetail()));
+    public String getCarTitle() {
+        return carTitle;
+    }
 
-        String detail = String.format(
-                "<p>" +
-                "<b>ราคา.</b> %s" + //"<b>ราคา.</b> %s " +
-                "</p>",getCarPrice());
-
-        String message = titleCar+topic+detail;
-        return String.format("<header>%s</header>",message);
+    public void setCarTitle(String carTitle) {
+        this.carTitle = carTitle;
     }
 
     public String toTopicCar(){

@@ -40,7 +40,6 @@ import android.widget.ToggleButton;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.manager.Cache;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
@@ -112,10 +111,8 @@ public class PostFragment extends Fragment {
     private int id_province = 1;
     private HashMap<Integer, File> filesPhotoList;
     private InformationCarModel carModel;
-    private Subscription subscription;
+//    private Subscription subscription;
     private PostCarDao dao;
-
-    Cache daoCacheManager = new Cache();
 
     public PostFragment() {
         super();
@@ -180,8 +177,8 @@ public class PostFragment extends Fragment {
             editTextTelephone.setText(dao.getPhone());
             editTextName.setText(dao.getName());
             editTextPrice.setText(dao.getCarPrice());
-            editTextTopic.setText(AngelCarUtils.subTopic(dao.getCarDetail()));
-            editTextDescription.setText(AngelCarUtils.subDetail(dao.getCarDetail()));
+            editTextTopic.setText(dao.getCarTitle());
+            editTextDescription.setText(AngelCarUtils.convertLineUp(dao.getCarDetail()));
             btnPost.setText("SAVE");
         }
         editTextPrice.addTextChangedListener(AutoCommaListener);
@@ -235,7 +232,7 @@ public class PostFragment extends Fragment {
        String carName = carModel.getBrandDao().getBrandName().toUpperCase() ; // toyota
        String topic = editTextTopic.getText().toString();
        String detail = editTextDescription.getText().toString().trim();
-       String appendCarTopDetail = AngelCarUtils.append(topic,detail); // ชื่อสั้นๆ
+//       String appendCarTopDetail = AngelCarUtils.append(topic,detail); // ชื่อสั้นๆ
 //       int carYear = carModel.getYear(); // ปีรถ
        String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
 //       String carStatus = "wait";//wait,online,offline
@@ -265,23 +262,18 @@ public class PostFragment extends Fragment {
                     carModel.getBrandDao().getBrandId(),
                     carModel.getSubDao().getSubId(),
                     carModel.getSubDetailDao().getSubId(),
-                    appendCarTopDetail, carModel.getYear(),
+                    topic, detail, carModel.getYear(),
                     carPrice, "online", province, gear, plate, name, phone);
             call.enqueue(postCallback);
 
 //            OnSelectData onSelectData = (OnSelectData) getActivity();
 //            onSelectData.onSelectedCallback(PostActivity.CALLBACK_ALL_POST);
 
-        //Delete cache shop
-        if(daoCacheManager.isFile("cacheShop"))
-            daoCacheManager.deleteCache("cacheShop");
     }
 
     private boolean isEmpty(String str){
-        if (str.isEmpty())
-            return true;
-        if (str.equals(""))
-            return true;
+        if (str.isEmpty()) return true;
+        if (str.equals("")) return true;
         return false;
     }
 
@@ -344,8 +336,8 @@ public class PostFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (subscription != null)
-            subscription.unsubscribe();
+//        if (subscription != null)
+//            subscription.unsubscribe();
     }
 
     @Override

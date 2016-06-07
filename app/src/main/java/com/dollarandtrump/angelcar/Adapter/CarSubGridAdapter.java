@@ -7,11 +7,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.CarDataTypeDao;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
-
-import java.util.List;
 
 public class CarSubGridAdapter extends BaseAdapter {
 

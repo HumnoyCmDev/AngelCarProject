@@ -106,7 +106,6 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        Log.i("Adapter", "ps1 "+position);
         if (getItemViewType(position) == 2){
             HeaderChatCar headerChatCar;
             if (convertView != null) {

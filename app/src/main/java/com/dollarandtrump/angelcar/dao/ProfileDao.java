@@ -77,8 +77,13 @@ public class ProfileDao implements Serializable {
     public String getShopLogo() {
         return shopLogo;
     }
+
     public String getUrlShopLogo() {
         return "http://angelcar.com/ios/data/clsdata/"+shopLogo;
+    }
+
+    public String getUrlShopBackground(int id){
+        return "http://angelcar.com/ios/data/clsdata/"+profilePath.get(id);
     }
 
 

@@ -45,36 +45,9 @@ public class AngelCarUtils {
         return topic+"``"+ formatLineUp(detail);
     }
 
-    public static Post getPostCollection(String s){
-        Post post = new Post();
-        post.setTopic(subTopic(s));
-        post.setDetail(convertLineUp(subDetail(s)));
-        return post;
-    }
-
     public static String textFormatHtml(String codeColor, String text){
         String textColor = "<font color=\"%s\">%s</font>";
         return String.format(textColor,codeColor,text);
-    }
-
-    public static class Post{
-        private String topic;
-        private String detail;
-        public String getTopic() {
-            return topic;
-        }
-
-        public void setTopic(String topic) {
-            this.topic = topic;
-        }
-
-        public String getDetail() {
-            return detail;
-        }
-
-        public void setDetail(String detail) {
-            this.detail = detail;
-        }
     }
 
     public static String getFilesPath(Context context,Intent data){
