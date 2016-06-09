@@ -179,4 +179,9 @@ public interface ApiService {
     @GET("ios/api/cls_shop.php?operation=edit")
     Observable<Results> editShopObservable(@Query("message") String message);
 
+    //
+    @FormUrlEncoded
+    @POST("android/api/registerfirebase.php")
+    Observable<Results> sendTokenRegistration(@Field("userref") String userRef,@Field("firebaseid") String token);
+
 }

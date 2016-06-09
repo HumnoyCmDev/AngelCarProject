@@ -67,7 +67,7 @@ public class MessageManager {
     }
 
     public void unifyDao(MessageAdminCollectionDao messageSellDao, MessageCollectionDao messageBuyDao){
-        this.messageSellDao = messageSellDao.getMessageAdminDao().convertToMessageCollectionDao();
+        this.messageSellDao = messageSellDao.convertToMessageCollectionDao();
         this.messageBuyDao = messageBuyDao;
         if (messageDao == null){
             messageDao = new MessageCollectionDao();

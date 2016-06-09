@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.activeandroid.ActiveAndroid;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 
@@ -21,11 +22,14 @@ import java.util.LinkedList;
 public class PostCarManager {
 
     private PostCarCollectionDao dao;
+    private Cache mCache;
+
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public PostCarManager() {
+        mCache = new Cache();
         //Load Cache
         loadCache();
     }
@@ -54,6 +58,19 @@ public class PostCarManager {
                 dao = new PostCarCollectionDao();
             if (dao.getListCar() == null)
                 dao.setListCar(new ArrayList<PostCarDao>());
+
+            if (dao.getListCar().size() > 0){
+                for (int i = 0; i < newDao.getListCar().size(); i++) {
+                    for (int j = 0; j < dao.getListCar().size(); j++) {
+                        if (dao.getListCar().get(j).getCarId() ==
+                                newDao.getListCar().get(i).getCarId()){
+                            dao.getListCar().remove(j);
+                        }
+                    }
+                }
+
+            }
+
             dao.getListCar().addAll(0, newDao.getListCar());
             //Save Cache
             saveCache();
@@ -72,7 +89,7 @@ public class PostCarManager {
         }
     }
 
-    public int getMaximumId(){
+   /* public int getMaximumId(){
         if (dao == null)
             return 0;
         if (dao.getListCar().size() == 0)
@@ -95,38 +112,6 @@ public class PostCarManager {
         for (int i = 0; i < dao.getListCar().size(); i++)
             minId = Math.min(minId, dao.getListCar().get(i).getCarId());
         return minId;
-    }
-
-   /* public String getAfterDate(){ //ของที่เก่ากว่า
-        Date d = new Date();
-        if (dao == null)
-            return dateFormat.format(d);
-        if (dao.getListCar().size() == 0)
-            return dateFormat.format(d);
-
-        Date afterDate = dao.getListCar().get(getCount()-1).getCarModifyTime();
-        for (int i = 0; i < dao.getListCar().size(); i++) {
-            if (afterDate.after(dao.getListCar().get(i).getCarModifyTime()))
-                afterDate = dao.getListCar().get(i).getCarModifyTime();
-        }
-        return dateFormat.format(afterDate);
-    }
-
-    public String getBeforeDate(){ //ของที่ใหม่กว่า
-
-        Date d = new Date();
-        if (dao == null)
-            return dateFormat.format(d);
-        if (dao.getListCar().size() == 0)
-            return dateFormat.format(d);
-
-        Date beforeDate = dao.getListCar().get(0).getCarModifyTime();
-        for (int i = 0; i < dao.getListCar().size(); i++) {
-            if (beforeDate.before(dao.getListCar().get(i).getCarModifyTime()))
-                beforeDate = dao.getListCar().get(i).getCarModifyTime();
-        }
-
-        return dateFormat.format(beforeDate);
     }*/
 
     public String firstDateDao(){
@@ -164,13 +149,33 @@ public class PostCarManager {
             LinkedList<PostCarDao> sub = new LinkedList<>(dao.getListCar().subList(0,
                     Math.min(20, dao.getListCar().size())));
             cacheDao.setListCar(sub);
+
+//            //cache object
+//            CacheFeed.delete(CacheFeed.class,1);
+//            ActiveAndroid.beginTransaction();
+//            try {
+//                for (PostCarDao d : cacheDao.getListCar()) {
+//                    d.save();
+//                    CacheFeed feed = new CacheFeed();
+//                    feed.setPostCarDao(d);
+//                    feed.save();
+//                }
+//                ActiveAndroid.setTransactionSuccessful();
+//            } finally {
+//                ActiveAndroid.endTransaction();
+//            }
+            mCache.save("postDao",cacheDao);
         }
 
-        //cache object
+
+
     }
 
     private void loadCache(){
 //        load cache Object
+        if(mCache.isFile("postDao")){
+            dao = mCache.load("postDao",PostCarCollectionDao.class);
+        }
 
     }
 

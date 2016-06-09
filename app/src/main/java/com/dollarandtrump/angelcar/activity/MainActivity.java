@@ -27,6 +27,7 @@ import android.widget.Toast;
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
@@ -34,6 +35,7 @@ import com.dollarandtrump.angelcar.fragment.RegistrationAlertFragment;
 import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
 import com.dollarandtrump.angelcar.utils.TabEntity;
@@ -42,17 +44,15 @@ import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
-import com.parse.FindCallback;
-import com.parse.ParseAnalytics;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -60,22 +60,25 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
     private  final int EMAIL_RESOLUTION_REQUEST = 333;
     private  final int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
+
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
     @Bind(R.id.toolbar_top) Toolbar toolbar;
-//    @Bind(R.id.drawerLayout) DrawerLayout drawerLayout;
     @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.menu_fab) FloatingActionMenu menuFab;
     @Bind(R.id.fab_ac_Deposit) FloatingActionButton fabAcDeposit;
     @Bind(R.id.fab_ac_Dealer) FloatingActionButton fabAcDealer;
 
 
-
-//    private ActionBarDrawerToggle drawerToggle;
 
     private static final String TAG = "MainActivity";
 
@@ -102,23 +105,6 @@ public class MainActivity extends AppCompatActivity {
         fabAcDealer.setEnabled(false);
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
-
-
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Installation");
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null){
-                    for (ParseObject ob : objects){
-                        Log.i(TAG, "done: "+ob.getString("appName"));
-                        Log.i(TAG, "done: "+ob.getObjectId());
-                    }
-                }else {
-                    Log.e(TAG, "done: ", e);
-                }
-            }
-        });
-
     }
 
 //  googlePicker
@@ -174,9 +160,8 @@ public class MainActivity extends AppCompatActivity {
 //            }
             Intent googlePicker =
                     AccountPicker.newChooseAccountIntent(null, null,
-                            new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, true, null, null, null, null);
+                            new String[]{"com.google"}, true, null, null, null, null);
             startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
-
         }else {
             // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
             String cache_User = Registration.getInstance().getUserId();
@@ -253,26 +238,43 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Subscribe
+    public void subscribeNotification(RemoteMessage remoteMessage){
+        if (remoteMessage != null && remoteMessage.getData() != null){
+            final Map<String, String> data = remoteMessage.getData();
+            Log.i(TAG, "subscribeNotification: "+ data.get("type"));
+            Log.i(TAG, "subscribeNotification: "+ data.get("roomid"));
+                    Toast.makeText(MainActivity.this,data.get("type")+" , "+data.get("roomid"),
+                            Toast.LENGTH_SHORT).show();
+        }else {
+            Log.e(TAG, "subscribeNotification: error sub");
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+//        registerReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+//        unregisterReceiver();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this );
     }
 
     @Subscribe
@@ -371,6 +373,18 @@ public class MainActivity extends AppCompatActivity {
         return new Intent(MainActivity.this,cls);
     }
 
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
+    }
+
     /**************
     *Listener Zone*
     ***************/
@@ -381,6 +395,28 @@ public class MainActivity extends AppCompatActivity {
                 // Save Cache
                 Registration.getInstance().save(response.body());
                 Toast.makeText(MainActivity.this, "ลงทะเบียนเรียบร้อยแล้ว "+response.body().getUserId() +" "+response.body().getShopId(), Toast.LENGTH_LONG).show();
+                String user = Registration.getInstance().getUserId();
+                HttpManager.getInstance().getService().sendTokenRegistration(user, FirebaseInstanceId.getInstance().getToken())
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Observer<Results>() {
+                            @Override
+                            public void onCompleted() {
+                                Log.i(TAG, "onCompleted: ");
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, "onError: ",e);
+                            }
+
+                            @Override
+                            public void onNext(Results results) {
+                                Log.i(TAG, "onNext: "+results);
+                            }
+                        });
+
+
             } else {
                 Toast.makeText(MainActivity.this, "" + response.errorBody(), Toast.LENGTH_SHORT).show();
             }

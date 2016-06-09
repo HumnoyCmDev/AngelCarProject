@@ -84,7 +84,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         ButterKnife.bind(this);
 //        decorView = getWindow().getDecorView();
         initToolbar();
-        initMessage();
+        initInstance();
         loadDataMessage();
         loadFollow();
 
@@ -99,7 +99,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         call.enqueue(followCollectionDaoCallback);
     }
 
-    private void initMessage() {
+    private void initInstance() {
         // getIntent
         /*init detail chat*/
         postCarDao = Parcels.unwrap(
@@ -122,6 +122,39 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         callLoadPictureAll.enqueue(loadPictureCallback);
 
         messageManager = new MessageManager();
+
+        adapter = new ChatAdapter(MESSAGE_BY);
+        listView.setAdapter(adapter);
+        adapter.setOnClickItemBannerListener(this);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Intent View Image
+                if (messageManager != null &&
+                        messageManager.getMessageDao() != null &&
+                        messageManager.getMessageDao().getListMessage() != null) {
+
+                    if (position > 1) {
+                        MessageDao item = messageManager.getMessageDao()
+                                .getListMessage().get(position - 2);
+                        if (item.getMessageText().contains("<img>") &&
+                                item.getMessageText().contains("</img>")) {
+                            String url = item.getMessageText()
+                                    .substring("<img>".length(),
+                                            item.getMessageText().lastIndexOf("</img>"));
+                            Intent intent = new Intent(DetailCarActivity.this,
+                                    SingleViewImageActivity.class);
+                            intent.putExtra(SingleViewImageActivity.ARGS_PICTURE, url);
+                            startActivity(intent);
+                        }
+                        adapter.setShowDate(position);
+                        adapter.notifyDataSetChanged();
+                    }
+                }
+
+            }
+        });
 
     }
 
@@ -224,46 +257,10 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     }
 
     private void loadDataMessage() {
-        adapter = new ChatAdapter(MESSAGE_BY);
-        listView.setAdapter(adapter);
-        adapter.setOnClickItemBannerListener(this);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Intent View Image
-                if (messageManager != null &&
-                        messageManager.getMessageDao() != null &&
-                        messageManager.getMessageDao().getListMessage() != null) {
-
-                    if (position > 1) {
-                        MessageDao item = messageManager.getMessageDao()
-                                .getListMessage().get(position - 2);
-                        if (item.getMessageText().contains("<img>") &&
-                                item.getMessageText().contains("</img>")) {
-                            String url = item.getMessageText()
-                                    .substring("<img>".length(),
-                                            item.getMessageText().lastIndexOf("</img>"));
-                            Intent intent = new Intent(DetailCarActivity.this,
-                                    SingleViewImageActivity.class);
-                            intent.putExtra(SingleViewImageActivity.ARGS_PICTURE, url);
-                            startActivity(intent);
-                        }
-                            adapter.setShowDate(position);
-                            adapter.notifyDataSetChanged();
-                    }
-                }
-
-            }
-        });
-
-
         Call<MessageCollectionDao> call =
                 HttpManager.getInstance().getService()
                         .viewMessage(postCarDao.getCarId()+"||"+ messageFromUser +"||0");
-        call.enqueue(new LoadMessageCallback());
-
-
+        call.enqueue(new LoadMessageCallback());//TODO Refactor
         Log.i(TAG, "loadDataMessage: :: "+ postCarDao.getCarId()+"||"+ messageFromUser +"||0");
 
 

@@ -34,9 +34,9 @@ public class MessageAdminDao {
     }
 
     // Convert MessageAdmin To MessageCollectionDao
-    public MessageCollectionDao convertToMessageCollectionDao() {
-        MessageCollectionDao gao = new MessageCollectionDao();
-        gao.setListMessage(message);
-        return gao;
-    }
+//    public MessageCollectionDao convertToMessageCollectionDao() {
+//        MessageCollectionDao gao = new MessageCollectionDao();
+//        gao.setListMessage(message);
+//        return gao;
+//    }
 }

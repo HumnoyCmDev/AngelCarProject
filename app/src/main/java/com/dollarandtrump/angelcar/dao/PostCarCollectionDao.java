@@ -3,6 +3,9 @@ package com.dollarandtrump.angelcar.dao;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,8 +13,6 @@ import org.parceler.Parcel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +34,49 @@ public class PostCarCollectionDao implements Serializable {
         this.listCar = rows;
     }
 
+    /*Insert all data*/
+    public void insertAll(){
+        if (getListCar() != null) {
+            ActiveAndroid.beginTransaction();
+            try {
+                for (PostCarDao d : getListCar()) {
+                    d.save();
+                }
+                ActiveAndroid.setTransactionSuccessful();
+            } finally {
+                ActiveAndroid.endTransaction();
+            }
+        }
+    }
+
+    public void deleteAll(){
+       new Delete().from(PostCarDao.class).execute();
+    }
+
+    public PostCarCollectionDao queryPostCar(){//all
+        List<PostCarDao> model = new Select().from(PostCarDao.class)
+                .orderBy("BrandName ASC").execute();
+        PostCarCollectionDao newDao = new PostCarCollectionDao();
+        newDao.setListCar(model);
+        return newDao;
+    }
+
+    public PostCarCollectionDao queryFindBrandDuplicates(){
+        List<PostCarDao> model = new Select().from(PostCarDao.class)
+                .groupBy("BrandName").having("COUNT(BrandName) > 0")
+                .orderBy("BrandName ASC").execute();
+        PostCarCollectionDao newDao = new PostCarCollectionDao();
+        newDao.setListCar(model);
+        return newDao;
+    }
+
+    public PostCarCollectionDao findPostCar(String brandName){
+        List<PostCarDao> model = new Select().from(PostCarDao.class)
+                .where("BrandName LIKE ?",brandName).execute();
+        PostCarCollectionDao newDao = new PostCarCollectionDao();
+        newDao.setListCar(model);
+        return newDao;
+    }
 
     // หาตำแหน่งหัวข้อยี่ห้อ
     public @Nullable List<Integer> findPositionHeader(){

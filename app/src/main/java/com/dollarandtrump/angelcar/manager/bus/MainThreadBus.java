@@ -8,23 +8,27 @@ import com.squareup.otto.Bus;
 /**
  * Created by humnoy on 5/2/59.
  */
-public class ActivityResultBus extends Bus {
+public class MainThreadBus extends Bus {
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-    private static ActivityResultBus instance;
+    private static MainThreadBus instance;
 
-    public static ActivityResultBus getInstance() {
+    public static MainThreadBus getInstance() {
         if (instance == null)
-            instance = new ActivityResultBus();
+            instance = new MainThreadBus();
         return instance;
     }
 
     @Override
     public void post(final Object event) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            super.post(event);
+        } else {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    ActivityResultBus.getInstance().post(event);
+                    MainThreadBus.super.post(event);
                 }
             });
+        }
     }
 }

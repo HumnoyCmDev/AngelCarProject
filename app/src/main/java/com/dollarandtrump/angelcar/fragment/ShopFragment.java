@@ -187,10 +187,10 @@ public class ShopFragment extends Fragment {
             @Override
             public void onItemClick(boolean isSelected, int position, String brand) {
                 if (isSelected && position != 0) {
-                     adapter.setDao(findPostCar(brand));
+                     adapter.setDao(dao.findPostCar(brand));
                      adapter.notifyDataSetChanged();
                 }else{
-                    adapter.setDao(queryPostCar());
+                    adapter.setDao(dao.queryPostCar());
                     adapter.notifyDataSetChanged();
                 }
                 for (int i = 0; i < listHashTag.getChildCount(); i++) {
@@ -274,57 +274,60 @@ public class ShopFragment extends Fragment {
     private void initData(ShopCollectionDao shopCollectionDao){
         initProfile(shopCollectionDao.getProfileDao());
         dao.setListCar(shopCollectionDao.getPostCarDao());
-        save2db(dao);
+        shopCollectionDao.insertAll();
+//        dao.deleteAll();
+//        dao.insertAll();
+//        save2db(dao);
 
         /*Query PostCar*/
         //Todo HashTag
-        shopHashTag.setDao(queryFindBrandDuplicates());
-        shopHashTag.setChildBrand(queryPostCar().getListCar());
+        shopHashTag.setDao(dao.queryFindBrandDuplicates());
+        shopHashTag.setChildBrand(dao.queryPostCar().getListCar());
         shopHashTag.notifyDataSetChanged();
 
         adapter.setDao(dao);
         adapter.notifyDataSetChanged();
     }
 
-    private void save2db(PostCarCollectionDao dao){
-        new Delete().from(PostCarDao.class).execute();
-        //TODO SAVE To DB
-        ActiveAndroid.beginTransaction();
-        try {
-            for (PostCarDao d : dao.getListCar()){
-                    d.save();
-            }
-            ActiveAndroid.setTransactionSuccessful();
-        }
-        finally {
-            ActiveAndroid.endTransaction();
-        }
-    }
+//    private void save2db(PostCarCollectionDao dao){
+//        new Delete().from(PostCarDao.class).execute();
+//        //TODO SAVE To DB
+//        ActiveAndroid.beginTransaction();
+//        try {
+//            for (PostCarDao d : dao.getListCar()){
+//                    d.save();
+//            }
+//            ActiveAndroid.setTransactionSuccessful();
+//        }
+//        finally {
+//            ActiveAndroid.endTransaction();
+//        }
+//    }
 
-    private PostCarCollectionDao queryPostCar(){//all
-        List<PostCarDao> model = new Select().from(PostCarDao.class)
-                .orderBy("BrandName ASC").execute();
-        PostCarCollectionDao newDao = new PostCarCollectionDao();
-        newDao.setListCar(model);
-        return newDao;
-    }
-
-    private PostCarCollectionDao queryFindBrandDuplicates(){
-        List<PostCarDao> model = new Select().from(PostCarDao.class)
-                .groupBy("BrandName").having("COUNT(BrandName) > 0")
-                .orderBy("BrandName ASC").execute();
-        PostCarCollectionDao newDao = new PostCarCollectionDao();
-        newDao.setListCar(model);
-        return newDao;
-    }
-
-    private PostCarCollectionDao findPostCar(String brandName){
-        List<PostCarDao> model = new Select().from(PostCarDao.class)
-                .where("BrandName LIKE ?",brandName).execute();
-        PostCarCollectionDao newDao = new PostCarCollectionDao();
-        newDao.setListCar(model);
-        return newDao;
-    }
+//    private PostCarCollectionDao queryPostCar(){//all
+//        List<PostCarDao> model = new Select().from(PostCarDao.class)
+//                .orderBy("BrandName ASC").execute();
+//        PostCarCollectionDao newDao = new PostCarCollectionDao();
+//        newDao.setListCar(model);
+//        return newDao;
+//    }
+//
+//    private PostCarCollectionDao queryFindBrandDuplicates(){
+//        List<PostCarDao> model = new Select().from(PostCarDao.class)
+//                .groupBy("BrandName").having("COUNT(BrandName) > 0")
+//                .orderBy("BrandName ASC").execute();
+//        PostCarCollectionDao newDao = new PostCarCollectionDao();
+//        newDao.setListCar(model);
+//        return newDao;
+//    }
+//
+//    private PostCarCollectionDao findPostCar(String brandName){
+//        List<PostCarDao> model = new Select().from(PostCarDao.class)
+//                .where("BrandName LIKE ?",brandName).execute();
+//        PostCarCollectionDao newDao = new PostCarCollectionDao();
+//        newDao.setListCar(model);
+//        return newDao;
+//    }
 
     private void initProfile(ProfileDao profileDao){
         this.profileDao = profileDao;

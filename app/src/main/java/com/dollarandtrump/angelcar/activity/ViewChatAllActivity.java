@@ -79,9 +79,11 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
     }
 
     private void loadAllMessage(CarIdDao carIdDao) {
+        Log.d("view", "loadAllMessage: "+carIdDao.getAllCarId());
         Observable<MessageAdminCollectionDao> rxCallLoadMsg1 =
                 HttpManager.getInstance().getService()
                         .observableMessageAdmin(carIdDao.getAllCarId());
+
         Observable<MessageCollectionDao> rxCallLoadMsg2 = HttpManager.getInstance()
                 .getService().observableMessageClient(Registration.getInstance().getUserId());
 
@@ -102,7 +104,6 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
                 .subscribe(new Subscriber<MessageManager>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("ViewChat", "onCompleted: ");
                     }
 
                     @Override

@@ -1,29 +1,35 @@
 package com.dollarandtrump.angelcar.dao;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by humnoyDeveloper on 28/3/59. 15:12
  */
-public class ProfileDao implements Serializable {
+@Parcel(value = Parcel.Serialization.FIELD, analyze = ProfileDao.class)
+@Table(name = "Profile")
+public class ProfileDao extends Model /*implements Serializable*/ {
 
-    @SerializedName("shopid")           @Expose int shopId;
-    @SerializedName("shopname")         @Expose String shopName;
-    @SerializedName("shopdescription")  @Expose String shopDescription;
-    @SerializedName("shopnumber")       @Expose String shopNumber;
-    @SerializedName("shoprank")         @Expose String shopRank;
-    @SerializedName("shoplogo")         @Expose String shopLogo;
-    @SerializedName("shopstatus")       @Expose String shopStatus;
-    @SerializedName("userref")          @Expose String shopUserRef;
-    @SerializedName("shopcreate")       @Expose String shopCreate;
-    @SerializedName("shopview")         @Expose int shopView;
-    @SerializedName("shopfollow")       @Expose int shopFollow;
-    @SerializedName("profile_path")     @Expose List<String> profilePath = new ArrayList<String>();
+    @SerializedName("shopid")           @Expose @Column(name = "ShopId") int shopId;
+    @SerializedName("shopname")         @Expose @Column(name = "ShopName") String shopName;
+    @SerializedName("shopdescription")  @Expose @Column(name = "ShopDescription") String shopDescription;
+    @SerializedName("shopnumber")       @Expose @Column(name = "ShopNumber") String shopNumber;
+    @SerializedName("shoprank")         @Expose @Column(name = "ShopRank") String shopRank;
+    @SerializedName("shoplogo")         @Expose @Column(name = "ShopLogo") String shopLogo;
+    @SerializedName("shopstatus")       @Expose @Column(name = "ShopStatus") String shopStatus;
+    @SerializedName("userref")          @Expose @Column(name = "ShopUserRef") String shopUserRef;
+    @SerializedName("shopcreate")       @Expose @Column(name = "ShopCreate") String shopCreate;
+    @SerializedName("shopview")         @Expose @Column(name = "ShopView") int shopView;
+    @SerializedName("shopfollow")       @Expose @Column(name = "ShopFollow") int shopFollow;
+    @SerializedName("profile_path")     @Expose @Column(name = "ProfilePathImage") List<String> profilePath = new ArrayList<String>();
 
 
     public List<String> getProfilePath() {
