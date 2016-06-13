@@ -182,6 +182,6 @@ public interface ApiService {
     //
     @FormUrlEncoded
     @POST("android/api/registerfirebase.php")
-    Observable<Results> sendTokenRegistration(@Field("userref") String userRef,@Field("firebaseid") String token);
+    Observable<Results> sendTokenRegistration(@Field("userref") String userRef,@Field("shopref") String shopRef,@Field("firebaseid") String token);
 
 }

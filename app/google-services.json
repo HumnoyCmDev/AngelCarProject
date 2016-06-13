@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1064422136727",
+    "firebase_url": "https://project-1539553899883583115.firebaseio.com",
+    "project_id": "project-1539553899883583115",
+    "storage_bucket": "project-1539553899883583115.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064422136727:android:d35192e05badf5ae",
+        "android_client_info": {
+          "package_name": "com.dollarandtrump.angelcar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1064422136727-7606rudki5fcnb9vlaihrtq6qkl1hcvi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dollarandtrump.angelcar",
+            "certificate_hash": "0BDDBD95EA3E0E2430771013A014B2EBF05A579A"
+          }
+        },
+        {
+          "client_id": "1064422136727-fkdm2gnd3jqbcl8eijulv4tu9a17ki75.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC50oXLX1vi2MHwWHO6p4TZBtkaKJCb4Cs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1064422136727-fkdm2gnd3jqbcl8eijulv4tu9a17ki75.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

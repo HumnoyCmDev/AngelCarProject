@@ -38,7 +38,7 @@ public class BrandGridAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         ViewHolder holder;
         if(view == null) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row,parent,false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_item_brand,parent,false);
             holder = new ViewHolder(view);
             view.setTag(holder);
         }else {

@@ -1,11 +1,15 @@
 package com.dollarandtrump.angelcar.dao;
 
+import android.util.Log;
+
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.model.CacheShop;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.parceler.Parcel;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,6 +18,7 @@ import java.util.List;
 /**
  * Created by humnoyDeveloper on 28/3/59. 15:19
  */
+@Parcel
 public class ShopCollectionDao /*implements Serializable*/ {
     @SerializedName("profile")  @Expose ProfileDao profileDao;
     @SerializedName("car")      @Expose List<PostCarDao> postCarDao = new ArrayList<>();
@@ -34,13 +39,15 @@ public class ShopCollectionDao /*implements Serializable*/ {
         this.postCarDao = postCarDao;
     }
 
+    public PostCarCollectionDao getPostCarCellection(){
+        PostCarCollectionDao dao = new PostCarCollectionDao();
+        dao.setListCar(postCarDao);
+        return dao;
+    }
+
     /*Insert all data*/
     public void insertAll(){
-
         if (postCarDao != null) {
-            CacheShop cacheShop1 = new CacheShop();
-            cacheShop1.setProfileDao(profileDao);
-            cacheShop1.save();
             ActiveAndroid.beginTransaction();
             try {
                 for (PostCarDao d : getPostCarDao()) {
@@ -57,6 +64,7 @@ public class ShopCollectionDao /*implements Serializable*/ {
     }
     public void deleteAll(){
         new Delete().from(CacheShop.class).execute();
+        new Delete().from(PostCarDao.class).execute();
     }
 
     public PostCarCollectionDao queryPostCar(){//all

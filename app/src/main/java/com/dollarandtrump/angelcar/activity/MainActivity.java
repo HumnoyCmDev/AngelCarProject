@@ -24,6 +24,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
@@ -37,6 +39,7 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.model.CacheShop;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
@@ -52,6 +55,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -105,6 +109,10 @@ public class MainActivity extends AppCompatActivity {
         fabAcDealer.setEnabled(false);
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
+
+//        Intent in = new Intent(MainActivity.this,ChatActivity.class);
+//        startActivity(in);
+
     }
 
 //  googlePicker
@@ -200,13 +208,11 @@ public class MainActivity extends AppCompatActivity {
                                     REQUEST_CODE_ASK_PERMISSIONS);
                         }
                     });
-
                 }else {
                     ActivityCompat.requestPermissions(MainActivity.this,
                             new String[]{Manifest.permission.GET_ACCOUNTS},
                             REQUEST_CODE_ASK_PERMISSIONS);
                 }
-
             }else {
                 dialogConfirmFragment();
             }
@@ -396,7 +402,8 @@ public class MainActivity extends AppCompatActivity {
                 Registration.getInstance().save(response.body());
                 Toast.makeText(MainActivity.this, "ลงทะเบียนเรียบร้อยแล้ว "+response.body().getUserId() +" "+response.body().getShopId(), Toast.LENGTH_LONG).show();
                 String user = Registration.getInstance().getUserId();
-                HttpManager.getInstance().getService().sendTokenRegistration(user, FirebaseInstanceId.getInstance().getToken())
+                String shop = Registration.getInstance().getShopRef();
+                HttpManager.getInstance().getService().sendTokenRegistration(user,shop,FirebaseInstanceId.getInstance().getToken())
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Observer<Results>() {

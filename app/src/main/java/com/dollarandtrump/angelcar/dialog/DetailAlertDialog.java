@@ -140,24 +140,26 @@ public class DetailAlertDialog extends DialogFragment {
     }
 
     private void pictureCarDetail(final PictureCollectionDao dao) {
-        ImageBanner sib = ViewFindUtils.find(decorView, R.id.detailImage);
-        sib
-                .setTransformerClass(DepthTransformer.class)
-                .setSelectAnimClass(ZoomInEnter.class)
-                .setSource(dao.getListPicture())
-                .startScroll();
+        if (dao != null && dao.getListPicture() !=  null && dao.getListPicture().size() > 0) {
+            ImageBanner sib = ViewFindUtils.find(decorView, R.id.detailImage);
+            sib
+                    .setTransformerClass(DepthTransformer.class)
+                    .setSelectAnimClass(ZoomInEnter.class)
+                    .setSource(dao.getListPicture())
+                    .startScroll();
 
-        sib.setOnItemClickL(new BaseBanner.OnItemClickL() {
-            @Override
-            public void onItemClick(int position) {
+            sib.setOnItemClickL(new BaseBanner.OnItemClickL() {
+                @Override
+                public void onItemClick(int position) {
 
                     Intent intent = new Intent(getContext(), ViewPictureActivity.class);
                     intent.putExtra("PICTURE_DAO", Parcels.wrap(dao));
-                    intent.putExtra("POSITION",position);
+                    intent.putExtra("POSITION", position);
                     startActivity(intent);
 
-            }
-        });
+                }
+            });
+        }
     }
 
     public void setOnClickEditListener(OnClickEdit onClickEdit){

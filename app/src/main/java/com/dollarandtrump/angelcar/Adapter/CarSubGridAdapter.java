@@ -39,7 +39,7 @@ public class CarSubGridAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder mViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_item_brand, parent, false);
             mViewHolder = new ViewHolder();
             mViewHolder.cartype_sub = (TextView) convertView.findViewById(R.id.name_cartype);
             convertView.setTag(mViewHolder);

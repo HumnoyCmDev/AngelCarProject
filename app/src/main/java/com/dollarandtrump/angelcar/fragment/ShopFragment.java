@@ -2,13 +2,11 @@ package com.dollarandtrump.angelcar.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,16 +19,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
-import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
@@ -71,13 +65,13 @@ import rx.schedulers.Schedulers;
 public class ShopFragment extends Fragment {
     private static final String TAG = "ShopFragment";
 
-    @Bind(R.id.recycler_car) RecyclerView recyclerCar;
+    @Bind(R.id.recycler_car) RecyclerView listCar;
+    @Bind(R.id.recyclerImageHeaderShop) RecyclerView listImageHeader;
     @Bind(R.id.pictureShopProfile) CircularImageView shopProfilePicture;
     @Bind(R.id.tvShopName) TextView shopName;
     @Bind(R.id.tvShopNumber) TextView shopNumber;
     @Bind(R.id.tvShopDescription) TextView shopDescription;
     @Bind(R.id.appBarLayout) AppBarLayout appBarLayout;
-    @Bind(R.id.recyclerImageHeaderShop) RecyclerView recyclerImageHeaderShop;
     @Bind(R.id.tvViewShop) TextView viewShop;
     @Bind(R.id.imageShopBackground) ImageView imgShopBg;
     @Bind(R.id.menu_fab) FloatingActionMenu menuFab;
@@ -86,9 +80,10 @@ public class ShopFragment extends Fragment {
 
 //    @Bind(R.id.snappy) SnappyRecyclerView snappy;
 
-    private GridLayoutManager manager;
-    private ShopAdapter adapter;
-    private PostCarCollectionDao dao;
+    private GridLayoutManager mManager;
+    private ShopAdapter mAdapter;
+//    private PostCarCollectionDao dao;
+    private ShopCollectionDao shopCollectionDao;
     private Subscription subscription;
 
     private ShopHashTagAdapter shopHashTag;
@@ -130,9 +125,10 @@ public class ShopFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        dao = new PostCarCollectionDao();
-      /*application = (MainApplication) getActivity().getApplication();
-        mDaoSession = application.getDaoSession();*/
+//        dao = new PostCarCollectionDao();
+        shopCollectionDao = new ShopCollectionDao();
+
+
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -154,9 +150,9 @@ public class ShopFragment extends Fragment {
         menuFab.setClosedOnTouchOutside(true);
 
         //Header Shop
-        recyclerImageHeaderShop.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        listImageHeader.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         imageHeaderAdapter = new ImageHeaderAdapter();
-        recyclerImageHeaderShop.setAdapter(imageHeaderAdapter);
+        listImageHeader.setAdapter(imageHeaderAdapter);
         imageHeaderAdapter.setOnItemClickListener(new ImageHeaderAdapter.HeaderShop() {
             @Override
             public void OnClickItemListener(View view, int position) {
@@ -171,13 +167,13 @@ public class ShopFragment extends Fragment {
 //        snappy.setAdapter(imageHeaderAdapter);
 
 
-        manager = new GridLayoutManager(getActivity(),3);
-        recyclerCar.setLayoutManager(manager);
-        adapter = new ShopAdapter();
-        adapter.setDao(dao);
-        recyclerCar.setAdapter(adapter);
-        adapter.setOnclickListener(recyclerOnItemClickListener);
-        manager.setSpanSizeLookup(spanSizeLookupManager);
+        mManager = new GridLayoutManager(getActivity(),3);
+        listCar.setLayoutManager(mManager);
+        mAdapter = new ShopAdapter();
+        mAdapter.setDao(shopCollectionDao.getPostCarCellection());
+        listCar.setAdapter(mAdapter);
+        mAdapter.setOnclickListener(recyclerOnItemClickListener);
+        mManager.setSpanSizeLookup(spanSizeLookupManager);
 
 
         shopHashTag = new ShopHashTagAdapter();
@@ -187,11 +183,11 @@ public class ShopFragment extends Fragment {
             @Override
             public void onItemClick(boolean isSelected, int position, String brand) {
                 if (isSelected && position != 0) {
-                     adapter.setDao(dao.findPostCar(brand));
-                     adapter.notifyDataSetChanged();
+                     mAdapter.setDao(shopCollectionDao.findPostCar(brand));
+                     mAdapter.notifyDataSetChanged();
                 }else{
-                    adapter.setDao(dao.queryPostCar());
-                    adapter.notifyDataSetChanged();
+                    mAdapter.setDao(shopCollectionDao.queryPostCar());
+                    mAdapter.notifyDataSetChanged();
                 }
                 for (int i = 0; i < listHashTag.getChildCount(); i++) {
                     if (i != position) {
@@ -228,7 +224,7 @@ public class ShopFragment extends Fragment {
             }
         });
 
-        recyclerCar.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        listCar.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -273,61 +269,24 @@ public class ShopFragment extends Fragment {
 
     private void initData(ShopCollectionDao shopCollectionDao){
         initProfile(shopCollectionDao.getProfileDao());
-        dao.setListCar(shopCollectionDao.getPostCarDao());
-        shopCollectionDao.insertAll();
+//        dao.setListCar(shopCollectionDao.getPostCarDao());
+        this.shopCollectionDao = shopCollectionDao;
+        this.shopCollectionDao.deleteAll();
+        this.shopCollectionDao.insertAll();
 //        dao.deleteAll();
 //        dao.insertAll();
 //        save2db(dao);
 
         /*Query PostCar*/
         //Todo HashTag
-        shopHashTag.setDao(dao.queryFindBrandDuplicates());
-        shopHashTag.setChildBrand(dao.queryPostCar().getListCar());
+        shopHashTag.setDao(this.shopCollectionDao.queryFindBrandDuplicates());
+        shopHashTag.setChildBrand(this.shopCollectionDao.queryPostCar().getListCar());
         shopHashTag.notifyDataSetChanged();
 
-        adapter.setDao(dao);
-        adapter.notifyDataSetChanged();
+        mAdapter.setDao(this.shopCollectionDao.getPostCarCellection());
+        mAdapter.notifyDataSetChanged();
     }
 
-//    private void save2db(PostCarCollectionDao dao){
-//        new Delete().from(PostCarDao.class).execute();
-//        //TODO SAVE To DB
-//        ActiveAndroid.beginTransaction();
-//        try {
-//            for (PostCarDao d : dao.getListCar()){
-//                    d.save();
-//            }
-//            ActiveAndroid.setTransactionSuccessful();
-//        }
-//        finally {
-//            ActiveAndroid.endTransaction();
-//        }
-//    }
-
-//    private PostCarCollectionDao queryPostCar(){//all
-//        List<PostCarDao> model = new Select().from(PostCarDao.class)
-//                .orderBy("BrandName ASC").execute();
-//        PostCarCollectionDao newDao = new PostCarCollectionDao();
-//        newDao.setListCar(model);
-//        return newDao;
-//    }
-//
-//    private PostCarCollectionDao queryFindBrandDuplicates(){
-//        List<PostCarDao> model = new Select().from(PostCarDao.class)
-//                .groupBy("BrandName").having("COUNT(BrandName) > 0")
-//                .orderBy("BrandName ASC").execute();
-//        PostCarCollectionDao newDao = new PostCarCollectionDao();
-//        newDao.setListCar(model);
-//        return newDao;
-//    }
-//
-//    private PostCarCollectionDao findPostCar(String brandName){
-//        List<PostCarDao> model = new Select().from(PostCarDao.class)
-//                .where("BrandName LIKE ?",brandName).execute();
-//        PostCarCollectionDao newDao = new PostCarCollectionDao();
-//        newDao.setListCar(model);
-//        return newDao;
-//    }
 
     private void initProfile(ProfileDao profileDao){
         this.profileDao = profileDao;
@@ -369,12 +328,12 @@ public class ShopFragment extends Fragment {
             shopProfilePicture.startAnimation(animation);
         }
 
-        if (recyclerImageHeaderShop.getVisibility() == View.GONE){
+        if (listImageHeader.getVisibility() == View.GONE){
             Animation animationHeader = AnimationUtils.loadAnimation(
                     Contextor.getInstance().getContext(),
                     R.anim.activity_slide_left_in);
-            recyclerImageHeaderShop.setVisibility(View.VISIBLE);
-            recyclerImageHeaderShop.startAnimation(animationHeader);
+            listImageHeader.setVisibility(View.VISIBLE);
+            listImageHeader.startAnimation(animationHeader);
         }
     }
 
@@ -388,12 +347,12 @@ public class ShopFragment extends Fragment {
 
         }
 
-        if (recyclerImageHeaderShop.getVisibility() == View.VISIBLE){
+        if (listImageHeader.getVisibility() == View.VISIBLE){
             Animation animationHeader = AnimationUtils.loadAnimation(
                     Contextor.getInstance().getContext(),
                     R.anim.activity_slide_right_out);
-            recyclerImageHeaderShop.setVisibility(View.GONE);
-            recyclerImageHeaderShop.startAnimation(animationHeader);
+            listImageHeader.setVisibility(View.GONE);
+            listImageHeader.startAnimation(animationHeader);
         }
     }
 
@@ -476,7 +435,7 @@ public class ShopFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("dao",Parcels.wrap(dao));
+        outState.putParcelable("dao",Parcels.wrap(shopCollectionDao));
     }
 
     @Override
@@ -489,7 +448,7 @@ public class ShopFragment extends Fragment {
 
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-        dao = Parcels.unwrap(savedInstanceState.getParcelable("dao"));
+        shopCollectionDao = Parcels.unwrap(savedInstanceState.getParcelable("dao"));
     }
 
     private void showFabButton(){
@@ -507,7 +466,7 @@ public class ShopFragment extends Fragment {
         @Override
         public int getSpanSize(int position) {
             //กำหนด จำนวน item ใน grid
-            return adapter.isHeader(position) ? manager.getSpanCount() : 1;
+            return mAdapter.isHeader(position) ? mManager.getSpanCount() : 1;
         }
     };
 
@@ -536,7 +495,7 @@ public class ShopFragment extends Fragment {
     ShopAdapter.RecyclerOnItemClickListener recyclerOnItemClickListener = new ShopAdapter.RecyclerOnItemClickListener() {
         @Override
         public void OnClickItemListener(View v, int position) {
-            PostCarDao modelCar = dao.getListCar().get(position);
+            PostCarDao modelCar = shopCollectionDao.getPostCarDao().get(position);
             FragmentTransaction ft = getChildFragmentManager().beginTransaction();
             Fragment fragment = getChildFragmentManager().findFragmentByTag("DetailAlertDialog");
             if (fragment != null){
@@ -551,7 +510,7 @@ public class ShopFragment extends Fragment {
 
         @Override
         public void OnClickSettingListener(View v, int position) {
-            PostCarDao modelCar = dao.getListCar().get(position);
+            PostCarDao modelCar = shopCollectionDao.getPostCarDao().get(position);
             intentEditPost(modelCar);
         }
     };
@@ -562,10 +521,10 @@ public class ShopFragment extends Fragment {
             intentEditPost(modelCar);
         }
     };
+
     /*****************
      *Inner Class Zone*
      ******************/
-
     public static class ImageHeaderAdapter extends RecyclerView.Adapter<ImageHeaderAdapter.ViewHolder>{
 
         private List<String> urlPath;

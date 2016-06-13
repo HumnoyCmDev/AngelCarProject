@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/swipeable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:duplicateParentState="true"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="2dp">
+
+        <LinearLayout
+            android:id="@+id/time_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingBottom="7dp"
+            android:paddingTop="14dp">
+
+            <TextView
+                android:id="@+id/time_group_day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[day]"
+                android:textColor="#FF757575"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/time_group_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[time]"
+                android:textColor="#FF757575"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <Space
+            android:id="@+id/cluster_space"
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <android.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:textColor="@android:color/white"
+                android:padding="5dp"
+                android:textSize="14sp"
+                android:id="@+id/cell"
+                android:background="@drawable/background_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:minHeight="30dp"
+                android:minWidth="30dp" />
+
+        </LinearLayout>
+
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/receipt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="12sp"
+            android:text="[Delivered]"
+            android:textColor="#FF757575"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
+</FrameLayout>

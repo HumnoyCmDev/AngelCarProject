@@ -63,17 +63,13 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
 
 //    private View decorView;
     private String MESSAGE_BY = "shop";// shop & user
-
-    ChatAdapter adapter;
-
-    MessageManager messageManager ;
-    WaitMessageSynchronous synchronous;
-
-    PictureCollectionDao pictureCollectionDao;
-    PostCarDao postCarDao;
-
-    int intentForm; // 0 = form homeFragment , 1 = ChatAll,ChatBuy,ChatSell
-    String messageFromUser;
+    private ChatAdapter adapter;
+    private MessageManager messageManager ;
+    private WaitMessageSynchronous synchronous;
+    private PictureCollectionDao pictureCollectionDao;
+    private PostCarDao postCarDao;
+    private int intentForm; // 0 = form homeFragment , 1 = ChatAll,ChatBuy,ChatSell
+    private String messageFromUser;
 
     private static final String TAG = "DetailCarActivity";
 
@@ -170,10 +166,18 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     public void onClick(View v){
         switch (v.getId()){
             case R.id.message_button_send:
+
+                String user;
+                if (MESSAGE_BY.contains("shop")) {
+                    user = messageManager.getMessageDao().getListMessage().get(0).getMessageFromUser();
+                }else {
+                    user = postCarDao.getShopRef();
+                }
+                Log.i(TAG, "onClick: "+user);
                 OkHttpManager okHttpManager = new OkHttpManager.SendMessageBuilder()
                         .setMessage(postCarDao.getCarId()+"||"+messageFromUser+"||"+
                                 input_chat.getText().toString() + "||"+
-                                MESSAGE_BY).build();
+                                MESSAGE_BY+"||"+user).build();
                 okHttpManager.callEnqueue(new OkHttpManager.CallBackMainThread() {
                     @Override
                     public void onResponse(okhttp3.Response response) {

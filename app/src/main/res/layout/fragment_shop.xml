@@ -221,7 +221,7 @@
         app:menu_colorPressed="@color/colorDarkItem"
         app:menu_labels_ellipsize="end"
         app:menu_labels_singleLine="true"
-        app:menu_backgroundColor="#ccffffff"
+        app:menu_backgroundColor="#c3000000"
         app:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton

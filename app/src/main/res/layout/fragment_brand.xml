@@ -6,5 +6,4 @@
     android:columnWidth="100dp"
     android:numColumns="auto_fit"
     android:stretchMode="columnWidth"
-    android:gravity="center"
-    tools:context=".activity.MainActivity"/>
+    android:gravity="center"/>

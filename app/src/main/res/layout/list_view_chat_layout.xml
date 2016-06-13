@@ -5,6 +5,7 @@
     android:orientation="vertical">
 
     <ListView
+        android:visibility="gone"
         android:id="@+id/list_view"
         android:divider="@null"
         android:layout_weight="1"
@@ -19,6 +20,11 @@
         >
 
     </ListView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <LinearLayout
         android:id="@+id/group_chat"

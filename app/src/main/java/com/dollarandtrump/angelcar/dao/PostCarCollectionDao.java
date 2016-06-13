@@ -34,7 +34,7 @@ public class PostCarCollectionDao implements Serializable {
         this.listCar = rows;
     }
 
-    /*Insert all data*/
+   /* *//*Insert all data*//*
     public void insertAll(){
         if (getListCar() != null) {
             ActiveAndroid.beginTransaction();
@@ -76,7 +76,7 @@ public class PostCarCollectionDao implements Serializable {
         PostCarCollectionDao newDao = new PostCarCollectionDao();
         newDao.setListCar(model);
         return newDao;
-    }
+    }*/
 
     // หาตำแหน่งหัวข้อยี่ห้อ
     public @Nullable List<Integer> findPositionHeader(){
