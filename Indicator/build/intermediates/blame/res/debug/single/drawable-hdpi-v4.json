@@ -1,26 +1,26 @@
 [
     {
-        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/drawable-hdpi-v4/vpi__tab_selected_focused_holo.9.png",
-        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable-hdpi/vpi__tab_selected_focused_holo.9.png"
+        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\vpi__tab_unselected_pressed_holo.9.png",
+        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\drawable-hdpi\\vpi__tab_unselected_pressed_holo.9.png"
     },
     {
-        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/drawable-hdpi-v4/vpi__tab_unselected_focused_holo.9.png",
-        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable-hdpi/vpi__tab_unselected_focused_holo.9.png"
+        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\vpi__tab_unselected_holo.9.png",
+        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\drawable-hdpi\\vpi__tab_unselected_holo.9.png"
     },
     {
-        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/drawable-hdpi-v4/vpi__tab_selected_holo.9.png",
-        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable-hdpi/vpi__tab_selected_holo.9.png"
+        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\vpi__tab_selected_pressed_holo.9.png",
+        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\drawable-hdpi\\vpi__tab_selected_pressed_holo.9.png"
     },
     {
-        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/drawable-hdpi-v4/vpi__tab_unselected_pressed_holo.9.png",
-        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable-hdpi/vpi__tab_unselected_pressed_holo.9.png"
+        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\vpi__tab_unselected_focused_holo.9.png",
+        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\drawable-hdpi\\vpi__tab_unselected_focused_holo.9.png"
     },
     {
-        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/drawable-hdpi-v4/vpi__tab_unselected_holo.9.png",
-        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable-hdpi/vpi__tab_unselected_holo.9.png"
+        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\vpi__tab_selected_focused_holo.9.png",
+        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\drawable-hdpi\\vpi__tab_selected_focused_holo.9.png"
     },
     {
-        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/drawable-hdpi-v4/vpi__tab_selected_pressed_holo.9.png",
-        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/drawable-hdpi/vpi__tab_selected_pressed_holo.9.png"
+        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\drawable-hdpi-v4\\vpi__tab_selected_holo.9.png",
+        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\drawable-hdpi\\vpi__tab_selected_holo.9.png"
     }
 ]

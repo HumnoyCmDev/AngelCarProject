@@ -5,13 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -20,25 +21,24 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 /**
  * Created by humnoy on 26/1/59.
  */
 //// TODO: 20/2/59 New Adapter...
-public class MessageAdapter extends BaseAdapter{
+public class ConversationAdapter extends BaseAdapter{
 
-    private List<MessageDao> dao;
-    private SimpleDateFormat sf;
+    private List<MessageDao> mListDao;
+    private SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");
 
 
-    @SuppressLint("SimpleDateFormat")
-    public MessageAdapter() {
-        sf = new SimpleDateFormat("HH:mm:ss");
+    public ConversationAdapter() {
     }
 
-    public void setDao(List<MessageDao> dao) {
-        this.dao = dao;
-        Collections.sort(dao, new Comparator<MessageDao>() {
+    public void setDao(List<MessageDao> mListDao) {
+        this.mListDao = mListDao;
+        Collections.sort(mListDao, new Comparator<MessageDao>() {
             @Override
             public int compare(MessageDao lhs, MessageDao rhs) {
                 return rhs.getMessagesTamp().compareTo(lhs.getMessagesTamp());
@@ -48,13 +48,13 @@ public class MessageAdapter extends BaseAdapter{
 
     @Override
     public int getCount() {
-        if (dao == null) return 0;
-        return dao.size();
+        if (mListDao == null) return 0;
+        return mListDao.size();
     }
 
     @Override
     public MessageDao getItem(int position) {
-        return dao.get(position);
+        return mListDao.get(position);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class MessageAdapter extends BaseAdapter{
         if(convertView != null) {
             holder = (ViewHolder) convertView.getTag();
         }else {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_item_message_adapter, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.angelcar_conversation_item, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         }
@@ -76,27 +76,30 @@ public class MessageAdapter extends BaseAdapter{
 
         Glide.with(parent.getContext())
                 .load(message.getUserProfileImage())
+                .bitmapTransform(new CropCircleTransformation(parent.getContext()))
                 .error(R.drawable.ic_hndeveloper)
-                .into(holder.icon);
+                .into(holder.avatar);
 
         String msg = message.getMessageText();
 
-        holder.txtDisPlayName.setText(message.getDisplayName());
+        holder.title.setText(message.getDisplayName());
         if (msg.contains("<img>") && msg.contains("</img>")){
-                holder.txtMessage.setText("รูปภาพ 1 รูป");
+                holder.lastMessage.setText("รูปภาพ 1 รูป");
         }else {
-            holder.txtMessage.setText(message.getMessageText());
+            holder.lastMessage.setText(message.getMessageText());
         }
-        holder.txtTime.setText(sf.format(message.getMessagesTamp()));
+        String time = AngelCarUtils.formatTimeDay(parent.getContext(),message.getMessagesTamp())
+                .replaceAll(",","");
+        holder.time.setText(time);
         return convertView;
     }
 
 
     public class ViewHolder{
-        @Bind(R.id.chat_item_message_dis_play_name) TextView txtDisPlayName;
-        @Bind(R.id.chat_item_message_image) CircularImageView icon;
-        @Bind(R.id.chat_item_message_message) TextView txtMessage;
-        @Bind(R.id.chat_item_message_time) TextView txtTime;
+        @Bind(R.id.avatar) ImageView avatar;
+        @Bind(R.id.title) TextView title;
+        @Bind(R.id.last_message) TextView lastMessage;
+        @Bind(R.id.time) TextView time;
 
         public ViewHolder(View v) {
             ButterKnife.bind(this,v);

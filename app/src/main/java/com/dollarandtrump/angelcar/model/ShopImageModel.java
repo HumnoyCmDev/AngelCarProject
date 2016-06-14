@@ -25,37 +25,37 @@ public class ShopImageModel {
         this.imageModels = imageModels;
     }
 
-    public static class ImageModel {
-        private File fileImage;
-        private String index;
-
-        public ImageModel() {
-        }
-
-        public ImageModel(File fileImage, String index) {
-            this.fileImage = fileImage;
-            this.index = index;
-        }
-
-        public File getFileImage() {
-            return fileImage;
-        }
-
-        public void setFileImage(File fileImage) {
-            this.fileImage = fileImage;
-        }
-
-        public String getIndex() {
-            return index;
-        }
-
-        public void setIndex(String index) {
-            this.index = index;
-        }
-
-//        public ShopImageModel get(){
-//            return new ShopImageModel();
+//    public static class ImageModel {
+//        private File fileImage;
+//        private String index;
+//
+//        public ImageModel() {
 //        }
-    }
+//
+//        public ImageModel(File fileImage, String index) {
+//            this.fileImage = fileImage;
+//            this.index = index;
+//        }
+//
+//        public File getFileImage() {
+//            return fileImage;
+//        }
+//
+//        public void setFileImage(File fileImage) {
+//            this.fileImage = fileImage;
+//        }
+//
+//        public String getIndex() {
+//            return index;
+//        }
+//
+//        public void setIndex(String index) {
+//            this.index = index;
+//        }
+//
+////        public ShopImageModel get(){
+////            return new ShopImageModel();
+////        }
+//    }
 
 }

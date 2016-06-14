@@ -4,6 +4,7 @@ package com.dollarandtrump.angelcar.Adapter;
  * Created by Developer on 12/15/2015. 14:35
  */
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +38,14 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
     private Filter planetFilter;
     private MutableInteger lastPositionInteger;
     private boolean isLoading = false;
-    @SuppressLint("SimpleDateFormat")
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-    public FeedPostCarAdapter(MutableInteger lastPositionInteger) {
+    private Context mContext;
+//    @SuppressLint("SimpleDateFormat")
+//    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+
+    public FeedPostCarAdapter(Context mContext,MutableInteger lastPositionInteger) {
         this.lastPositionInteger = lastPositionInteger;
+        this.mContext = mContext;
     }
 
     public void setDao(PostCarCollectionDao dao) {
@@ -160,15 +165,16 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
         holderPost.angelCarPost.setTitle(topic);
         double amount = Double.parseDouble(dao.getCarPrice());
-        DecimalFormat formatter = new DecimalFormat("#,###");
-        String price = formatter.format(amount);
+//        DecimalFormat formatter = new DecimalFormat("#,###").format(amount);
+        String price = new DecimalFormat("#,###").format(amount);
         String strTitle = dao.getCarName() + " " +
                 dao.getCarSub() + " " + dao.getCarSubDetail();
         String strDetail = "ปี "+ AngelCarUtils.textFormatHtml(color1,""+dao.getCarYear())+
                 " ราคา "+ AngelCarUtils.textFormatHtml(color2, price) +" บาท";
         holderPost.angelCarPost.setDetails(strTitle);
         holderPost.angelCarPost.setDetails2Html(strDetail);
-        holderPost.angelCarPost.setTime(dateFormat.format(dao.getCarModifyTime()));
+        String datetime = AngelCarUtils.formatTimeAndDay(mContext,dao.getCarModifyTime());
+        holderPost.angelCarPost.setTime(datetime);
     }
 
 //    private  <T extends ViewHolderPost> T ViewHolder(T t){

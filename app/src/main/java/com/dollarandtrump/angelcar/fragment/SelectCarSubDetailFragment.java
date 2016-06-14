@@ -15,14 +15,12 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
-
-import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -99,13 +97,13 @@ public class SelectCarSubDetailFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
 
@@ -135,7 +133,7 @@ public class SelectCarSubDetailFragment extends Fragment {
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
             carModel.setSubDetailDao(dao.getCarSubDao().get(position));
-            BusProvider.getInstance().post(carModel);
+            MainThreadBus.getInstance().post(carModel);
             OnSelectData onSelectData = (OnSelectData) getActivity();
             onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE_DETAIL);
 

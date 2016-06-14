@@ -89,7 +89,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
         context = parent.getContext();
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_shop,parent,false);
+                .inflate(R.layout.adapter_item_shop,parent,false);
         return new ViewHolder(v);
     }
 
@@ -116,7 +116,8 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                         .load(item.getCarImageThumbnailPath())
                         .placeholder(R.drawable.loading)
                         .into(viewHolder.shopImage);
-                viewHolder.carName.setText(item.getCarName());
+            String carName = item.getCarSub()+" "+item.getCarSubDetail();
+                viewHolder.carName.setText(carName);
 
         }
 

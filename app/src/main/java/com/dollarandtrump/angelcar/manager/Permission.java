@@ -1,5 +1,6 @@
 package com.dollarandtrump.angelcar.manager;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -56,5 +57,17 @@ public class Permission {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
+    }
+
+    public static boolean storeage(Activity mContext) {
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mContext,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    0);
+            return false;
+        } else {
+            return true;
+        }
     }
 }

@@ -17,7 +17,7 @@ import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.interfaces.WaitMessageOnBackground;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.WaitMessageSynchronous;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.squareup.otto.Subscribe;
 
@@ -139,13 +139,13 @@ public class ChatActivity extends AppCompatActivity {
 
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     @Subscribe
@@ -185,7 +185,7 @@ public class ChatActivity extends AppCompatActivity {
                 messageManager.appendDataToBottomPosition(response.body());
                 messageAdapter.setMessageDao(messageManager.getMessageDao());
                 messageAdapter.notifyDataSetChanged();
-                BusProvider.getInstance().post(messageManager);
+                MainThreadBus.getInstance().post(messageManager);
 //                for (MessageDao g : response.body().getListMessage()) {
 //                    Log.i(TAG, "doInBackground: " + g.getMessageId());
 //                    Log.i(TAG, "doInBackground: " + g.getMessageText());

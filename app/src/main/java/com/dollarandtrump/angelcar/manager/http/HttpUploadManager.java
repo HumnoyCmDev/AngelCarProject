@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar.manager.http;
 
 import android.util.Log;
 
+import com.dollarandtrump.angelcar.model.ImageModel;
 import com.dollarandtrump.angelcar.model.ShopImageModel;
 
 import java.io.File;
@@ -65,9 +66,9 @@ public class HttpUploadManager {
 
     public static void uploadFileShop(ShopImageModel imageModel, final String shopId, final Subscriber<String> subscriber) {
         final OkHttpClient okHttpClient = new OkHttpClient();
-        Observable.from(imageModel.getImageModels()).subscribe(new Action1<ShopImageModel.ImageModel>() {
+        Observable.from(imageModel.getImageModels()).subscribe(new Action1<ImageModel>() {
             @Override
-            public void call(final ShopImageModel.ImageModel imageModel) {
+            public void call(final ImageModel imageModel) {
                 Observable.create(new Observable.OnSubscribe<String>() {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {

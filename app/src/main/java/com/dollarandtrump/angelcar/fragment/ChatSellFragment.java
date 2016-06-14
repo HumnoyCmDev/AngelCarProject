@@ -10,21 +10,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.dollarandtrump.angelcar.Adapter.MessageAdapter;
+import com.dollarandtrump.angelcar.Adapter.ConversationAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
-import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
-import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
-import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
-
-import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +32,7 @@ public class ChatSellFragment extends Fragment {
     @Bind(R.id.list_view) ListView listView;
 
 
-    MessageAdapter adapter;
+    ConversationAdapter adapter;
 //    MessageCollectionDao dao;
     MessageManager messageManager;
 
@@ -71,7 +66,7 @@ public class ChatSellFragment extends Fragment {
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
         ButterKnife.bind(this, rootView);
-        adapter = new MessageAdapter();
+        adapter = new ConversationAdapter();
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
         listView.setAdapter(adapter);
@@ -95,13 +90,13 @@ public class ChatSellFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     @Subscribe

@@ -18,7 +18,7 @@ import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dialog.YearDialog;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
 import com.squareup.otto.Subscribe;
@@ -110,7 +110,7 @@ public class SelectCarSubFragment extends Fragment {
 
         if (requestCode == DIALOG_YEAR && resultCode == Activity.RESULT_OK && data != null){
             carModel.setYear(data.getIntExtra(YearDialog.ARG_YEAR,2016));
-            BusProvider.getInstance().post(carModel);
+            MainThreadBus.getInstance().post(carModel);
             OnSelectData onSelectData = (OnSelectData) getActivity();
             onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE);
         }
@@ -121,13 +121,13 @@ public class SelectCarSubFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     @Override

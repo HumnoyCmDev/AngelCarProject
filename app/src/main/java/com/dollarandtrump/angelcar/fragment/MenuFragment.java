@@ -1,5 +1,6 @@
 package com.dollarandtrump.angelcar.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.activity.ListCarImageActivity;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 
 /***************************************
@@ -53,9 +58,15 @@ public class MenuFragment extends Fragment {
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
+        ButterKnife.bind(this,rootView);
         // Init 'View' instance(s) with rootView.findViewById here
     }
 
+    @OnClick(R.id.btnTest)
+    public void sampleListCarGallery(){
+        Intent in = new Intent(getContext(),ListCarImageActivity.class);
+        startActivity(in);
+    }
     @Override
     public void onStart() {
         super.onStart();

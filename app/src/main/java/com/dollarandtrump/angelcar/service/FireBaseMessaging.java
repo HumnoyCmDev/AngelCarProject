@@ -4,14 +4,12 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.activity.MainActivity;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.activity.ConversationActivity;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -33,12 +31,18 @@ public class FireBaseMessaging extends FirebaseMessagingService{
 //        sendNotification(remoteMessage.getNotification().getBody());
     }
 
+    @Override
+    public void onMessageSent(String s) {
+        super.onMessageSent(s);
+        Log.i(TAG, "onMessageSent: "+s);
+
+    }
+
     private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ConversationActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-
 //        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Uri defaultSoundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)

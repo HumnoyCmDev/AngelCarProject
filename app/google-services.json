@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1064422136727-ijnb82vr62s9bn15ukg0tbqtunf07vfi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dollarandtrump.angelcar",
+            "certificate_hash": "247072F1A0FDC2F9D1810FCC7BAE0973142A1B37"
+          }
+        },
+        {
           "client_id": "1064422136727-7606rudki5fcnb9vlaihrtq6qkl1hcvi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -42,6 +50,13 @@
             {
               "client_id": "1064422136727-fkdm2gnd3jqbcl8eijulv4tu9a17ki75.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "1064422136727-dttjcvsjg06vblc8v7bbpa9u84hkdc26.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.angelcar.angelcar"
+              }
             }
           ]
         },

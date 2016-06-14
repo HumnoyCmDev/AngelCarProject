@@ -38,11 +38,11 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
@@ -74,7 +74,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Subscriber;
-import rx.Subscription;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -451,13 +450,13 @@ public class PostFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
 

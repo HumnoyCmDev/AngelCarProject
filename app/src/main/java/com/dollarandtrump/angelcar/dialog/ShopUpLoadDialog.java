@@ -10,7 +10,6 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,13 +23,12 @@ import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
-import com.dollarandtrump.angelcar.manager.http.SendMessageManager;
+import com.dollarandtrump.angelcar.model.ImageModel;
 import com.dollarandtrump.angelcar.model.ShopImageModel;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.squareup.otto.Subscribe;
-
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,7 +56,7 @@ public class ShopUpLoadDialog extends DialogFragment {
 //    List<File> listPicture;
     ShopUpLoadAdapter adapter;
     ShopImageModel imageModel;
-    List<ShopImageModel.ImageModel> imageModelList;
+    List<ImageModel> imageModelList;
     int index = 0;
 
     public static ShopUpLoadDialog newInstance() {
@@ -76,7 +74,7 @@ public class ShopUpLoadDialog extends DialogFragment {
 
     private void init(Bundle savedInstanceState) {
 //        listPicture = new ArrayList<>();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
 
@@ -139,8 +137,7 @@ public class ShopUpLoadDialog extends DialogFragment {
 
         if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && null != data) {
             String picturePath = AngelCarUtils.getFilesPath(getContext(),data);
-            ShopImageModel.ImageModel model =
-                    new ShopImageModel.ImageModel();
+            ImageModel model = new ImageModel();
             model.setFileImage(new File(picturePath));
             model.setIndex(String.valueOf(index));
             imageModelList.add(model);
@@ -208,7 +205,7 @@ public class ShopUpLoadDialog extends DialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     /******************
@@ -242,7 +239,7 @@ public class ShopUpLoadDialog extends DialogFragment {
         public ShopUpLoadAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             mContext = parent.getContext();
             View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_adapter_gallery, parent, false);
+                    .inflate(R.layout.adapter_item_gallery, parent, false);
             return new ViewHolder(v);
 
         }

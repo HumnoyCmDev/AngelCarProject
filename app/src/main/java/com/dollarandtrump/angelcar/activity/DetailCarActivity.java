@@ -25,16 +25,16 @@ import com.dollarandtrump.angelcar.Adapter.ChatAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
-import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
+import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.interfaces.WaitMessageOnBackground;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.WaitMessageSynchronous;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.OkHttpManager;
 import com.dollarandtrump.angelcar.view.HeaderChatCar;
@@ -273,13 +273,13 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     @Subscribe
@@ -495,7 +495,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         public void onMainThread() {
             if (response.isSuccessful()){
                 MessageCollectionDao messageGa = response.body();
-                BusProvider.getInstance().post(messageGa);
+                MainThreadBus.getInstance().post(messageGa);
             }else {
                 Log.i(TAG, "doInBackground: "+response.errorBody());
             }

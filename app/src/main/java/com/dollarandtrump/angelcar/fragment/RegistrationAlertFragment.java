@@ -11,7 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.util.Patterns;
 
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
 
 import java.util.regex.Pattern;
@@ -75,7 +75,7 @@ public class RegistrationAlertFragment extends DialogFragment {
                 .setMessage("ลงทะเบียนด้วยบัญชี Email: "+EMAIL_ADDRESS)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        BusProvider.getInstance().post(new RegistrationResult(isResult,EMAIL_ADDRESS));
+                        MainThreadBus.getInstance().post(new RegistrationResult(isResult,EMAIL_ADDRESS));
                     }
                 })
 

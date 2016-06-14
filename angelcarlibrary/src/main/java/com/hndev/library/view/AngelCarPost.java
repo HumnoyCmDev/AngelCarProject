@@ -177,7 +177,7 @@ public class AngelCarPost extends BaseCustomViewGroup {
     }
 
     public void setTime(String strTime){
-        String t = strTime+" น.";
+        String t = strTime;//+" น.";
         time.setText(t);
     }
 

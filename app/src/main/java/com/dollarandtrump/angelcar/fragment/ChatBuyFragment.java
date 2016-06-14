@@ -10,23 +10,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.dollarandtrump.angelcar.Adapter.MessageAdapter;
+import com.dollarandtrump.angelcar.Adapter.ConversationAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.CarIdDao;
-import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
-import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
-import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
-import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
-
-import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +32,7 @@ public class ChatBuyFragment extends Fragment {
 
     @Bind(R.id.list_view) ListView listView;
 
-    MessageAdapter adapter;
+    ConversationAdapter adapter;
     MessageManager messageManager;
 
     private static final String TAG = "ChatBuyFragment";
@@ -70,7 +63,7 @@ public class ChatBuyFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this, rootView);
-        adapter = new MessageAdapter();
+        adapter = new ConversationAdapter();
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
         listView.setAdapter(adapter);
@@ -117,13 +110,13 @@ public class ChatBuyFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     @Override

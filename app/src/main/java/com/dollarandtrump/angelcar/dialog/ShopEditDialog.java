@@ -20,7 +20,7 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
@@ -28,8 +28,6 @@ import com.github.siyamed.shapeimageview.CircularImageView;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -67,7 +65,7 @@ public class ShopEditDialog extends DialogFragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        BusProvider.getInstance().register(this);
+        MainThreadBus.getInstance().register(this);
         Bundle args = getArguments();
         if (args != null){
             shopName = args.getString("shopName");
@@ -193,7 +191,7 @@ public class ShopEditDialog extends DialogFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        BusProvider.getInstance().unregister(this);
+        MainThreadBus.getInstance().unregister(this);
     }
 
     /******************

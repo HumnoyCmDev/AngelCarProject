@@ -3,7 +3,6 @@ package com.dollarandtrump.angelcar.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
 
@@ -124,7 +123,7 @@ public class SelectBrandFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
             carModel.setBrandDao(dao.getBrandDao().get(position));
-            BusProvider.getInstance().post(carModel);
+            MainThreadBus.getInstance().post(carModel);
 
             OnSelectData onSelectData = (OnSelectData) getActivity();
             onSelectData.onSelectedCallback(PostActivity.CALLBACK_BRAND);

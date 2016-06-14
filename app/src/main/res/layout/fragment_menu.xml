@@ -46,6 +46,7 @@
                 android:background="#9B9B9B" />
 
             <TextView
+                android:id="@+id/btnTest"
                 android:drawableLeft="@drawable/shape_list_button_follow_on"
                 android:text="Follow"
                 android:drawablePadding="16dp"

@@ -32,7 +32,6 @@
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -40,11 +39,20 @@
             android:name=".activity.DetailCarActivity"
             android:label="ห้องสนทนา"
             android:windowSoftInputMode="stateHidden|adjustResize" >
+            <!--<intent-filter>-->
+                <!--<action android:name="com.dollarandtrump.angelcar.chat"/>-->
+                <!--<category android:name="android.intent.category.DEFAULT"/>-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <activity android:name=".activity.ConversationActivity" >
             <intent-filter>
+                <action android:name="com.dollarandtrump.angelcar.chat"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-            </activity>
-        <activity android:name=".activity.ViewChatAllActivity" />
+        </activity>
+
+
         <activity
             android:name=".activity.ChatActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
@@ -89,6 +97,8 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
+
+        <activity android:name=".activity.ListCarImageActivity"/>
 
     </application>
 

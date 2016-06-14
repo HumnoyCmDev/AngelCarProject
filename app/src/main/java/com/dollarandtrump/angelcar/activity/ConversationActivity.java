@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarIdDao;
@@ -23,7 +22,7 @@ import com.dollarandtrump.angelcar.fragment.ChatSellFragment;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.squareup.otto.Produce;
@@ -43,12 +42,12 @@ import rx.functions.Action1;
 import rx.functions.Func2;
 import rx.schedulers.Schedulers;
 
-public class ViewChatAllActivity extends AppCompatActivity implements OnClickItemMessageListener {
+public class ConversationActivity extends AppCompatActivity implements OnClickItemMessageListener {
     @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.tl_8) SlidingTabLayout slidingTabLayout;
     private Subscription subscriptionMessage;
     private Subscription subscriptionCarId;
-    private MessageManager mgsManager;
+//    private MessageManager mgsManager;
 
     private final String[] mTitles = {"ทั้งหมด", "คุยกับคนซื้อ", "คุยกับคนขาย"};
 
@@ -61,6 +60,12 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
 
         if (savedInstanceState == null)
             loadAllCarId();
+
+        /**
+        * TODO รับ Event bus หน้า Detail เพื่อเช็คค่าจาก push Notification
+        * ค่าที่ได้มา ตรงกับห้องที่กำลังแชทอยู่หรอืไม่ ถ้าไม่ ก็แสดงการแจ้งเตือน ถ้าใช่ไม่ต้องแสดง*
+         * กรณีที่ ไม่ได้อยู่ในการแชท ก็แสดงการแจ้งเตือนทั้งหมด
+        * */
 
     }
 
@@ -113,8 +118,8 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
 
                     @Override
                     public void onNext(MessageManager messageManager) {
-                         mgsManager = messageManager;
-                        BusProvider.getInstance().post(produceMsgManager());
+//                         mgsManager = messageManager;
+                        MainThreadBus.getInstance().post(messageManager);
                     }
                 });
     }
@@ -127,6 +132,7 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
 
 
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -136,17 +142,17 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
             subscriptionCarId.unsubscribe();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        BusProvider.getInstance().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        BusProvider.getInstance().unregister(this);
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        MainThreadBus.getInstance().register(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        MainThreadBus.getInstance().unregister(this);
+//    }
 
     /**************
     *Listener Zone*
@@ -216,10 +222,10 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
         }
     };
 */
-    @Produce
-    public MessageManager produceMsgManager(){
-        return mgsManager;
-    }
+//    @Produce
+//    public MessageManager produceMsgManager(){
+//        return mgsManager;
+//    }
 
     @Override
     public void onClickItemMessage(final MessageDao messageDao) {
@@ -231,7 +237,7 @@ public class ViewChatAllActivity extends AppCompatActivity implements OnClickIte
                 if (response.isSuccessful()) {
                     if (response.body().getListCar() != null) {
                         PostCarDao item = response.body().getListCar().get(0);
-                        Intent intent = new Intent(ViewChatAllActivity.this, DetailCarActivity.class);
+                        Intent intent = new Intent(ConversationActivity.this, DetailCarActivity.class);
                         intent.putExtra("PostCarDao", Parcels.wrap(item));
                         intent.putExtra("intentForm", 1);
                         intent.putExtra("messageFromUser", messageDao.getMessageFromUser());

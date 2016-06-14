@@ -46,7 +46,7 @@ import com.dollarandtrump.angelcar.dialog.YearDialog;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.PostCarManager;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.InformationCarModel;
 
@@ -148,7 +148,7 @@ public class FeedPostFragment extends Fragment {
         // Init 'View' instance(s) with rootView.findViewById here
         ButterKnife.bind(this,rootView);
 
-        adapter = new FeedPostCarAdapter(lastPositionInteger);
+        adapter = new FeedPostCarAdapter(getContext(),lastPositionInteger);
         adapter.setDao(carManager.getDao());
         listView.setAdapter(adapter);
         mSwipeRefresh.setColorSchemeColors(
@@ -518,11 +518,11 @@ public class FeedPostFragment extends Fragment {
 
             if (firstVisibleItem < last && !control){
                 //scrollUp
-                BusProvider.getInstance().post(new Scrolling(Scrolling.SCROLL_UP));
+                MainThreadBus.getInstance().post(new Scrolling(Scrolling.SCROLL_UP));
                 control = true;
             }else if(firstVisibleItem > last && control){
                 //scrollDown
-                BusProvider.getInstance().post(new Scrolling(Scrolling.SCROLL_DOWN));
+                MainThreadBus.getInstance().post(new Scrolling(Scrolling.SCROLL_DOWN));
                 control = false;
 
             }

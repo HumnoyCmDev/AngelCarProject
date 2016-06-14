@@ -24,8 +24,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
@@ -36,10 +34,8 @@ import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.fragment.RegistrationAlertFragment;
 import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.BusProvider;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.CacheShop;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
@@ -55,7 +51,6 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import butterknife.Bind;
@@ -110,9 +105,6 @@ public class MainActivity extends AppCompatActivity {
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
 
-//        Intent in = new Intent(MainActivity.this,ChatActivity.class);
-//        startActivity(in);
-
     }
 
 //  googlePicker
@@ -128,12 +120,12 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == ShopUpLoadDialog.REQUEST_CODE && resultCode == RESULT_OK){
            // requestCode ShopUpLoadDialog
            Log.i(TAG, "onActivityResult: "+requestCode+" , "+resultCode);
-           BusProvider.getInstance()
+            MainThreadBus.getInstance()
                    .post(new ActivityResultEvent(requestCode,resultCode,data));
         }
 
         if (requestCode == ShopEditDialog.REQUEST_CODE && resultCode == RESULT_OK){
-            BusProvider.getInstance()
+            MainThreadBus.getInstance()
                     .post(new ActivityResultEvent(requestCode,resultCode,data));
         }
     }
@@ -272,14 +264,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        BusProvider.getInstance().register(this);
+//        BusProvider.getInstance().register(this);
         MainThreadBus.getInstance().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        BusProvider.getInstance().unregister(this);
+//        BusProvider.getInstance().unregister(this);
         MainThreadBus.getInstance().unregister(this );
     }
 
@@ -348,27 +340,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void initToolbars() {
         setSupportActionBar(toolbar);
-//        drawerToggle = new ActionBarDrawerToggle(MainActivity.this, drawerLayout, R.string.hello_world, R.string.hello_world);
-//        drawerLayout.setDrawerListener(drawerToggle);
-
     }
-//    public void onPostCreate(Bundle savedInstanceState) { //ตัว fix Hamburger
-//        super.onPostCreate(savedInstanceState);
-//        drawerToggle.syncState();
-//    }
-
-//    public void onConfigurationChanged(Configuration newConfig) {
-//        super.onConfigurationChanged(newConfig);
-//        drawerToggle.onConfigurationChanged(newConfig);
-//    }
 
     public boolean onOptionsItemSelected(MenuItem item) { //ตัว select เรียก slide จาก Hamburger
 //        if (drawerToggle.onOptionsItemSelected(item))
 //            return true;
         int id = item.getItemId();
         if (id == R.id.action_chat) {
-            startActivity(initIntent(ViewChatAllActivity.class));
-            overridePendingTransition(R.anim.hash_tag_slide_left_in,R.anim.activity_out);
+            startActivity(initIntent(ConversationActivity.class));
+            overridePendingTransition(R.anim.activity_slide_left_in,R.anim.activity_out);
             return true;
         }
         return super.onOptionsItemSelected(item);
