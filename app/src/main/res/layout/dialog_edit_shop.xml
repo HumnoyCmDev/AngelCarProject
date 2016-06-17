@@ -48,18 +48,53 @@
                     android:clickable="true"/>
 
 
-                <EditText
+                <!--<EditText
                     android:gravity="center"
                     android:maxLength="20"
                     android:layout_marginTop="10dp"
-                    android:layout_centerHorizontal="true"
                     android:textSize="15sp"
                     android:textStyle="bold"
                     android:id="@+id/editShopName"
                     android:textColor="@android:color/black"
                     android:text="CEO CLS Development"
                     android:layout_width="200dp"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"/>-->
+
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_name"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:maxLength="20"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:id="@+id/editShopName"
+                            android:textColor="@android:color/black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Name" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+
 
                 <TextView
                     android:layout_marginTop="5dp"
@@ -73,7 +108,7 @@
                     android:layout_width="147dp"
                     android:layout_height="24dp"/>
 
-                <EditText
+                <!--<EditText
                     android:gravity="center"
                     android:maxLength="20"
                     android:layout_marginTop="5dp"
@@ -83,7 +118,40 @@
                     android:textColor="@android:color/black"
                     android:text="รถมือสองสสสส"
                     android:layout_width="200dp"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"/>-->
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/input_layout_shop"
+                        android:layout_marginTop="10dp"
+                        android:layout_weight="3"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:maxLength="20"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:id="@+id/editShopDescription"
+                            android:textColor="@android:color/black"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Description" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <Space
+                        android:layout_weight="1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

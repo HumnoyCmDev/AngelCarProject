@@ -32,7 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class SelectCarSubFragment extends Fragment {
+public class CarSubFragment extends Fragment {
     private static String SAVE_INSTANCE_USER_INFO = "SAVE_INSTANCE_USER_INFO";
     private static String SAVE_INSTANCE_CAT_TYPE_SUB = "SAVE_INSTANCE_CAT_TYPE_SUB";
     private static String TAG = "CarSubFragment";
@@ -45,8 +45,8 @@ public class SelectCarSubFragment extends Fragment {
     private InformationCarModel carModel;
     private CarSubCollectionDao dao;
 
-    public static SelectCarSubFragment newInstance() {
-        SelectCarSubFragment fragment = new SelectCarSubFragment();
+    public static CarSubFragment newInstance() {
+        CarSubFragment fragment = new CarSubFragment();
 //        Bundle args = new Bundle();
 //        args.putInt("position",position);
 //        fragment.setArguments(args);
@@ -112,7 +112,7 @@ public class SelectCarSubFragment extends Fragment {
             carModel.setYear(data.getIntExtra(YearDialog.ARG_YEAR,2016));
             MainThreadBus.getInstance().post(carModel);
             OnSelectData onSelectData = (OnSelectData) getActivity();
-            onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE);
+            onSelectData.onSelectedCallback(PostActivity.CALL_CAR_TYPE);
         }
 
     }

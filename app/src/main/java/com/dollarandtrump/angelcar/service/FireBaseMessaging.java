@@ -27,7 +27,6 @@ public class FireBaseMessaging extends FirebaseMessagingService{
             Log.d(TAG, "From: " + remoteMessage.getFrom());
             Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
             MainThreadBus.getInstance().post(remoteMessage);
-
 //        sendNotification(remoteMessage.getNotification().getBody());
     }
 
@@ -47,7 +46,7 @@ public class FireBaseMessaging extends FirebaseMessagingService{
         Uri defaultSoundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("FCM Message")
+                .setContentTitle("AngelCar")
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)

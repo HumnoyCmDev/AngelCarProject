@@ -28,7 +28,7 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
-public class SelectBrandFragment extends Fragment {
+public class BrandFragment extends Fragment {
 
 
     @Bind(R.id.gridview) GridView gridview;
@@ -38,10 +38,10 @@ public class SelectBrandFragment extends Fragment {
     BrandGridAdapter adapter;
     Subscription subscription;
 
-    private static final String TAG = "SelectBrandFragment";
+    private static final String TAG = "BrandFragment";
 
-    public static SelectBrandFragment newInstance(){
-        SelectBrandFragment fragment = new SelectBrandFragment();
+    public static BrandFragment newInstance(){
+        BrandFragment fragment = new BrandFragment();
         return fragment;
     }
 
@@ -126,7 +126,7 @@ public class SelectBrandFragment extends Fragment {
             MainThreadBus.getInstance().post(carModel);
 
             OnSelectData onSelectData = (OnSelectData) getActivity();
-            onSelectData.onSelectedCallback(PostActivity.CALLBACK_BRAND);
+            onSelectData.onSelectedCallback(PostActivity.CALL_BRAND);
         }
     };
 

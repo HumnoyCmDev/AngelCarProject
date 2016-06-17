@@ -1,5 +1,14 @@
 package com.dollarandtrump.angelcar.model;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
+
+import com.dollarandtrump.angelcar.utils.FileUtils;
+
+import org.parceler.Parcel;
+
 import java.io.File;
 
 /********************************************
@@ -7,9 +16,24 @@ import java.io.File;
  * @AngelCarProject
  * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
  ********************************************/
+@Parcel
 public class ImageModel {
-    private File mFileImage;
+    private File mFileImage; // ตัดออก
     private String mIndex;
+
+    Uri uri;
+
+    public Uri getUri() {
+        return uri;
+    }
+
+    public void setUri(Uri uri) {
+        this.uri = uri;
+    }
+
+    public File convertToFile(Context mContext){
+        return FileUtils.getFile(mContext,uri);
+    }
 
     public ImageModel() {
     }

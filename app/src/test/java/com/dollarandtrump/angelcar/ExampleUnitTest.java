@@ -1,6 +1,11 @@
 package com.dollarandtrump.angelcar;
 
+import android.net.Uri;
+import android.os.Environment;
+
 import org.junit.Test;
+
+import java.io.File;
 
 import static org.junit.Assert.*;
 
@@ -10,8 +15,6 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(40, "eJ1uDeno4Pw:APA91bHCoV82ZHri1qTIxLSYTxRbfyYftTaA4xu3QvFw4WBEMm54xPxqA8XIHpQ4AXGSNW20gRgr0HtJz4IGv4GmN8Y2Dhhilw7o06W31Ac2CBVMJdOEb2nAIE8xvQc6wJKa6OPEON36".length());
-
     }
 
 }

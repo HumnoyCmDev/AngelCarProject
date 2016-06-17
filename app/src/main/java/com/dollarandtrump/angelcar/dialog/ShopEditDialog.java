@@ -121,7 +121,7 @@ public class ShopEditDialog extends DialogFragment {
         }
         String shopRef = Registration.getInstance().getShopRef();
         String message = shopRef+"||"+shopName+"||"+shopDescription;
-        Observable<Results> rxCall = HttpManager.getInstance().getService().editShopObservable(message)
+        Observable<Results> rxCall = HttpManager.getInstance().getService().observableEditShop(message)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
         rxCall.subscribe(new Observer<Results>() {
@@ -160,7 +160,7 @@ public class ShopEditDialog extends DialogFragment {
                         public void onNext(String s) {
                             Log.i("ShopEdit", "onNext: "+s);
                         }
-                    });
+            });
         }
         dismiss();
     }

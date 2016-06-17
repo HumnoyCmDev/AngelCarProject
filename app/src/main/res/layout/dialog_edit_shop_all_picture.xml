@@ -16,7 +16,7 @@
            android:layout_gravity="center"
            android:id="@+id/recyclerShopAllPicture"
            android:numColumns="auto_fit"
-           android:columnWidth="110dp"
+           android:columnWidth="115dp"
            android:padding="10dp"
            android:layout_width="match_parent"
            android:layout_height="match_parent"/>

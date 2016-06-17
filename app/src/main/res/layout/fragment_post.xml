@@ -1,24 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="#EEEEEE"
+    android:fillViewport="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <ScrollView
-        android:fillViewport="true"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/mainLayout"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <!--root Photo-->
         <LinearLayout
+            android:visibility="visible"
             android:id="@+id/contentPhoto1"
             android:padding="2dp"
             android:orientation="horizontal"
@@ -44,8 +39,8 @@
 
 
         </LinearLayout>
-
         <LinearLayout
+            android:visibility="visible"
             android:id="@+id/contentPhoto2"
             android:padding="2dp"
             android:orientation="horizontal"
@@ -79,15 +74,12 @@
             app:cardElevation="4dp"
             android:layout_margin="10dp"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-
+            android:layout_height="wrap_content">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
 
             <TextView
@@ -108,7 +100,7 @@
             <LinearLayout
                 android:layout_marginTop="3dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -122,7 +114,7 @@
                         android:text=""
                         android:textOff=""
                         android:textOn=""
-                        android:id="@+id/fragment_all_post_tgGear"
+                        android:id="@+id/tgGear"
                         android:background="@drawable/selector_gear_toggle_button"
                         android:layout_width="74dp"
                         android:layout_height="36dp" />
@@ -131,7 +123,7 @@
                             android:text="กข-131"
                             android:hint="เลขทะเบียน"
                             android:inputType="text"
-                            android:id="@+id/fragment_all_post_etRegister"
+                            android:id="@+id/etRegister"
                             android:background="@drawable/background_edit_register"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
@@ -147,7 +139,7 @@
                         android:background="@drawable/background_edit_phone"
                         android:inputType="phone|text"
                         android:maxLength="14"
-                        android:id="@+id/fragment_all_post_etTelephone"
+                        android:id="@+id/etTelephone"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:textColorHint="#BDBDBD"/>
@@ -160,7 +152,7 @@
 
                     <EditText
                         android:text="Auttpon Reungsa"
-                        android:id="@+id/fragment_all_post_etName"
+                        android:id="@+id/etName"
                         android:background="@drawable/background_edit_name"
                         android:hint="ชื่อ-นามสกุล"
                         android:layout_width="match_parent"
@@ -171,7 +163,7 @@
                         android:text="2000000"
                         android:inputType="numberDecimal"
                         android:digits="0123456789.,"
-                        android:id="@+id/fragment_all_post_etPrice"
+                        android:id="@+id/etPrice"
                         android:background="@drawable/background_edit_price"
                         android:hint="กรุณาระบุราคา"
                         android:layout_width="match_parent"
@@ -180,7 +172,7 @@
 
                     <EditText
                         android:text="รถน้อย วิ่งน้อย ขับน้อย ขับยาว"
-                        android:id="@+id/fragment_all_post_etTopic"
+                        android:id="@+id/etTopic"
                         android:background="@drawable/background_edit_topic"
                         android:hint="ระบุข้อความ สั้นๆ..."
                         android:layout_width="match_parent"
@@ -191,7 +183,7 @@
                     android:text="สนใจ ติดต่อ 093-xxx-xxxx\n อยากขายยยยย ติดต่อมาๆๆๆๆๆ"
                     android:scrollbars="vertical"
                     android:textSize="18sp"
-                    android:id="@+id/fragment_all_post_etDescription"
+                    android:id="@+id/etDescription"
                     android:layout_width="match_parent"
                     android:layout_height="135dp"
                     android:background="@drawable/background_edit_detail"
@@ -202,23 +194,26 @@
 
             </LinearLayout>
 
-                <Button
-                    android:layout_marginTop="5dp"
-                    android:layout_gravity="bottom"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
-                    android:textColor="@android:color/white"
-                    android:id="@+id/fragment_all_post_ButtonPost"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/selector_menu_bottom"
-                    android:text="ลงประกาศขาย" />
+
 
         </LinearLayout>
         </android.support.v7.widget.CardView>
 
+        <Button
+            android:layout_gravity="bottom"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:id="@+id/buttonPost"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_menu_bottom"
+            android:text="ลงประกาศขาย" />
+        <View
+            android:background="#FFE0E0E0"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"/>
+
     </LinearLayout>
 
-    </ScrollView>
-
-</LinearLayout>
+</ScrollView>

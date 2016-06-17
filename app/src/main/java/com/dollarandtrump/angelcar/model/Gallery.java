@@ -1,5 +1,7 @@
 package com.dollarandtrump.angelcar.model;
 
+import org.parceler.Parcel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +10,15 @@ import java.util.List;
  * @AngelCarProject
  * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
  ********************************************/
-public class Gallery<Model> {
-    private List<Model> listGallery = new ArrayList<>();
+@Parcel
+public class Gallery {
+    private List<ImageModel> listGallery = new ArrayList<>();
 
-    public List<Model> getListGallery() {
+    public List<ImageModel> getListGallery() {
         return listGallery;
     }
 
-    public void setListGallery(Model modelGallery) {
+    public void setListGallery(ImageModel modelGallery) {
         this.listGallery.add(getCount(),modelGallery);
     }
 
@@ -27,7 +30,7 @@ public class Gallery<Model> {
         return false;
     }
 
-    public void addItem(Model model){
+    public void addItem(ImageModel model){
        if (listGallery.size() > 0){
         listGallery.add(listGallery.size(),model);
        }

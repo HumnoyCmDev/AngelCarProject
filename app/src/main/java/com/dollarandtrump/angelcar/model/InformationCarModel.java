@@ -5,7 +5,9 @@ import com.dollarandtrump.angelcar.dao.CarSubDao;
 
 import org.parceler.Parcel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by humnoyDeveloper on 19/4/59. 13:45
@@ -31,6 +33,25 @@ public class InformationCarModel {
     //sub detail
     CarSubDao subDetailDao;
 
+    Gallery gallery;
+
+    public Gallery getGallery() {
+        return gallery;
+    }
+
+    public void setGallery(Gallery gallery) {
+        this.gallery = gallery;
+    }
+
+    //    List<ImageModel> listImage = new ArrayList<>();
+//
+//    public List<ImageModel> getListImage() {
+//        return listImage;
+//    }
+//
+//    public void setListImage(List<ImageModel> listImage) {
+//        this.listImage = listImage;
+//    }
 
     public String getPriceStart() {
         return priceStart;

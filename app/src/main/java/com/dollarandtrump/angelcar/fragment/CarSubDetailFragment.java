@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.ListView;
 
-import com.dollarandtrump.angelcar.Adapter.CarSubDetailGridAdapter;
+import com.dollarandtrump.angelcar.Adapter.CarSubDetailAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
@@ -28,19 +28,19 @@ import retrofit2.Call;
 import retrofit2.Callback;
 
 
-public class SelectCarSubDetailFragment extends Fragment {
+public class CarSubDetailFragment extends Fragment {
 
 //    private ProgressDialog mProgressDialog;
 
-     @Bind(R.id.grid_detail_model) GridView mGridView;
+     @Bind(R.id.listCarDetail) ListView mlListView;
 
     private CarSubCollectionDao dao;
     private InformationCarModel carModel;
-    private CarSubDetailGridAdapter mAdapter;
+    private CarSubDetailAdapter mAdapter;
     private static final String TAG = "CarSubDetailFragment";
 
-    public static SelectCarSubDetailFragment newInstance() {
-        SelectCarSubDetailFragment fragment = new SelectCarSubDetailFragment();
+    public static CarSubDetailFragment newInstance() {
+        CarSubDetailFragment fragment = new CarSubDetailFragment();
         return fragment;
     }
 
@@ -72,10 +72,10 @@ public class SelectCarSubDetailFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-        mAdapter = new CarSubDetailGridAdapter();
+        mAdapter = new CarSubDetailAdapter();
         mAdapter.setDao(dao);
-        mGridView.setAdapter(mAdapter);
-        mGridView.setOnItemClickListener(onItemClickListener);
+        mlListView.setAdapter(mAdapter);
+        mlListView.setOnItemClickListener(onItemClickListener);
 
         if (savedInstanceState == null)
             loadCarSubDetail();
@@ -135,7 +135,7 @@ public class SelectCarSubDetailFragment extends Fragment {
             carModel.setSubDetailDao(dao.getCarSubDao().get(position));
             MainThreadBus.getInstance().post(carModel);
             OnSelectData onSelectData = (OnSelectData) getActivity();
-            onSelectData.onSelectedCallback(PostActivity.CALLBACK_CAR_TYPE_DETAIL);
+            onSelectData.onSelectedCallback(PostActivity.CALL_CAR_TYPE_DETAIL);
 
         }
     };

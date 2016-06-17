@@ -99,6 +99,11 @@
         <!-- [END firebase_iid_service] -->
 
         <activity android:name=".activity.ListCarImageActivity"/>
+        <activity
+            android:name=".rx_image.HiddenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
     </application>
 

@@ -11,9 +11,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.fragment.SelectBrandFragment;
-import com.dollarandtrump.angelcar.fragment.SelectCarSubDetailFragment;
-import com.dollarandtrump.angelcar.fragment.SelectCarSubFragment;
+import com.dollarandtrump.angelcar.fragment.ListImageFragment;
+import com.dollarandtrump.angelcar.fragment.BrandFragment;
+import com.dollarandtrump.angelcar.fragment.CarSubDetailFragment;
+import com.dollarandtrump.angelcar.fragment.CarSubFragment;
 import com.dollarandtrump.angelcar.fragment.PostFragment;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
 import com.dollarandtrump.angelcar.view.AngelCarViewPager;
@@ -30,10 +31,12 @@ import butterknife.OnClick;
  ***************************************/
 public class PostActivity extends AppCompatActivity implements OnSelectData{
     private static final String TAG = "PostActivity";
-    public static final int CALLBACK_BRAND = 1;
-    public static final int CALLBACK_CAR_TYPE = 2;
-    public static final int CALLBACK_CAR_TYPE_DETAIL = 3;
-    public static final int CALLBACK_ALL_POST = 4;
+    public static final int CALL_BRAND = 1;
+    public static final int CALL_CAR_TYPE = 2;
+    public static final int CALL_CAR_TYPE_DETAIL = 3;
+    public static final int CALL_GALLERY_OK = 4;
+    public static final int CALL_GALLERY_CANCEL = -4;
+    public static final int CALL_FINISH_POST = 5;
 
     private int lastPosition = 0;
 
@@ -90,19 +93,23 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
 
     @Override
     public void onSelectedCallback(int callback) {
-        if (callback == CALLBACK_ALL_POST){
+        if (callback == CALL_FINISH_POST){
             finish();
             return;
+        }else if (callback == CALL_GALLERY_OK){
+            next.setEnabled(true);
+            return;
+        }else if (callback == CALL_GALLERY_CANCEL){
+            next.setEnabled(false);
+            return;
         }
-
-            pager.setCurrentItem(pager.getCurrentItem()+1);
-            lastPosition = pager.getCurrentItem();
-            enabledButton(pager.getCurrentItem(),lastPosition);
+        pager.setCurrentItem(pager.getCurrentItem()+1);
+        lastPosition = pager.getCurrentItem();
+        enabledButton(pager.getCurrentItem(),lastPosition);
     }
 
     private class PostAdapterViewpager extends FragmentStatePagerAdapter {
 
-        int numPager = 4;
 
         public PostAdapterViewpager(FragmentManager fm) {
             super(fm);
@@ -111,17 +118,18 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         @Override
         public Fragment getItem(int position) {
             switch (position){
-                case 0: return SelectBrandFragment.newInstance();
-                case 1: return SelectCarSubFragment.newInstance();
-                case 2: return SelectCarSubDetailFragment.newInstance();
-                case 3: return PostFragment.newInstance();
+                case 0: return BrandFragment.newInstance();
+                case 1: return CarSubFragment.newInstance();
+                case 2: return CarSubDetailFragment.newInstance();
+                case 3: return ListImageFragment.newInstance();
+                case 4: return PostFragment.newInstance();
             }
             return null;
         }
 
         @Override
         public int getCount() {
-            return numPager;
+            return 5;
         }
     }
 }

@@ -61,12 +61,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         if (savedInstanceState == null)
             loadAllCarId();
 
-        /**
-        * TODO รับ Event bus หน้า Detail เพื่อเช็คค่าจาก push Notification
-        * ค่าที่ได้มา ตรงกับห้องที่กำลังแชทอยู่หรอืไม่ ถ้าไม่ ก็แสดงการแจ้งเตือน ถ้าใช่ไม่ต้องแสดง*
-         * กรณีที่ ไม่ได้อยู่ในการแชท ก็แสดงการแจ้งเตือนทั้งหมด
-        * */
-
     }
 
     private void loadAllCarId() {

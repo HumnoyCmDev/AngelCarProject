@@ -1,22 +1,22 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="100dp"
-        android:height="50dp"
+        android:width="32dp"
+        android:height="22dp"
         android:viewportWidth="107.0"
         android:viewportHeight="84.0">
     <path
         android:pathData="M1.87,2.81h102.67v78.56h-102.67z"
         android:strokeColor="#00000000"
-
+        android:fillColor="#ECF0F1"
         android:strokeWidth="1"/>
     <path
         android:pathData="M106.4,83.23L0,83.23L0,0.94L106.4,0.94L106.4,83.23L106.4,83.23ZM3.73,79.49L102.67,79.49L102.67,4.68L3.73,4.68L3.73,79.49L3.73,79.49Z"
         android:strokeColor="#00000000"
-        android:fillColor="#292929"
+        android:fillColor="#545E73"
         android:strokeWidth="1"/>
     <path
         android:pathData="M9.33,10.29h87.73v63.59h-87.73z"
         android:strokeColor="#00000000"
-        android:fillColor="#292929"
+        android:fillColor="#545E73"
         android:strokeWidth="1"/>
     <path
         android:pathData="M98.93,75.75L7.47,75.75L7.47,8.42L98.93,8.42L98.93,75.75L98.93,75.75ZM11.2,72.01L95.2,72.01L95.2,12.16L11.2,12.16L11.2,72.01L11.2,72.01Z"
@@ -26,7 +26,7 @@
     <path
         android:pathData="M19.47,26.31a8.53,8.55 0,1 0,17.06 0a8.53,8.55 0,1 0,-17.06 0z"
         android:strokeColor="#00000000"
-        android:fillColor="#FFB13D"
+        android:fillColor="#F3D55A"
         android:strokeWidth="1"/>
     <path
         android:pathData="M95.2,55.38L93.33,53.31L70.93,32.73L51.33,54.24L61.57,64.5L69.07,72.01L95.2,72.01L95.2,55.38Z"
@@ -41,7 +41,7 @@
     <path
         android:pathData="M75,64.59a12.83,12.78 0,1 0,25.66 0a12.83,12.78 0,1 0,-25.66 0z"
         android:strokeColor="#00000000"
-        android:fillColor="#FFB13D"
+        android:fillColor="#71C386"
         android:strokeWidth="1"/>
     <path
         android:pathData="M94.24,63.52L88.9,63.52L88.9,58.2C88.9,57.61 88.42,57.13 87.83,57.13C87.24,57.13 86.76,57.61 86.76,58.2L86.76,63.52L81.41,63.52C80.82,63.52 80.35,64 80.35,64.59C80.35,65.18 80.82,65.65 81.41,65.65L86.76,65.65L86.76,70.98C86.76,71.57 87.24,72.05 87.83,72.05C88.42,72.05 88.9,71.57 88.9,70.98L88.9,65.65L94.24,65.65C94.83,65.65 95.31,65.18 95.31,64.59C95.31,64 94.83,63.52 94.24,63.52L94.24,63.52Z"

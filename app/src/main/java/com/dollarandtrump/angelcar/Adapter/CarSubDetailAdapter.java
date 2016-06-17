@@ -11,7 +11,7 @@ import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
 
 
-public class CarSubDetailGridAdapter extends BaseAdapter {
+public class CarSubDetailAdapter extends BaseAdapter {
 
     private CarSubCollectionDao dao;
 
@@ -40,7 +40,7 @@ public class CarSubDetailGridAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder mViewHolder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.grid_detail_row, parent, false);
+            convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_text_car_sub_detail, parent, false);
             mViewHolder = new ViewHolder();
             mViewHolder.cardetail_sub = (TextView) convertView.findViewById(R.id.sub_detail);
 

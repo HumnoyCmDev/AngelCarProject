@@ -38,6 +38,7 @@ import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.OkHttpManager;
 import com.dollarandtrump.angelcar.view.HeaderChatCar;
+import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -70,6 +71,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     private PostCarDao postCarDao;
     private int intentForm; // 0 = form homeFragment , 1 = ChatAll,ChatBuy,ChatSell
     private String messageFromUser;
+    private String mChatSerailKey ;
 
     private static final String TAG = "DetailCarActivity";
 
@@ -107,7 +109,6 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         /*check user*/
             MESSAGE_BY = postCarDao.getShopRef().contains(Registration.getInstance().getShopRef()) ? "shop" : "user";
             Toast.makeText(DetailCarActivity.this, postCarDao.getCarId()+","+MESSAGE_BY, Toast.LENGTH_LONG).show();
-
 
         if (intentForm == 0 && MESSAGE_BY.contains("shop"))
             groupChat.setVisibility(View.GONE);
@@ -167,12 +168,13 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         switch (v.getId()){
             case R.id.message_button_send:
 
-                String user;
-                if (MESSAGE_BY.contains("shop")) {
-                    user = messageManager.getMessageDao().getListMessage().get(0).getMessageFromUser();
-                }else {
-                    user = postCarDao.getShopRef();
-                }
+                String user = MESSAGE_BY.contains("shop") ? messageManager.getMessageDao()
+                        .getListMessage().get(0).getMessageFromUser() : postCarDao.getShopRef();
+//                if (MESSAGE_BY.contains("shop"))
+//                    user = messageManager.getMessageDao().getListMessage().get(0).getMessageFromUser();
+//                else
+//                    user = postCarDao.getShopRef();
+
                 Log.i(TAG, "onClick: "+user);
                 OkHttpManager okHttpManager = new OkHttpManager.SendMessageBuilder()
                         .setMessage(postCarDao.getCarId()+"||"+messageFromUser+"||"+
@@ -268,6 +270,13 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         Log.i(TAG, "loadDataMessage: :: "+ postCarDao.getCarId()+"||"+ messageFromUser +"||0");
 
 
+    }
+
+    /**push Notification**/
+    @Subscribe
+    public void onNotification(RemoteMessage remoteMessage){
+        Log.d(TAG, "From: " + remoteMessage.getFrom());
+        Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
     }
 
     @Override

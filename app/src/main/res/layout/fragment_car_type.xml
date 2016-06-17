@@ -7,4 +7,4 @@
     android:numColumns="auto_fit"
     android:stretchMode="columnWidth"
     android:gravity="center"
-    tools:context=".fragment.SelectCarSubFragment"/>
+    tools:context=".fragment.CarSubFragment"/>
