@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
 
+        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+        startActivity(intent);
+
     }
 
 //  googlePicker

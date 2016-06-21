@@ -22,9 +22,9 @@ public class EditPostActivity  extends AppCompatActivity{
 
         PostCarDao dao = Parcels.unwrap(getIntent().getParcelableExtra("postCarDao"));
         if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content, PostFragment.newInstanceEdit(dao))
-                    .commit();
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.content, PostFragment.newInstance())
+//                    .commit();
         }
     }
 

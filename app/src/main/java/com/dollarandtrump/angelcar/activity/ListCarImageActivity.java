@@ -18,10 +18,10 @@ public class ListCarImageActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample_center_view);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.content, ListImageFragment.newInstance())
-                    .addToBackStack(null)
-                    .commit();
+//            getSupportFragmentManager().beginTransaction()
+//                    .replace(R.id.content, ListImageFragment.newInstance())
+//                    .addToBackStack(null)
+//                    .commit();
         }
     }
 }

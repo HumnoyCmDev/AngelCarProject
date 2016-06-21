@@ -12,14 +12,14 @@ import java.util.List;
  ********************************************/
 @Parcel
 public class Gallery {
-    private List<ImageModel> listGallery = new ArrayList<>();
+    List<ImageModel> listGallery = new ArrayList<>();
 
     public List<ImageModel> getListGallery() {
         return listGallery;
     }
 
     public void setListGallery(ImageModel modelGallery) {
-        this.listGallery.add(getCount(),modelGallery);
+        this.listGallery.add(modelGallery);
     }
 
     public boolean removeItem(int position){
@@ -30,9 +30,9 @@ public class Gallery {
         return false;
     }
 
-    public void addItem(ImageModel model){
+    public void addItem(int position,ImageModel model){
        if (listGallery.size() > 0){
-        listGallery.add(listGallery.size(),model);
+        listGallery.add(position,model);
        }
     }
 

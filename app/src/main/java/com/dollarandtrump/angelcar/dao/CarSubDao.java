@@ -13,6 +13,14 @@ public class CarSubDao {
     @SerializedName("subId") @Expose  int subId;
     @SerializedName("subName") @Expose  String subName;
 
+    public CarSubDao() {
+    }
+
+    public CarSubDao(int subId, String subName) {
+        this.subId = subId;
+        this.subName = subName;
+    }
+
     public int getSubId() {
         return subId;
     }

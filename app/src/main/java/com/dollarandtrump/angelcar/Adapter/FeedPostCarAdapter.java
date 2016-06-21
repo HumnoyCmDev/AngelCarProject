@@ -3,7 +3,7 @@ package com.dollarandtrump.angelcar.Adapter;
 /**
  * Created by Developer on 12/15/2015. 14:35
  */
-import android.annotation.SuppressLint;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +20,9 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.datatype.MutableInteger;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.dollarandtrump.angelcar.utils.T;
 import com.hndev.library.view.AngelCarPost;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 

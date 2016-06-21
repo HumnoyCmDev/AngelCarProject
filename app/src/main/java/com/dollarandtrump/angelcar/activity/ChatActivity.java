@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.dollarandtrump.angelcar.Adapter.AngelCarMessageAdapter;
 import com.dollarandtrump.angelcar.Adapter.ChatAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
@@ -171,7 +172,7 @@ public class ChatActivity extends AppCompatActivity {
         public void onBackground() {
             int maxId = messageManager.getMaximumId();
             Call<MessageCollectionDao> cell = HttpManager.getInstance()
-                    .getService(60 * 1000).waitMessage("12||2016042200001||" +maxId);
+                    .getService(60 * 1000).waitMessage("13||2016042200001||" +maxId);
             try {
                 response = cell.execute();
             } catch (IOException e) {

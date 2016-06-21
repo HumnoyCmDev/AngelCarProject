@@ -11,6 +11,7 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
+import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.dollarandtrump.angelcar.view.HeaderAdminChatCar;
 import com.dollarandtrump.angelcar.view.HeaderChatCar;
 import com.hndev.library.view.AngelCarMessage;
@@ -43,9 +44,6 @@ public class ChatAdapter extends BaseAdapter {
         else
             viewTypeShowDate = View.GONE;
     }
-
-    @SuppressLint("SimpleDateFormat")
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
     HeaderChatCar.OnClickItemHeaderChatListener onClickItemHeaderChatListener;
 
@@ -121,7 +119,7 @@ public class ChatAdapter extends BaseAdapter {
                 if (onClickItemHeaderChatListener != null)
                     headerChatCar.setOnClickItemBannerListener(onClickItemHeaderChatListener);
                 headerChatCar.setFollow(isFollow);
-                headerChatCar.setTimeString(dateFormat.format(postCarDao.getCarModifyTime()) + " น.");
+                headerChatCar.setTimeString(AngelCarUtils.formatTimeAndDay(parent.getContext(),postCarDao.getCarModifyTime()));
             }
             return headerChatCar;
         }

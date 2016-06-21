@@ -21,7 +21,7 @@ import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 
 import org.parceler.Parcels;
 
@@ -40,13 +40,13 @@ public class FilterSubDetailDialog extends DialogFragment {
 
     @Bind(R.id.list_view) ListView listView;
     private CarSubCollectionDao dao;
-    private InformationCarModel informationCarModel;
+    private InfoCarModel infoCarModel;
     private ListViewAdapter adapter;
 
-    public static FilterSubDetailDialog newInstance(InformationCarModel informationCarModel) {
+    public static FilterSubDetailDialog newInstance(InfoCarModel infoCarModel) {
         Bundle args = new Bundle();
         FilterSubDetailDialog fragment = new FilterSubDetailDialog();
-        args.putParcelable(ARGS_BRAND,Parcels.wrap(informationCarModel));
+        args.putParcelable(ARGS_BRAND,Parcels.wrap(infoCarModel));
         fragment.setArguments(args);
         return fragment;
     }
@@ -70,7 +70,7 @@ public class FilterSubDetailDialog extends DialogFragment {
 
     private void initInstance(Bundle savedInstanceState) {
 
-        informationCarModel = Parcels.unwrap(getArguments().getParcelable(ARGS_BRAND));
+        infoCarModel = Parcels.unwrap(getArguments().getParcelable(ARGS_BRAND));
 
         adapter = new ListViewAdapter();
         adapter.setData(dao);
@@ -88,7 +88,7 @@ public class FilterSubDetailDialog extends DialogFragment {
         });
 
         if (savedInstanceState == null) {
-            Call<CarSubCollectionDao> call = HttpManager.getInstance().getService().loadDataBrandSubDetail(informationCarModel.getSubDao().getSubId());
+            Call<CarSubCollectionDao> call = HttpManager.getInstance().getService().loadDataBrandSubDetail(infoCarModel.getSubDao().getSubId());
             call.enqueue(carSubCollectionDaoCallback);
         }
 

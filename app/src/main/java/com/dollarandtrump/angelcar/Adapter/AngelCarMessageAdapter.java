@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.activity;
+package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+
 /**
  * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
  *
@@ -36,21 +38,17 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     private final static int TYPE_ME = 1;
     private MessageCollectionDao mMessageDao;
     private String mMessageBy;
-    private LayoutInflater mLayoutInflater;
 
     private Context mContext;
-
     // Dates and Clustering
     private final Map<Integer, Cluster> mClusterCache = new HashMap<>();
-//    protected final Handler mUiThreadHandler;
-//    private final DateFormat mDateFormat;
+    protected final Handler mUiThreadHandler;
     private final DateFormat mTimeFormat;
 
     public AngelCarMessageAdapter(Context context, String mMessageBy) {
         this.mContext = context;
         this.mMessageBy = mMessageBy;
-        mLayoutInflater = LayoutInflater.from(context);
-//        mUiThreadHandler = new Handler(Looper.getMainLooper());
+        mUiThreadHandler = new Handler(Looper.getMainLooper());
 //        mDateFormat = android.text.format.DateFormat.getDateFormat(context);
         mTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
     }
@@ -71,11 +69,15 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-//        //chat
-        int roodId = viewType == TYPE_THEM ? CellViewHolder.RESOURCE_ID_ME : CellViewHolder.RESOURCE_ID_THEM;
-        CellViewHolder callViewHolder = new CellViewHolder(mLayoutInflater.inflate(roodId,parent,false));
-        return callViewHolder;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        switch (viewType){
+            case TYPE_ME :
+                View viewMe = inflater.inflate(CellViewHolder.RESOURCE_ID_ME,parent,false);
+                return new CellViewHolder(viewMe);
+            default:
+                View viewThem = inflater.inflate(CellViewHolder.RESOURCE_ID_THEM,parent,false);
+                return new CellViewHolder(viewThem);
+        }
     }
 
     @Override
@@ -84,8 +86,9 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     }
 
     public void bindCellViewHolder(CellViewHolder viewHolder, int position) {
-         MessageDao messageDao  = mMessageDao.getListMessage().get(position);
-        Log.i("Ag", "bindCellViewHolder: "+mMessageDao.getListMessage().size());
+         MessageDao msgDao  = mMessageDao.getListMessage().get(position);
+
+        boolean oneOnOne = getParticipants(mMessageDao); // User == 2 = true ; > 2 = false;
         //Clustering and dates
         Cluster cluster = getClustering(mMessageDao,position);
         if (cluster.mClusterWithPrevious == null){
@@ -93,7 +96,7 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
             viewHolder.mTimeGroup.setVisibility(View.GONE);
         }else if (cluster.mDateBoundaryWithPrevious || cluster.mClusterWithPrevious == ClusterType.MORE_THAN_HOUR) {
             // Crossed into a new day, or > 1hr lull in conversation
-            Date receivedAt = messageDao.getMessagesTamp();
+            Date receivedAt = msgDao.getMessagesTamp();
             if (receivedAt == null) receivedAt = new Date();
             String timeBarDayText = AngelCarUtils.formatTimeDay(viewHolder.mCell.getContext(), receivedAt);
             viewHolder.mTimeGroupDay.setText(timeBarDayText);
@@ -114,34 +117,59 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         //
 
         if (getItemViewType(position) == TYPE_ME){
-//            viewHolder.mReceipt.setVisibility(View.GONE);
-            GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setColor(Color.parseColor("#FFB13D"));
-            gradientDrawable.setCornerRadius(35);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                viewHolder.mCell.setBackground(gradientDrawable);
-            }else {
-                viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
-            }
-
-            viewHolder.mCell.setText(messageDao.getMessageText());
+            createBackgroundMessage(viewHolder,Color.parseColor("#FFB13D"));
+            viewHolder.mCell.setText(msgDao.getMessageText());
+            viewHolder.mReceipt.setVisibility(View.GONE);
 
         }else {
-            GradientDrawable gradientDrawable = new GradientDrawable();
-            gradientDrawable.setColor(Color.parseColor("#696969"));
-            gradientDrawable.setCornerRadius(35);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-                viewHolder.mCell.setBackground(gradientDrawable);
-            }else {
-                viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
+            createBackgroundMessage(viewHolder,Color.parseColor("#696969"));
+            viewHolder.mCell.setText(msgDao.getMessageText());
+
+            // Sender name, only for first message in cluster // User > 2
+            if (!oneOnOne && (cluster.mClusterWithPrevious == null || cluster.mClusterWithPrevious == ClusterType.NEW_SENDER)) {
+                if (msgDao.getDisplayName() != null) {
+                    viewHolder.mUserName.setText(msgDao.getDisplayName());
+                } else {
+                    MessageDao nameProvider = mMessageDao.getListMessage().get(position-1);
+                    viewHolder.mUserName.setText(nameProvider != null ? nameProvider.getDisplayName() : "Unknown user");
+                }
+                viewHolder.mUserName.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.mUserName.setVisibility(View.GONE);
             }
 
-            viewHolder.mCell.setText(messageDao.getMessageText());
-//            Glide.with(mContext).load(messageDao.getUserProfileImage()).into(viewHolder.mAvatar);
+            // Avatars
+            if (oneOnOne) { // TODO เช็ค user 1-1
+                // Not in one-on-one conversations
+                viewHolder.mAvatar.setVisibility(View.GONE);
+            } else if (cluster.mClusterWithNext == null || cluster.mClusterWithNext != ClusterType.LESS_THAN_MINUTE) {
+                // Last message in cluster
+                viewHolder.mAvatar.setVisibility(View.VISIBLE);
+                Glide.with(mContext)
+                        .load(R.drawable.ic_hndeveloper)
+                        .bitmapTransform(new CropCircleTransformation(mContext))
+                        .into(viewHolder.mAvatar);
+            } else {
+                // Invisible for clustered messages to preserve proper spacing
+                viewHolder.mAvatar.setVisibility(View.INVISIBLE);
+            }
+
         }
 
-
     }
+
+    private GradientDrawable createBackgroundMessage(CellViewHolder viewHolder,int color) {
+        GradientDrawable gradientDrawable = new GradientDrawable();
+        gradientDrawable.setColor(color);
+        gradientDrawable.setCornerRadius(35);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+            viewHolder.mCell.setBackground(gradientDrawable);
+        }else {
+            viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
+        }
+        return gradientDrawable;
+    }
+
 
     @Override
     public int getItemCount() {
@@ -151,8 +179,6 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     }
 
     private int userTypeView(String messageBy, String daoMessageBy) {
-//        if (messageBy.equals(daoMessageBy)) return TYPE_ME;
-//        else return TYPE_THEM;
         return messageBy.equals(daoMessageBy) ? TYPE_ME : TYPE_THEM;
     }
 
@@ -190,8 +216,9 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
                 // does the previous need to change its clustering?
                 if ((previousCluster.mClusterWithNext != result.mClusterWithPrevious) ||
                         (previousCluster.mDateBoundaryWithNext != result.mDateBoundaryWithPrevious)) {
+
 //                    requestUpdate(previousMessage, previousPosition);
-                    Log.i("AngelCar", "getClustering: Update 1");
+//                    notifyItemChanged(previousPosition,mMessageDao);
                 }
             }
             previousCluster.mClusterWithNext = result.mClusterWithPrevious;
@@ -215,7 +242,7 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
                 if ((nextCluster.mClusterWithPrevious != result.mClusterWithNext) ||
                         (nextCluster.mDateBoundaryWithPrevious != result.mDateBoundaryWithNext)) {
 //                    requestUpdate(nextMessage, nextPosition);
-                    Log.i("AngelCar", "getClustering: Update 2");
+//                    notifyItemChanged(nextPosition,mMessageDao);
                 }
             }
             nextCluster.mClusterWithPrevious = result.mClusterWithNext;
@@ -230,14 +257,14 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         return (d1.getYear() != d2.getYear()) || (d1.getMonth() != d2.getMonth()) || (d1.getDay() != d2.getDay());
     }
 
-//    private void requestUpdate(final MessageDao message, final int lastPosition) {
-//        mUiThreadHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                notifyItemChanged(getPosition(message, lastPosition));
-//            }
-//        });
-//    }
+    private void requestUpdate(final MessageDao messageDao, final int lastPosition) {
+        mUiThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemChanged(lastPosition,messageDao);
+            }
+        });
+    }
 
     private static class Cluster {
         public boolean mDateBoundaryWithPrevious;
@@ -247,7 +274,7 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         public ClusterType mClusterWithNext;
     }
 
-    static class CellViewHolder extends ViewHolder{
+    static class CellViewHolder extends ViewHolder {
         public final static int RESOURCE_ID_ME = R.layout.angelcar_message_item_me;
         public final static int RESOURCE_ID_THEM = R.layout.angelcer_message_item_them;
 
@@ -271,6 +298,8 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
             mCell = (TextView) itemView.findViewById(R.id.cell);
             mReceipt = (TextView) itemView.findViewById(R.id.receipt);
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
+
+
         }
     }
 
@@ -285,7 +314,7 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
 
         public static ClusterType fromMessages(MessageDao older, MessageDao newer) {
             // Different users?
-//            if (!older.getSender().equals(newer.getSender())) return NEW_SENDER;
+            if (!older.getMessageBy().equals(newer.getMessageBy())) return NEW_SENDER;
 
             // Time clustering for same user?
             Date oldReceivedAt = older.getMessagesTamp();
@@ -296,5 +325,13 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
             if (delta <= MILLIS_HOUR) return LESS_THAN_HOUR;
             return MORE_THAN_HOUR;
         }
+    }
+
+    boolean getParticipants(MessageCollectionDao dao) {
+        for (MessageDao d : dao.getListMessage())
+            if (d.getMessageBy().equals("officer"))
+                return false;
+//            else if (d.equals(""))
+        return true;
     }
 }

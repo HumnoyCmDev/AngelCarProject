@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar.dialog;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -23,7 +24,10 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
+import com.dollarandtrump.angelcar.rx_image.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_image.Sources;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.squareup.otto.Subscribe;
 
@@ -37,6 +41,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -57,7 +62,7 @@ public class ShopEditDialog extends DialogFragment {
     EditShopCallback editShopCallback;
 
     String shopName, shopDescription,shopNumber , logoShop;
-    String picturePath = null;
+    Uri mUri = null;
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,7 +70,7 @@ public class ShopEditDialog extends DialogFragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        MainThreadBus.getInstance().register(this);
+//        MainThreadBus.getInstance().register(this);
         Bundle args = getArguments();
         if (args != null){
             shopName = args.getString("shopName");
@@ -102,12 +107,23 @@ public class ShopEditDialog extends DialogFragment {
 
     }
 
-
-    @OnClick(R.id.tvButtonUpLoadImage)
+    @OnClick(R.id.tv_button_upload_image)
     public void uploadImage(){
-        Intent i = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        getActivity().startActivityForResult(i, REQUEST_CODE);
+        RxImagePicker.with(getActivity())
+                .requestImage(Sources.GALLERY)
+                .subscribe(new Action1<Uri>() {
+                    @Override
+                    public void call(Uri uri) {
+                        mUri = uri;
+                        Glide.with(getActivity()).load(uri)
+                                .placeholder(com.hndev.library.R.drawable.loading)
+                                .bitmapTransform(new CropCircleTransformation(getActivity()))
+                                .into(profileImage);
+                    }
+                });
+//        Intent i = new Intent(Intent.ACTION_PICK,
+//                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        getActivity().startActivityForResult(i, REQUEST_CODE);
     }
 
     @OnClick(R.id.btnSaveShop)
@@ -144,8 +160,8 @@ public class ShopEditDialog extends DialogFragment {
         });
 
         // upload image profiles
-        if (picturePath != null) {
-            HttpUploadManager.uploadLogoShop(new File(picturePath), Registration.getInstance().getShopRef(), new Subscriber<String>() {
+        if (mUri != null) {
+            HttpUploadManager.uploadLogoShop(FileUtils.getFile(getActivity(),mUri), Registration.getInstance().getShopRef(), new Subscriber<String>() {
                         @Override
                         public void onCompleted() {
                             Log.i("ShopEdit", "onCompleted: ");
@@ -165,33 +181,33 @@ public class ShopEditDialog extends DialogFragment {
         dismiss();
     }
 
-    @Subscribe
-    public void onActivityResultReceived(ActivityResultEvent event) {
-        int requestCode = event.getRequestCode();
-        int resultCode = event.getResultCode();
-        Intent data = event.getData();
-        onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && null != data) {
-            picturePath = AngelCarUtils.getFilesPath(getContext(),data);
-            Glide.with(this).load(new File(picturePath))
-                    .placeholder(com.hndev.library.R.drawable.loading)
-                    .bitmapTransform(new CropCircleTransformation(getActivity()))
-                    .into(profileImage);
-        }
-
-    }
+//    @Subscribe
+//    public void onActivityResultReceived(ActivityResultEvent event) {
+//        int requestCode = event.getRequestCode();
+//        int resultCode = event.getResultCode();
+//        Intent data = event.getData();
+//        onActivityResult(requestCode, resultCode, data);
+//    }
+//
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && null != data) {
+//            picturePath = AngelCarUtils.getFilesPath(getContext(),data);
+//            Glide.with(this).load(new File(picturePath))
+//                    .placeholder(com.hndev.library.R.drawable.loading)
+//                    .bitmapTransform(new CropCircleTransformation(getActivity()))
+//                    .into(profileImage);
+//        }
+//
+//    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-        MainThreadBus.getInstance().unregister(this);
+//        MainThreadBus.getInstance().unregister(this);
     }
 
     /******************

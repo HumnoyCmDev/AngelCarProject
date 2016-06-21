@@ -8,15 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.BrandGridAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
+import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -33,7 +36,7 @@ public class BrandFragment extends Fragment {
 
     @Bind(R.id.gridview) GridView gridview;
 
-    InformationCarModel carModel;
+    InfoCarModel carModel;
     CarBrandCollectionDao dao;
     BrandGridAdapter adapter;
     Subscription subscription;
@@ -64,7 +67,7 @@ public class BrandFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        carModel = new InformationCarModel();
+        carModel = new InfoCarModel();
         dao = new CarBrandCollectionDao();
     }
 
@@ -116,6 +119,24 @@ public class BrandFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
+    @Subscribe
+    public void onSubscribeInfoCarModel(InfoCarModel infoCarModel){
+        carModel = infoCarModel;
+        Toast.makeText(getActivity(),"onSubscribePostCar "+infoCarModel.isEditInfo(),Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MainThreadBus.getInstance().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MainThreadBus.getInstance().unregister(this);
+    }
+
     /***************
      * Listener Zone
      * *************/
@@ -126,7 +147,7 @@ public class BrandFragment extends Fragment {
             MainThreadBus.getInstance().post(carModel);
 
             OnSelectData onSelectData = (OnSelectData) getActivity();
-            onSelectData.onSelectedCallback(PostActivity.CALL_BRAND);
+            onSelectData.onSelectedCallback(PostActivity.CALL_BRAND,carModel);
         }
     };
 

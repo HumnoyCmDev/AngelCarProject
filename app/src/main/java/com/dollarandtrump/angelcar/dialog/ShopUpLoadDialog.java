@@ -25,14 +25,12 @@ import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
+import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
-import com.dollarandtrump.angelcar.model.ShopImageModel;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.squareup.otto.Subscribe;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -53,10 +51,9 @@ public class ShopUpLoadDialog extends DialogFragment {
     RecyclerView recyclerShop;
 
 
-//    List<File> listPicture;
     ShopUpLoadAdapter adapter;
-    ShopImageModel imageModel;
-    List<ImageModel> imageModelList;
+    Gallery mGallery;
+
     int index = 0;
 
     public static ShopUpLoadDialog newInstance() {
@@ -90,16 +87,15 @@ public class ShopUpLoadDialog extends DialogFragment {
     private void initInstance(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
 
-        imageModel = new ShopImageModel();
-        imageModelList = new ArrayList<>();
+        mGallery = new Gallery();
 
         adapter = new ShopUpLoadAdapter();
         recyclerShop.setAdapter(adapter);
         adapter.setOnItemClickListener(new ShopUpLoadAdapter.OnItemClickListener() {
             @Override
             public void onItemClickSelect() {
-                if (imageModel != null && imageModel.getImageModels() != null){
-                    if (imageModel.getImageModels().size() > 3)
+                if (mGallery != null && mGallery.getListGallery() != null){
+                    if (mGallery.getListGallery().size() > 3)
                         return;
                 }
                 intentLoadPictureExternalStore();
@@ -108,7 +104,7 @@ public class ShopUpLoadDialog extends DialogFragment {
             @Override
             public void onItemClickDelete(int position) {
 //                listPicture.remove(position);
-                imageModel.getImageModels().remove(position);
+                mGallery.getListGallery().remove(position);
                 adapter.notifyDataSetChanged();
             }
         });
@@ -127,7 +123,6 @@ public class ShopUpLoadDialog extends DialogFragment {
         int requestCode = event.getRequestCode();
         int resultCode = event.getResultCode();
         Intent data = event.getData();
-
         onActivityResult(requestCode, resultCode, data);
     }
 
@@ -140,12 +135,11 @@ public class ShopUpLoadDialog extends DialogFragment {
             ImageModel model = new ImageModel();
             model.setFileImage(new File(picturePath));
             model.setIndex(String.valueOf(index));
-            imageModelList.add(model);
-            imageModel.setImageModels(imageModelList);
+            mGallery.setListGallery(model);
             index++;
-//
+
 //            listPicture.add(new File(picturePath));
-            adapter.setListPicture(imageModel);
+            adapter.setListPicture(mGallery);
             adapter.notifyDataSetChanged();
         }
 
@@ -153,7 +147,8 @@ public class ShopUpLoadDialog extends DialogFragment {
 
     @OnClick(R.id.btnShopUpLoad)
     public void shopUpLoad(){
-        HttpUploadManager.uploadFileShop(imageModel, Registration.getInstance().getShopRef(),
+        if (mGallery.getListGallery().size() > 3 )
+        HttpUploadManager.uploadFileShop(mGallery, Registration.getInstance().getShopRef(),
                 new Subscriber<String>() {
             @Override
             public void onCompleted() {
@@ -173,11 +168,6 @@ public class ShopUpLoadDialog extends DialogFragment {
 
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        BusProvider.getInstance().unregister(this);
-//    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -217,13 +207,12 @@ public class ShopUpLoadDialog extends DialogFragment {
      * Inner class zone*
      ******************/
     public static class ShopUpLoadAdapter extends RecyclerView.Adapter<ShopUpLoadAdapter.ViewHolder> {
-//        List<File> listPicture;
-        ShopImageModel imageModel;
+        Gallery mGallery;
         OnItemClickListener onItemClickListener;
         Context mContext;
 
-        public void setListPicture(ShopImageModel imageModel) {
-            this.imageModel = imageModel;
+        public void setListPicture( Gallery gallery) {
+            this.mGallery = gallery;
         }
 
         public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
@@ -248,7 +237,7 @@ public class ShopUpLoadDialog extends DialogFragment {
         public void onBindViewHolder(ShopUpLoadAdapter.ViewHolder holder, int position) {
             if (getItemViewType(position) == 1) {
                 Glide.with(mContext)
-                        .load(imageModel.getImageModels().get(position - 1).getFileImage())
+                        .load(mGallery.getListGallery().get(position - 1).getFileImage())
                         .placeholder(R.drawable.ic_image)
                         .into(holder.imageGallery);
             }
@@ -256,10 +245,10 @@ public class ShopUpLoadDialog extends DialogFragment {
 
         @Override
         public int getItemCount() {
-            if (imageModel == null) return 1;
-            if (imageModel.getImageModels() == null) return 1;
+            if (mGallery == null) return 1;
+            if (mGallery.getListGallery() == null) return 1;
 
-            return imageModel.getImageModels().size() + 1;
+            return mGallery.getListGallery().size() + 1;
 
         }
 

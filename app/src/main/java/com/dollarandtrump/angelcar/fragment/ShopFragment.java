@@ -24,6 +24,7 @@ import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
+import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
@@ -314,8 +315,9 @@ public class ShopFragment extends Fragment {
     }
 
     public void intentEditPost(PostCarDao modelCar) {
-        Intent intent = new Intent(getActivity(),EditPostActivity.class);
-        intent.putExtra("postCarDao", Parcels.wrap(modelCar));
+        Intent intent = new Intent(getActivity(),PostActivity.class);
+        intent.putExtra("isEdit",true);
+        intent.putExtra("carModel", Parcels.wrap(modelCar));
         startActivity(intent);
     }
 

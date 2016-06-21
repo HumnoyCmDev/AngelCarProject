@@ -48,7 +48,7 @@ import com.dollarandtrump.angelcar.manager.PostCarManager;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 
 import org.parceler.Parcels;
 
@@ -94,8 +94,8 @@ public class FeedPostFragment extends Fragment {
     @Bind(R.id.etPriceEnd) EditText etPriceEnd;
 
     private static final String TAG = "FeedPostFragment";
-    private InformationCarModel informationCarModel;
-    private InformationCarModel copyInformLoadMore;
+    private InfoCarModel infoCarModel;
+    private InfoCarModel copyInformLoadMore;
     private MutableInteger lastPositionInteger;
     private boolean isLoadingMore = false;
     private boolean isStopLoadingMore = false; // หยุดการ LoadMore
@@ -137,7 +137,7 @@ public class FeedPostFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        informationCarModel = new InformationCarModel();
+        infoCarModel = new InfoCarModel();
         carManager = new PostCarManager();
         lastPositionInteger = new MutableInteger(-1);
 //        dao = new PostCarCollectionDao();
@@ -310,28 +310,28 @@ public class FeedPostFragment extends Fragment {
                 break;
 
             case R.id.filterSub:
-                if (isNullFilter(informationCarModel,0)) {
+                if (isNullFilter(infoCarModel,0)) {
                     Fragment fragmentSub = getFragmentManager().findFragmentByTag("FilterSubDialog");
                     if (fragmentSub != null) {
                         ft.remove(fragmentSub);
                     }
                     ft.addToBackStack(null);
                     FilterSubDialog dialogSub = FilterSubDialog
-                            .newInstance(informationCarModel);
+                            .newInstance(infoCarModel);
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB);
                     dialogSub.show(getFragmentManager(), "FilterSubDialog");
                 }
                 break;
 
             case R.id.filterSubDetail:
-                if (isNullFilter(informationCarModel,1)){
+                if (isNullFilter(infoCarModel,1)){
                     Fragment fragmentSubDetail = getFragmentManager().findFragmentByTag("FilterSubDialog");
                     if (fragmentSubDetail != null) {
                         ft.remove(fragmentSubDetail);
                     }
                     ft.addToBackStack(null);
                     FilterSubDetailDialog dialogSub = FilterSubDetailDialog
-                            .newInstance(informationCarModel);
+                            .newInstance(infoCarModel);
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB_DETAIL);
                     dialogSub.show(getFragmentManager(), "FilterSubDialog");
                 }
@@ -356,14 +356,14 @@ public class FeedPostFragment extends Fragment {
 
     private void loadFilter() {
         isFilter = true;
-        if (informationCarModel != null) {
+        if (infoCarModel != null) {
             /* **set Price */
-            informationCarModel.setPriceStart(etPriceStart.getText().toString());
-            informationCarModel.setPriceEnd(etPriceEnd.getText().toString());
-            copyInformLoadMore = informationCarModel;
+            infoCarModel.setPriceStart(etPriceStart.getText().toString());
+            infoCarModel.setPriceEnd(etPriceEnd.getText().toString());
+            copyInformLoadMore = infoCarModel;
             Call<PostCarCollectionDao> callFilter =
                     HttpManager.getInstance().getService()
-                            .loadFilterFeed(informationCarModel.getMapFilter());
+                            .loadFilterFeed(infoCarModel.getMapFilter());
             callFilter.enqueue(new FilterCallback(0));
         }
     }
@@ -372,33 +372,33 @@ public class FeedPostFragment extends Fragment {
     void radioButtonGear(View view){
         boolean checked = ((RadioButton) view).isChecked();
         if (view.getId() == R.id.radioGearMt){
-            informationCarModel.setGear(checked ? "1" : "0");
+            infoCarModel.setGear(checked ? "1" : "0");
         }else if (view.getId() == R.id.radioGearAt){
-            informationCarModel.setGear(checked ? "2" : "0");
+            infoCarModel.setGear(checked ? "2" : "0");
         }else {// all
-            informationCarModel.setGear("gear");
+            infoCarModel.setGear("gear");
         }
-        Log.i(TAG, "radioButtonGear: "+ informationCarModel.getGear());
+        Log.i(TAG, "radioButtonGear: "+ infoCarModel.getGear());
     }
 
-    private boolean isNullFilter(InformationCarModel informationCarModel, int mode){
+    private boolean isNullFilter(InfoCarModel infoCarModel, int mode){
         if (mode == 0){
-            if (informationCarModel.getBrandDao() != null && !informationCarModel.getBrandDao().getBrandName().isEmpty())
+            if (infoCarModel.getBrandDao() != null && !infoCarModel.getBrandDao().getBrandName().isEmpty())
             return true;
         }else {
-            if (informationCarModel.getBrandDao() != null && informationCarModel.getSubDao() != null &&
-                    !informationCarModel.getBrandDao().getBrandName().isEmpty() &&
-                    !informationCarModel.getSubDao().getSubName().isEmpty())
+            if (infoCarModel.getBrandDao() != null && infoCarModel.getSubDao() != null &&
+                    !infoCarModel.getBrandDao().getBrandName().isEmpty() &&
+                    !infoCarModel.getSubDao().getSubName().isEmpty())
             return true;
         }
         return false;
     }
 
     private void clearObject() {
-        if (informationCarModel != null) {
-            informationCarModel.clear();
-            informationCarModel = null;
-            informationCarModel = new InformationCarModel();
+        if (infoCarModel != null) {
+            infoCarModel.clear();
+            infoCarModel = null;
+            infoCarModel = new InfoCarModel();
         }
     }
 
@@ -435,7 +435,7 @@ public class FeedPostFragment extends Fragment {
                     CarBrandDao model = Parcels.unwrap(data.getParcelableExtra(ARG_BRAND));
 //                    int drawableLogo = data.getIntExtra(ARG_DRAWABLE_LOGO,R.drawable.toyota);
 //                    typedArray.recycle();
-                    informationCarModel.setBrandDao(model);
+                    infoCarModel.setBrandDao(model);
                     tvBrand.setText(model.getBrandName());
                     tvSub.setText("All");
                     tvSubDetail.setText("All");
@@ -443,20 +443,20 @@ public class FeedPostFragment extends Fragment {
 
                 case REQUEST_CODE_SUB: // sub
                     CarSubDao modelSub = Parcels.unwrap(data.getParcelableExtra(ARG_SUB));
-                    informationCarModel.setSubDao(modelSub);
+                    infoCarModel.setSubDao(modelSub);
                     tvSub.setText(modelSub.getSubName());
                     tvSubDetail.setText("All");
                     break;
 
                 case REQUEST_CODE_SUB_DETAIL: // sub detail
                     CarSubDao modelSubDetail = Parcels.unwrap(data.getParcelableExtra(ARG_SUB_DETAIL));
-                    informationCarModel.setSubDetailDao(modelSubDetail);
+                    infoCarModel.setSubDetailDao(modelSubDetail);
                     tvSubDetail.setText(modelSubDetail.getSubName());
                     break;
 
                 case REQUEST_CODE_YEAR: // year
                     int resultYear = data.getIntExtra("TAG_YEAR",2016);
-                    informationCarModel.setYear(resultYear);
+                    infoCarModel.setYear(resultYear);
                     tvYear.setText(String.valueOf(resultYear));
                     break;
             }
@@ -800,9 +800,9 @@ public class FeedPostFragment extends Fragment {
 //                double doubleValue = Double.parseDouble(givenString);
 
                 if (editText.getId() == R.id.etPriceStart){
-                    informationCarModel.setPriceStart(givenString);
+                    infoCarModel.setPriceStart(givenString);
                 }else {
-                    informationCarModel.setPriceEnd(givenString);
+                    infoCarModel.setPriceEnd(givenString);
                 }
             } catch (NumberFormatException e) {
             }

@@ -13,6 +13,14 @@ public class CarBrandDao {
     @SerializedName("brandId") @Expose  int brandId;
     @SerializedName("brandName") @Expose  String brandName;
 
+    public CarBrandDao() {
+    }
+
+    public CarBrandDao(int brandId, String brandName) {
+        this.brandId = brandId;
+        this.brandName = brandName;
+    }
+
     public int getBrandId() {
         return brandId;
     }

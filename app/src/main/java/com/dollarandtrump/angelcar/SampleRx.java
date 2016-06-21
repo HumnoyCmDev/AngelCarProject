@@ -17,6 +17,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func3;
+import rx.observables.GroupedObservable;
 import rx.schedulers.Schedulers;
 
 /**
@@ -56,9 +57,14 @@ public class SampleRx {
             }
         });
 
-        Observable<String> z = Observable.zip(odds, evens, s, new Func3<Integer, String, String, String>() {
+        Observable.zip(odds, evens, s, new Func3<Integer, String, String, String>() {
             @Override
             public String call(Integer integer, String s, String s2) {
+                return null;
+            }
+        }).groupBy(new Func1<String, Integer>() {
+            @Override
+            public Integer call(String s) {
                 return null;
             }
         });

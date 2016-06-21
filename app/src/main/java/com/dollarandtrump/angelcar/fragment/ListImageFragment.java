@@ -3,15 +3,11 @@ package com.dollarandtrump.angelcar.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,11 +25,10 @@ import com.dollarandtrump.angelcar.interfaces.OnSelectData;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 import com.dollarandtrump.angelcar.rx_image.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_image.Sources;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.dollarandtrump.angelcar.view.RecyclerGridAutoFit;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
@@ -41,7 +36,6 @@ import com.squareup.otto.Subscribe;
 import org.parceler.Parcels;
 
 import java.io.File;
-import java.net.URI;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -61,7 +55,7 @@ public class  ListImageFragment extends Fragment {
     @Bind(R.id.listImage) RecyclerGridAutoFit mListImage;
     @Bind(R.id.group_gallery) LinearLayout mGroupGallery;
 
-    InformationCarModel mInformationCarModel;
+    InfoCarModel mInfoCarModel;
     Gallery mGallery;
     ListImageAdapter mAdapter;
 
@@ -73,10 +67,11 @@ public class  ListImageFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
-    public static ListImageFragment newInstance() {
+    public static ListImageFragment newInstance(InfoCarModel infoCarModel) {
         ListImageFragment fragment = new ListImageFragment();
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
+        Bundle args = new Bundle();
+        args.putParcelable("infoCar",Parcels.wrap(infoCarModel));
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -99,7 +94,7 @@ public class  ListImageFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         mGallery = new Gallery();
-//        mInformationCarModel = new InformationCarModel();
+        mInfoCarModel = Parcels.unwrap(getArguments().getParcelable("infoCar"));
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -116,8 +111,14 @@ public class  ListImageFragment extends Fragment {
 
     @OnClick(R.id.tvGallery)
     public void onClickGallery(){
-        if (mCount > mLimitImage) return;
-        rxPickerPicker(Sources.GALLERY);
+
+        if (mCount > mLimitImage){
+            OnSelectData selectData = (OnSelectData) getActivity();
+            selectData.onSelectedCallback(PostActivity.CALL_GALLERY_NEXT,mInfoCarModel);
+        }else {
+            rxPickerPicker(Sources.GALLERY);
+        }
+
 //        if (Permission.storeage(getActivity())) {
 //            if (id == R.id.tvGallery || (id == R.id.group_gallery &&
 //                    mGallery.getListGallery().size() == 0)) {
@@ -175,11 +176,11 @@ public class  ListImageFragment extends Fragment {
         OnSelectData selectData = (OnSelectData) getActivity();
         if (mGallery.getListGallery().size() > 2){
             // post event
-            mInformationCarModel.setGallery(mGallery);
+            mInfoCarModel.setGallery(mGallery);
             MainThreadBus.getInstance().post(onProduceData());
-            selectData.onSelectedCallback(PostActivity.CALL_GALLERY_OK);
+            selectData.onSelectedCallback(PostActivity.CALL_GALLERY_OK,mInfoCarModel);
         }else {
-            selectData.onSelectedCallback(PostActivity.CALL_GALLERY_CANCEL);
+            selectData.onSelectedCallback(PostActivity.CALL_GALLERY_CANCEL,mInfoCarModel);
         }
     }
 
@@ -196,8 +197,8 @@ public class  ListImageFragment extends Fragment {
     }
 
     @Produce
-    public InformationCarModel onProduceData(){
-        return mInformationCarModel;
+    public InfoCarModel onProduceData(){
+        return mInfoCarModel;
     }
 
     @Override
@@ -213,20 +214,20 @@ public class  ListImageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MainThreadBus.getInstance().register(this);
+//        MainThreadBus.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        MainThreadBus.getInstance().unregister(this);
+//        MainThreadBus.getInstance().unregister(this);
     }
 
-    @Subscribe
-    public void eventBusProduceData(InformationCarModel carModel){
-        mInformationCarModel = carModel;
-        Log.i(TAG, "eventBusProduceData: ListImage");
-    }
+//    @Subscribe
+//    public void eventBusProduceData(InfoCarModel carModel){
+//        mInfoCarModel = carModel;
+//        Log.d(TAG, "3 : "+carModel.isEditInfo());
+//    }
 
     /*
      * Save Instance State Here
@@ -234,7 +235,7 @@ public class  ListImageFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-       outState.putParcelable("data", Parcels.wrap(mInformationCarModel));
+       outState.putParcelable("data", Parcels.wrap(mInfoCarModel));
     }
 
     /*
@@ -242,7 +243,7 @@ public class  ListImageFragment extends Fragment {
      */
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-        mInformationCarModel = Parcels.unwrap(savedInstanceState.getParcelable("data"));
+        mInfoCarModel = Parcels.unwrap(savedInstanceState.getParcelable("data"));
     }
 
     /*****************

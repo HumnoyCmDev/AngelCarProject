@@ -1,23 +1,9 @@
 package com.dollarandtrump.angelcar.fragment;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -31,8 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,14 +26,12 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.Contextor;
-import com.dollarandtrump.angelcar.manager.Permission;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.manager.http.RxUploadFile;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.hndev.library.view.Transformtion.ScalingUtilities;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.squareup.otto.Subscribe;
@@ -57,8 +39,6 @@ import com.squareup.otto.Subscribe;
 import org.parceler.Parcels;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -79,10 +59,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.functions.Func3;
 import rx.functions.Func6;
+import rx.schedulers.Schedulers;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -90,14 +71,6 @@ import rx.functions.Func6;
  * ลงวันที่ 5/2/59. เวลา 10:41
  ***************************************/
 public class PostFragment extends Fragment {
-    private static final int REQUEST_CODE_ASK_PERMISSIONS = 1;
-    private static final int REQUEST_CODE_LOAD_IMAGE = 191;
-    @Bind({
-            R.id.post_photo_1,R.id.post_photo_2,
-            R.id.post_photo_3,R.id.post_photo_4,
-            R.id.post_photo_5,R.id.post_photo_6,
-            R.id.post_photo_7,R.id.post_photo_8,
-    }) List<ImageView> photo;
 
     @Bind(R.id.etDescription) EditText editTextDescription;
     @Bind(R.id.tgGear) ToggleButton tgGear;
@@ -110,46 +83,33 @@ public class PostFragment extends Fragment {
     @Bind(R.id.tvTopicCar) TextView tvTopicCar;
     @Bind(R.id.spinnerProvince) Spinner spinnerProvince;
     @Bind(R.id.buttonPost) Button btnPost;
-    @Bind({R.id.contentPhoto1,R.id.contentPhoto2}) List<LinearLayout> content;
 
     private static final String TAG = "PostFragment";
-    private static final MediaType MEDIA_TYPE_PNG = MediaType.parse("image/png");
 
-    private int idPhoto = 0;
     private int id_province = 1;
-    private HashMap<Integer, File> filesPhotoList;
-    private InformationCarModel carModel;
-//    private Subscription subscription;
-    private PostCarDao dao;
+    private InfoCarModel carModel;
 
     public PostFragment() {
         super();
     }
 
     public static PostFragment newInstance() {
-        Bundle args = new Bundle();
         PostFragment fragment = new PostFragment();
-        args.putBoolean("isPost",true);
-        fragment.setArguments(args);
         return fragment;
     }
 
-    public static PostFragment newInstanceEdit(PostCarDao dao) {
-        Bundle args = new Bundle();
-        PostFragment fragment = new PostFragment();
-        args.putBoolean("isPost",false);
-        args.putParcelable("carDao",Parcels.wrap(dao));
-        fragment.setArguments(args);
-        return fragment;
-    }
+//    public static PostFragment newInstance(InfoCarModel infoCarModel) {
+//        PostFragment fragment = new PostFragment();
+//        Bundle args = new Bundle();
+//        args.putParcelable("infoCar",Parcels.wrap(infoCarModel));
+//        fragment.setArguments(args);
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(savedInstanceState);
-
-        if(!getArguments().getBoolean("isPost"))
-            dao = Parcels.unwrap(getArguments().getParcelable("carDao"));
 
         if (savedInstanceState != null)
             onRestoreInstanceState(savedInstanceState);
@@ -164,31 +124,38 @@ public class PostFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        filesPhotoList = new HashMap<>();
+//        carModel = Parcels.unwrap(getArguments().getParcelable("infoCar"));
     }
 
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
+/*
+        String topic = carModel.getBrandDao().getBrandName().toUpperCase()+" "+
+                carModel.getSubDao().getSubName()+" "+
+                carModel.getSubDetailDao().getSubName()+" ปี"+
+                carModel.getYear();
+        tvTopicCar.setText(topic);
+        Log.d(TAG, "4 : "+carModel.isEditInfo());
+        if (carModel.isEditInfo()){
+            //init data (Edit)
+            tvTopicCar.setText(carModel.getPostCarDao().toTopicCar());
+            tgGear.setChecked(carModel.getPostCarDao().getGear() == 0);
+            spinnerProvince.setSelection(carModel.getPostCarDao().getProvinceId()); // make
+            editTextRegister.setText(carModel.getPostCarDao().getPlate());
+            editTextTelephone.setText(carModel.getPostCarDao().getPhone());
+            editTextName.setText(carModel.getPostCarDao().getName());
+            editTextPrice.setText(carModel.getPostCarDao().getCarPrice());
+            editTextTopic.setText(carModel.getPostCarDao().getCarTitle());
+            editTextDescription.setText(AngelCarUtils.convertLineUp(carModel.getPostCarDao().getCarDetail()));
+            btnPost.setText("SAVE");
+        }*/
+
+
         // Text Format
         editTextTelephone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         editTextDescription.setOnEditorActionListener(onEditorActionListener);
         initDataProvince();
 
-        //init data (Edit)
-        if (dao != null){
-            content.get(0).setVisibility(View.GONE);
-            content.get(1).setVisibility(View.GONE);
-            tvTopicCar.setText(dao.toTopicCar());
-            tgGear.setChecked(dao.getGear() == 0);
-            spinnerProvince.setSelection(dao.getProvinceId()); // make
-            editTextRegister.setText(dao.getPlate());
-            editTextTelephone.setText(dao.getPhone());
-            editTextName.setText(dao.getName());
-            editTextPrice.setText(dao.getCarPrice());
-            editTextTopic.setText(dao.getCarTitle());
-            editTextDescription.setText(AngelCarUtils.convertLineUp(dao.getCarDetail()));
-            btnPost.setText("SAVE");
-        }
 //        editTextPrice.addTextChangedListener(AutoCommaListener);
         initObservableView();
     }
@@ -270,37 +237,19 @@ public class PostFragment extends Fragment {
 
     @OnClick(R.id.buttonPost)
     public void onClickPost(){
+        
+        String topic = editTextTopic.getText().toString();
+        String detail = editTextDescription.getText().toString().trim();
+        String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
+        String province = String.valueOf(id_province).trim(); // 1 - 77
+        String gear = tgGear.isChecked() ? "1" : "2"; // 0 or 1
+        String plate = editTextRegister.getText().toString().trim(); // text ทะเบียนน
+        String name = editTextName.getText().toString().trim(); // ชื่อ นามสกุล
+        String phone = editTextTelephone.getText().toString().trim();
 
-       String shopPref = Registration.getInstance().getShopRef(); // 1
-       String carName = carModel.getBrandDao().getBrandName().toUpperCase() ; // toyota
-       String topic = editTextTopic.getText().toString();
-       String detail = editTextDescription.getText().toString().trim();
-//       String appendCarTopDetail = AngelCarUtils.append(topic,detail); // ชื่อสั้นๆ
-//       int carYear = carModel.getYear(); // ปีรถ
-       String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
-//       String carStatus = "wait";//wait,online,offline
-       String province = String.valueOf(id_province).trim(); // 1 - 77
-       String gear = tgGear.isChecked() ? "1":"2"; // 0 or 1
-       String plate = editTextRegister.getText().toString().trim(); // text ทะเบียนน
-       String name = editTextName.getText().toString().trim(); // ชื่อ นามสกุล
-       String phone = editTextTelephone.getText().toString().trim();
-
-        //isEmpty = true หากมีค่าว่าง
-
-//        if (filesPhotoList.size() < 3) {
-//            Toast.makeText(getContext(), "กรุณาใส่รูปมากกว่า 3", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-
-//        if (isEmpty(shopPref)   ||  isEmpty(carName)    ||
-//            isEmpty(topic)      ||  isEmpty(carPrice)   ||
-//            isEmpty(detail)     ||  isEmpty(phone)      ||
-//            isEmpty(province)   ||  isEmpty(gear)       ||
-//            isEmpty(plate)      ||  isEmpty(name)){
-//            Toast.makeText(getContext(),"กรุณากรอกข้อมูลให้ครบ!",Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-
+        if (!carModel.isEditInfo()) {
+            String shopPref = Registration.getInstance().getShopRef(); // 1
+//            String carName = carModel.getBrandDao().getBrandName().toUpperCase(); // toyota
             Call<Results> call = HttpManager.getInstance().getService().postCar(shopPref,
                     carModel.getBrandDao().getBrandId(),
                     carModel.getSubDao().getSubId(),
@@ -312,14 +261,32 @@ public class PostFragment extends Fragment {
 //            OnSelectData onSelectData = (OnSelectData) getActivity();
 //            onSelectData.onSelectedCallback(PostActivity.CALL_FINISH_POST);
 
-    }
+        }else {
+            Log.d(TAG, "onClickPost: ");
+             HttpManager.getInstance().getService()
+                     .observableUpdatePostCar(carModel.getPostCarDao().getCarId(),
+                             carModel.getBrandDao().getBrandId(),carModel.getSubDao().getSubId(),carModel.getSubDetailDao().getSubId(),
+                             topic,detail,carModel.getYear(),carPrice,province,gear,name,phone)
+             .subscribeOn(Schedulers.newThread())
+             .observeOn(AndroidSchedulers.mainThread())
+             .subscribe(new Subscriber<Results>() {
+                 @Override
+                 public void onCompleted() {
+                     Log.d(TAG, "onCompleted: ");
+                 }
 
-    private boolean isEmpty(String str){
-        if (str.isEmpty()) return true;
-        if (str.equals("")) return true;
-        return false;
-    }
+                 @Override
+                 public void onError(Throwable e) {
+                     Log.e(TAG, "onError: ", e);
+                 }
 
+                 @Override
+                 public void onNext(Results results) {
+                     Log.d(TAG, "onNext: "+results);
+                 }
+             });
+        }
+    }
 
     private static void uploadPicture(final String id, final HashMap<Integer, File> filesPhotoList,
                                       okhttp3.Callback responseCallbackUpFile) {
@@ -334,7 +301,7 @@ public class PostFragment extends Fragment {
                         .addFormDataPart(
                         "userfile",
                         filesPhotoList.get(i).getName(),
-                        RequestBody.create(MEDIA_TYPE_PNG, filesPhotoList.get(i))).build();
+                        RequestBody.create(MediaType.parse("image/png"), filesPhotoList.get(i))).build();
 
                 Request request = new Request.Builder()
                         .url("http://www.angelcar.com/ios/data/gadata/imgupload.php")
@@ -346,41 +313,11 @@ public class PostFragment extends Fragment {
 
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE_LOAD_IMAGE && resultCode == Activity.RESULT_OK && null != data) {
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Uri selectedImage = data.getData();
-                Cursor cursor = getActivity().getContentResolver()
-                        .query(selectedImage, filePathColumn, null, null, null);
-                assert cursor != null;
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String picturePath = cursor.getString(columnIndex);
-                cursor.close();
-                // add path
-                addFilesPhotoList(idPhoto,picturePath);
-        }
-
-    }
-
-    private void addFilesPhotoList(int idPhoto,String picturePath){
-        // list photo
-        filesPhotoList.put(idPhoto,new File(picturePath));
-        Bitmap scaledBitmap = ScalingUtilities
-                .createScaledBitmap(decodeFile(filesPhotoList.get(idPhoto)),
-                        90, 90, ScalingUtilities.ScalingLogic.CROP);
-        photo.get(idPhoto).setImageBitmap(scaledBitmap);
-
-    }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (subscription != null)
-//            subscription.unsubscribe();
     }
 
     @Override
@@ -389,108 +326,6 @@ public class PostFragment extends Fragment {
         ButterKnife.unbind(this);
     }
 
-    @OnClick({
-            R.id.post_photo_1,R.id.post_photo_2,
-            R.id.post_photo_3,R.id.post_photo_4,
-            R.id.post_photo_5,R.id.post_photo_6,
-            R.id.post_photo_7,R.id.post_photo_8,
-    })
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.post_photo_1 : idPhoto = 0 ; break ;
-            case R.id.post_photo_2 : idPhoto = 1 ; break ;
-            case R.id.post_photo_3 : idPhoto = 2 ; break ;
-            case R.id.post_photo_4 : idPhoto = 3 ; break ;
-            case R.id.post_photo_5 : idPhoto = 4 ; break ;
-            case R.id.post_photo_6 : idPhoto = 5 ; break ;
-            case R.id.post_photo_7 : idPhoto = 6 ; break ;
-            case R.id.post_photo_8 : idPhoto = 7 ; break ;
-        }
-        addOrRemovePhotoList(idPhoto);
-    }
-
-    private void addOrRemovePhotoList(int id_photo){
-        // เช็คกรณี หากมีรูปอยู่แล้ว กดอีกครั้งให้ลบออก
-        if (filesPhotoList.containsKey(id_photo)){
-            filesPhotoList.remove(id_photo);
-            photo.get(id_photo).setImageResource(R.drawable.ic_photo);
-        }else{
-            if (!Permission.storeage(getActivity())){ //ต่ำกว่า Android 23
-                return;
-            }
-                intentLoadPictureExternalStore();
-        }
-    }
-
-    /*Permission*/
-//    private boolean checkPermissionApi23(){
-//        if (Build.VERSION.SDK_INT >=
-//                Build.VERSION_CODES.M) {
-//            if (ContextCompat.checkSelfPermission(getActivity(),
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                    != PackageManager.PERMISSION_GRANTED) {
-//                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-//                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-//                    //กรณีไม่ให้สิทธิ์// แสดงรายการคำขอ ผลหากไม่ให้สิท ขอ Permission ผ่าน Dialog
-//                    showMessageOKCancel("AngelCar ต้องการขอสิทธิ์ในการเข้าถึงรูปภาพ", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            ActivityCompat.requestPermissions(getActivity(),
-//                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                                    REQUEST_CODE_ASK_PERMISSIONS);
-//                        }
-//                    });
-//
-//                } else {
-//                    // ขอสิทธิ์เข้าถึง
-//                    ActivityCompat.requestPermissions(getActivity(),
-//                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-//                            REQUEST_CODE_ASK_PERMISSIONS);
-//
-//                }
-//            }else {
-//                intentLoadPictureExternalStore();
-//            }
-//            return true;
-//        }
-//            return false;
-//    }
-
-    private void intentLoadPictureExternalStore(){
-        Intent i = new Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//        if (Build.VERSION.SDK_INT >= 18)
-//            i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        startActivityForResult(i, REQUEST_CODE_LOAD_IMAGE);
-    }
-
-//    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-//        new AlertDialog.Builder(getActivity())
-//                .setMessage(message)
-//                .setPositiveButton("OK", okListener)
-//                .setNegativeButton("Cancel", null)
-//                .create()
-//                .show();
-//    }
-
-   /* //TODO Method ไม่ทำงาน [call ไปยัง activity ที่ถือครอง fragment นี้อยู่]
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionsResult: "+requestCode);
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS:
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    intentLoadPictureExternalStore();
-                    Log.i(TAG, "onRequestPermissionsResult: true");
-
-                }
-                break;
-                default:
-                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }*/
 
     @Override
     public void onResume() {
@@ -507,36 +342,29 @@ public class PostFragment extends Fragment {
 
 
     @Subscribe
-    public void eventBusProduceData(InformationCarModel carModel){
+    public void eventBusProduceData(InfoCarModel carModel){
         this.carModel = carModel;
+
+        Log.i(TAG, "eventBusProduceData: "+carModel.getBrandDao().getBrandName());
 //init data
         String topic = carModel.getBrandDao().getBrandName().toUpperCase()+" "+
                 carModel.getSubDao().getSubName()+" "+
                 carModel.getSubDetailDao().getSubName()+" ปี"+
                 carModel.getYear();
         tvTopicCar.setText(topic);
-    }
-
-    private Bitmap decodeFile(File f) {
-        try {
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-            // The new size we want to scale to
-            final int REQUIRED_SIZE = 50;
-            // Find the correct scale value. It should be the power of 2.
-            int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-            // Decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {}
-        return null;
+        if (carModel.isEditInfo()){
+            //init data (Edit)
+//                tvTopicCar.setText(carModel.getPostCarDao().toTopicCar());
+                tgGear.setChecked(carModel.getPostCarDao().getGear() == 0);
+                spinnerProvince.setSelection(carModel.getPostCarDao().getProvinceId()); // make
+                editTextRegister.setText(carModel.getPostCarDao().getPlate());
+                editTextTelephone.setText(carModel.getPostCarDao().getPhone());
+                editTextName.setText(carModel.getPostCarDao().getName());
+                editTextPrice.setText(carModel.getPostCarDao().getCarPrice());
+                editTextTopic.setText(carModel.getPostCarDao().getCarTitle());
+                editTextDescription.setText(AngelCarUtils.convertLineUp(carModel.getPostCarDao().getCarDetail()));
+                btnPost.setText("SAVE");
+        }
     }
 
     /*************
@@ -548,29 +376,34 @@ public class PostFragment extends Fragment {
             if (response.isSuccessful()) {
                 // upload picture
 //                uploadPicture(response.body().getSuccess(),filesPhotoList, responseCallbackUpFile);
-
 //                List<File> fileList = new ArrayList<>();
 //                for (int i = 0; i < filesPhotoList.size(); i++) {
 //                    fileList.add(filesPhotoList.get(i));
 //                }
 
-                HttpUploadManager.uploadFilePostCar(getContext(),carModel.getGallery(), response.body().getSuccess(),
-                        new Subscriber<String>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.i(TAG, "onCompleted: ");
-                    }
+                RxUploadFile.with(getContext())
+                        .postCar()
+                        .setId(response.body().getSuccess())
+                        .setGallery(carModel.getGallery())
+                        .subscriber();
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: ",e );
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-                        Log.i(TAG, "onNext: "+s);
-                    }
-                });
+//                HttpUploadManager.uploadFilePostCar(getContext(),carModel.getGallery(), response.body().getSuccess(),
+//                        new Subscriber<String>() {
+//                    @Override
+//                    public void onCompleted() {
+//                        Log.i(TAG, "onCompleted: ");
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.e(TAG, "onError: ",e );
+//                    }
+//
+//                    @Override
+//                    public void onNext(String s) {
+//                        Log.i(TAG, "onNext: "+s);
+//                    }
+//                });
 
                 Toast.makeText(Contextor.getInstance().getContext(),
                         "Completed"+response.body().getSuccess(), Toast.LENGTH_SHORT).show();

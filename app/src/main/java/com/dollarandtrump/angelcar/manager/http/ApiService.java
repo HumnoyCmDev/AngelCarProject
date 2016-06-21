@@ -75,7 +75,7 @@ public interface ApiService {
     );
 
     @FormUrlEncoded
-    @POST("android/api/android/api/insertpost.php")
+    @POST("android/api/insertpost.php")
     Observable<Results> observablePostCar
             (
                     @Field("shopref") String shopPref, // 1
@@ -89,6 +89,24 @@ public interface ApiService {
                     @Field("province") String province, // 0 - 77
                     @Field("gear") String gear, // 0 or 1
                     @Field("plate") String plate, // text ทะเบียนน
+                    @Field("name") String name, // ชื่อ นามสกุล
+                    @Field("telnumber") String telNumber // ชื่อ นามสกุล
+            );
+
+    @FormUrlEncoded
+    @POST("android/api/updateshop.php")
+    Observable<Results> observableUpdatePostCar
+            (
+                    @Field("carid") int carId,
+                    @Field("brandref") int brand, // toyota **ตัด
+                    @Field("subref") int subBrand,
+                    @Field("typeref") int subDetailBrand,
+                    @Field("cartitle") String carTitle,
+                    @Field("cardetail") String carDetail, // ชื่อสั้นๆ
+                    @Field("caryear") int carYear, // ปีรถ
+                    @Field("carprice") String carPrice,// ราคารถ
+                    @Field("province") String province, // 0 - 77
+                    @Field("gear") String gear, // 0 or 1
                     @Field("name") String name, // ชื่อ นามสกุล
                     @Field("telnumber") String telNumber // ชื่อ นามสกุล
             );

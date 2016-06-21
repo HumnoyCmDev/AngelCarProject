@@ -17,7 +17,8 @@ import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
+import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -35,7 +36,7 @@ public class CarSubDetailFragment extends Fragment {
      @Bind(R.id.listCarDetail) ListView mlListView;
 
     private CarSubCollectionDao dao;
-    private InformationCarModel carModel;
+    private InfoCarModel carModel;
     private CarSubDetailAdapter mAdapter;
     private static final String TAG = "CarSubDetailFragment";
 
@@ -66,7 +67,7 @@ public class CarSubDetailFragment extends Fragment {
 
     private void init(Bundle savedInstanceState) {
         dao = new CarSubCollectionDao();
-        carModel = new InformationCarModel();
+        carModel = new InfoCarModel();
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -108,10 +109,15 @@ public class CarSubDetailFragment extends Fragment {
 
 
     @Subscribe
-    public void getProduceData(InformationCarModel carModel) {
+    public void getProduceData(InfoCarModel carModel) {
         this.carModel = carModel;
         loadCarSubDetail();
     }
+
+//    @Produce
+//    public InfoCarModel onProduceInfo() {
+//        return carModel;
+//    }
 
     private void loadCarSubDetail() {
         if (carModel.getSubDao() == null) return;
@@ -135,7 +141,7 @@ public class CarSubDetailFragment extends Fragment {
             carModel.setSubDetailDao(dao.getCarSubDao().get(position));
             MainThreadBus.getInstance().post(carModel);
             OnSelectData onSelectData = (OnSelectData) getActivity();
-            onSelectData.onSelectedCallback(PostActivity.CALL_CAR_TYPE_DETAIL);
+            onSelectData.onSelectedCallback(PostActivity.CALL_CAR_TYPE_DETAIL,carModel);
 
         }
     };

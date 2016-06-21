@@ -20,7 +20,7 @@ import com.dollarandtrump.angelcar.dialog.YearDialog;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
@@ -42,7 +42,7 @@ public class CarSubFragment extends Fragment {
     @Bind(R.id.grid_sub_model) GridView mGridView;
 
     private CarSubGridAdapter mAdapter;
-    private InformationCarModel carModel;
+    private InfoCarModel carModel;
     private CarSubCollectionDao dao;
 
     public static CarSubFragment newInstance() {
@@ -69,7 +69,7 @@ public class CarSubFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        carModel = new InformationCarModel();
+        carModel = new InfoCarModel();
         dao = new CarSubCollectionDao();
     }
 
@@ -112,7 +112,7 @@ public class CarSubFragment extends Fragment {
             carModel.setYear(data.getIntExtra(YearDialog.ARG_YEAR,2016));
             MainThreadBus.getInstance().post(carModel);
             OnSelectData onSelectData = (OnSelectData) getActivity();
-            onSelectData.onSelectedCallback(PostActivity.CALL_CAR_TYPE);
+            onSelectData.onSelectedCallback(PostActivity.CALL_CAR_TYPE,carModel);
         }
 
     }
@@ -137,7 +137,7 @@ public class CarSubFragment extends Fragment {
     }
 
     @Subscribe
-    public void eventBusProduceData(InformationCarModel carModel){
+    public void eventBusProduceData(InfoCarModel carModel){
         this.carModel = carModel;
         loadCarSubDetail();
     }

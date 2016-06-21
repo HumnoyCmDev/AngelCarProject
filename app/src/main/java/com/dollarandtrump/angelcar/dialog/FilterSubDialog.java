@@ -21,7 +21,7 @@ import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.InformationCarModel;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 
 import org.parceler.Parcels;
 
@@ -42,15 +42,15 @@ public class FilterSubDialog extends DialogFragment {
 
 //    private int brandId;
 //    private int drawableLogo;
-    private InformationCarModel informationCarModel;
+    private InfoCarModel infoCarModel;
     private CarSubCollectionDao dao;
 
     private ListViewAdapter adapter;
 
-    public static FilterSubDialog newInstance(InformationCarModel informationCarModel) {
+    public static FilterSubDialog newInstance(InfoCarModel infoCarModel) {
         Bundle args = new Bundle();
         FilterSubDialog fragment = new FilterSubDialog();
-        args.putParcelable(ARGS_BRAND,Parcels.wrap(informationCarModel));
+        args.putParcelable(ARGS_BRAND,Parcels.wrap(infoCarModel));
         fragment.setArguments(args);
         return fragment;
     }
@@ -77,7 +77,7 @@ public class FilterSubDialog extends DialogFragment {
 
     private void initInstance(Bundle savedInstanceState) {
 
-        informationCarModel = Parcels.unwrap(getArguments().getParcelable(ARGS_BRAND));
+        infoCarModel = Parcels.unwrap(getArguments().getParcelable(ARGS_BRAND));
 
         adapter = new ListViewAdapter();
         adapter.setData(dao);
@@ -96,7 +96,7 @@ public class FilterSubDialog extends DialogFragment {
 
         if (savedInstanceState == null) {
             Call<CarSubCollectionDao> call = HttpManager.getInstance()
-                    .getService().loadDataBrandSub(informationCarModel.getBrandDao().getBrandId());
+                    .getService().loadDataBrandSub(infoCarModel.getBrandDao().getBrandId());
             call.enqueue(carSubCollectionDaoCallback);
         }
 
@@ -167,7 +167,7 @@ public class FilterSubDialog extends DialogFragment {
                holder = new ViewHolder(convertView);
                convertView.setTag(holder);
             }
-//            holder.iconFilter.setImageDrawable(informationCarModel.getLogoBrand());
+//            holder.iconFilter.setImageDrawable(infoCarModel.getLogoBrand());
             holder.tvFilter.setText(getItem(position).getSubName());
 
             return convertView;

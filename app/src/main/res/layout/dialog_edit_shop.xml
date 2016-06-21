@@ -34,7 +34,7 @@
 
 
                 <TextView
-                    android:id="@+id/tvButtonUpLoadImage"
+                    android:id="@+id/tv_button_upload_image"
                     android:padding="3dp"
                     android:drawableLeft="@drawable/ic_camera_black"
                     android:drawablePadding="5dp"

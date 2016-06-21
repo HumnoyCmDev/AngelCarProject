@@ -2,22 +2,23 @@ package com.dollarandtrump.angelcar.model;
 
 import com.dollarandtrump.angelcar.dao.CarBrandDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
+import com.dollarandtrump.angelcar.dao.PostCarDao;
 
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by humnoyDeveloper on 19/4/59. 13:45
  */
 @Parcel
-public class InformationCarModel {
+public class InfoCarModel {
 
-    /*
+    /**
     *กำหนด price ทุกครั้ง
     * */
+    // edit post
+    boolean isEditInfo = false;
 
     int resIdLogo; //logo
     int year = 0;//2016
@@ -34,6 +35,24 @@ public class InformationCarModel {
     CarSubDao subDetailDao;
 
     Gallery gallery;
+
+    PostCarDao postCarDao;
+
+    public PostCarDao getPostCarDao() {
+        return postCarDao;
+    }
+
+    public void setPostCarDao(PostCarDao postCarDao) {
+        this.postCarDao = postCarDao;
+    }
+
+    public boolean isEditInfo() {
+        return isEditInfo;
+    }
+
+    public void setEditInfo(boolean editInfo) {
+        isEditInfo = editInfo;
+    }
 
     public Gallery getGallery() {
         return gallery;

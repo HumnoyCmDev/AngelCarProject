@@ -19,17 +19,17 @@
     <string name="baseUrlImg_full">http://angelcar.com/ios/data/gadata/carimages/</string>
 
     <string-array name="time_days_of_week">
-        <item>Sunday</item>
-        <item>Monday</item>
-        <item>Tuesday</item>
-        <item>Wednesday</item>
-        <item>Thursday</item>
-        <item>Friday</item>
-        <item>Saturday</item>
+        <item>อา.</item>
+        <item>จ.</item>
+        <item>อ.</item>
+        <item>พ.</item>
+        <item>พฤ.</item>
+        <item>ศ.</item>
+        <item>ส.</item>
     </string-array>
 
-    <string name="time_today">Today</string>
-    <string name="time_yesterday">Yesterday</string>
+    <string name="time_today">วันนี้</string>
+    <string name="time_yesterday">เมื่อวาน</string>
 
     <string-array name="province">
         <item>ราชบุรี</item>

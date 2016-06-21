@@ -11,14 +11,25 @@ import android.view.View;
 import android.widget.Button;
 
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.dao.CarBrandDao;
+import com.dollarandtrump.angelcar.dao.CarSubDao;
+import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.fragment.ListImageFragment;
 import com.dollarandtrump.angelcar.fragment.BrandFragment;
 import com.dollarandtrump.angelcar.fragment.CarSubDetailFragment;
 import com.dollarandtrump.angelcar.fragment.CarSubFragment;
 import com.dollarandtrump.angelcar.fragment.PostFragment;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
+import com.dollarandtrump.angelcar.model.InfoCarModel;
 import com.dollarandtrump.angelcar.view.AngelCarViewPager;
+import com.squareup.otto.Produce;
 import com.viewpagerindicator.LinePageIndicator;
+
+import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,6 +47,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     public static final int CALL_CAR_TYPE_DETAIL = 3;
     public static final int CALL_GALLERY_OK = 4;
     public static final int CALL_GALLERY_CANCEL = -4;
+    public static final int CALL_GALLERY_NEXT = -3;
     public static final int CALL_FINISH_POST = 5;
 
     private int lastPosition = 0;
@@ -44,21 +56,61 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     @Bind(R.id.indicator) LinePageIndicator indicator;
     @Bind(R.id.btnNext) Button next;
     @Bind(R.id.btnPrevious) Button previous;
+    InfoCarModel infoCarModel;
+    List<Fragment> mFragment;
+    private PostAdapterViewpager adapter;
+    boolean isEdit = false;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MainThreadBus.getInstance().unregister(this);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        MainThreadBus.getInstance().register(this);
         ButterKnife.bind(this);
+        initInstance();
 
-            PostAdapterViewpager adapter =
-                    new PostAdapterViewpager(getSupportFragmentManager());
-            pager.setOffscreenPageLimit(0);
-            pager.setAdapter(adapter);
-            indicator.setViewPager(pager);
-            pager.setPagingEnabled(false);
-            previous.setEnabled(false);
-            next.setEnabled(false);
+    }
+
+    private void initInstance(){
+        mFragment = new ArrayList<>(4);
+        mFragment.add(BrandFragment.newInstance());
+        mFragment.add(CarSubFragment.newInstance());
+        mFragment.add(CarSubDetailFragment.newInstance());
+//        mFragment.add(ListImageFragment.newInstance());
+//        mFragment.add(PostFragment.newInstance());
+
+        Bundle arg = getIntent().getExtras();
+        if (arg != null && arg.getBoolean("isEdit",false)){
+            isEdit = arg.getBoolean("isEdit",false);
+            PostCarDao modelCar = Parcels.unwrap(arg.getParcelable("carModel"));
+//            mFragment.remove(3);
+            infoCarModel = new InfoCarModel();
+            infoCarModel.setEditInfo(true);
+//            infoCarModel.setBrandDao(new CarBrandDao(modelCar.getCarNameId(),modelCar.getCarName()));
+//            infoCarModel.setSubDao(new CarSubDao(modelCar.getCarSubId(),modelCar.getCarSub()));
+//            infoCarModel.setSubDetailDao(new CarSubDao(modelCar.getCarSubDetailId(),modelCar.getCarSubDetail()));
+//            infoCarModel.setYear(modelCar.getCarYear());
+            infoCarModel.setPostCarDao(modelCar);
+//            mFragment.add(PostFragment.newInstance(modelCar));
+
+            MainThreadBus.getInstance().post(onProduceInfo());
+        }
+
+        adapter =
+                new PostAdapterViewpager(getSupportFragmentManager());
+        adapter.setFragmentList(mFragment);
+        pager.setOffscreenPageLimit(0);
+        pager.setAdapter(adapter);
+        indicator.setViewPager(pager);
+        pager.setPagingEnabled(false);
+        previous.setEnabled(false);
+        next.setEnabled(false);
 
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -92,16 +144,28 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     }
 
     @Override
-    public void onSelectedCallback(int callback) {
-        if (callback == CALL_FINISH_POST){
-            finish();
-            return;
-        }else if (callback == CALL_GALLERY_OK){
-            next.setEnabled(true);
-            return;
-        }else if (callback == CALL_GALLERY_CANCEL){
-            next.setEnabled(false);
-            return;
+    public void onSelectedCallback(int callback,InfoCarModel infoCarModel) {
+        this.infoCarModel = infoCarModel;
+        if (callback != CALL_BRAND && callback != CALL_CAR_TYPE) {
+            switch (callback) {
+                case CALL_CAR_TYPE_DETAIL:
+                    if (!isEdit)
+                        mFragment.add(ListImageFragment.newInstance(infoCarModel));
+                    mFragment.add(PostFragment.newInstance());
+                    adapter.notifyDataSetChanged();
+                    break;
+                case CALL_GALLERY_OK:
+                    next.setEnabled(true);
+                    MainThreadBus.getInstance().post(onProduceInfo());
+                    return;
+                case CALL_GALLERY_CANCEL:
+                    next.setEnabled(false);
+                    return;
+                case CALL_GALLERY_NEXT:
+                    MainThreadBus.getInstance().post(onProduceInfo());
+                    break;
+                default: finish();return;
+            }
         }
         pager.setCurrentItem(pager.getCurrentItem()+1);
         lastPosition = pager.getCurrentItem();
@@ -109,7 +173,11 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     }
 
     private class PostAdapterViewpager extends FragmentStatePagerAdapter {
+        private List<Fragment> fragmentList = new ArrayList<>();
 
+        public void setFragmentList(List<Fragment> fragmentList) {
+            this.fragmentList = fragmentList;
+        }
 
         public PostAdapterViewpager(FragmentManager fm) {
             super(fm);
@@ -117,19 +185,19 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
 
         @Override
         public Fragment getItem(int position) {
-            switch (position){
-                case 0: return BrandFragment.newInstance();
-                case 1: return CarSubFragment.newInstance();
-                case 2: return CarSubDetailFragment.newInstance();
-                case 3: return ListImageFragment.newInstance();
-                case 4: return PostFragment.newInstance();
-            }
-            return null;
+            return fragmentList.get(position);
         }
 
         @Override
         public int getCount() {
-            return 5;
+            return fragmentList.size();
         }
     }
+
+
+    @Produce
+    public InfoCarModel onProduceInfo(){
+        return infoCarModel;
+    }
+
 }

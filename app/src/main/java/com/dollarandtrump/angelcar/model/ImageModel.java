@@ -18,8 +18,8 @@ import java.io.File;
  ********************************************/
 @Parcel
 public class ImageModel {
-    private File mFileImage; // ตัดออก
-    private String mIndex;
+    File mFileImage; // ตัดออก
+    String mIndex;
 
     Uri uri;
 
