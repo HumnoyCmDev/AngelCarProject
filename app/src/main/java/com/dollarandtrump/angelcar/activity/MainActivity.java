@@ -105,8 +105,8 @@ public class MainActivity extends AppCompatActivity {
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
 
-        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+//        startActivity(intent);
 
     }
 
@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == ShopUpLoadDialog.REQUEST_CODE && resultCode == RESULT_OK){
            // requestCode ShopUpLoadDialog
-           Log.i(TAG, "onActivityResult: "+requestCode+" , "+resultCode);
             MainThreadBus.getInstance()
                    .post(new ActivityResultEvent(requestCode,resultCode,data));
         }

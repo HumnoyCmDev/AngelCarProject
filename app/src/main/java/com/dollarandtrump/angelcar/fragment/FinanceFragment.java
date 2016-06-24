@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
 @SuppressWarnings("unused")
 public class FinanceFragment extends Fragment {
 
-    @Bind(R.id.recyclerListChat) RecyclerView recyclerListChat;
+    @Bind(R.id.recycler_list_chat) RecyclerView mListChat;
 
     public FinanceFragment() {
         super();
@@ -61,7 +61,7 @@ public class FinanceFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-        recyclerListChat.setLayoutManager(new LinearLayoutManager(getContext()));
+        mListChat.setLayoutManager(new LinearLayoutManager(getContext()));
 
     }
 
@@ -111,6 +111,10 @@ public class FinanceFragment extends Fragment {
             public ViewHolder(View itemView) {
                 super(itemView);
                 ButterKnife.bind(this,itemView);
+            }
+
+            public void bindViewHolder(){
+
             }
         }
     }

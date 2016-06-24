@@ -239,7 +239,7 @@ public class PostFragment extends Fragment {
     public void onClickPost(){
         
         String topic = editTextTopic.getText().toString();
-        String detail = editTextDescription.getText().toString().trim();
+        String detail = AngelCarUtils.formatLineUp(editTextDescription.getText().toString().trim());
         String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
         String province = String.valueOf(id_province).trim(); // 1 - 77
         String gear = tgGear.isChecked() ? "1" : "2"; // 0 or 1

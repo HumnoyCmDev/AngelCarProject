@@ -40,6 +40,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
 //    @SuppressLint("SimpleDateFormat")
 //    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
+    AngelCarPost.OnClickImageProfile onClickImageProfile;
 
     public FeedPostCarAdapter(Context mContext,MutableInteger lastPositionInteger) {
         this.lastPositionInteger = lastPositionInteger;
@@ -50,6 +51,10 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         this.dao = dao;
         if (dao !=null && dao.getListCar() != null)
             daoFilter = dao.getListCar();
+    }
+
+    public void setOnClickImageProfile(AngelCarPost.OnClickImageProfile onClickImageProfile) {
+        this.onClickImageProfile = onClickImageProfile;
     }
 
     public void setLoading(boolean loading) {
@@ -101,9 +106,9 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         }
 
         switch (switching_position){
-            case 0: view = inflaterLayoutRight(view,parent,getItem(position));
+            case 0: view = inflaterLayoutRight(view,parent,getItem(position),position);
                 break;
-            case 1: view = inflaterLayoutLeft(view,parent,getItem(position));
+            case 1: view = inflaterLayoutLeft(view,parent,getItem(position),position);
                 break;
         }
 
@@ -117,7 +122,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         return view;
     }
 
-    private View inflaterLayoutLeft(View view, ViewGroup parent, PostCarDao postCarDao){
+    private View inflaterLayoutLeft(View view, ViewGroup parent, PostCarDao postCarDao,int position){
         ViewHolderItemLeft holder;
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
@@ -126,11 +131,11 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-        initPost(holder,postCarDao,"#ff0000","#ff0000");
+        initPost(holder,postCarDao,"#ff0000","#ff0000",position);
         return view;
     }
 
-    private View inflaterLayoutRight(View view, ViewGroup parent, PostCarDao postCarDao){
+    private View inflaterLayoutRight(View view, ViewGroup parent, PostCarDao postCarDao,int position){
         ViewHolderItemRight holder;
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
@@ -139,7 +144,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-        initPost(holder,postCarDao,"#FFB13D","#FFB13D");
+        initPost(holder,postCarDao,"#FFB13D","#FFB13D",position);
         return view;
     }
 
@@ -157,7 +162,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
 
 
 
-    private void initPost(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2){
+    private void initPost(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2,int position){
         String topic = dao.getCarTitle();
         holderPost.angelCarPost.setPictureProfile("http://angelcar.com/ios/data/clsdata/"+dao.getShopLogo());
         holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
@@ -173,6 +178,10 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         holderPost.angelCarPost.setDetails2Html(strDetail);
         String datetime = AngelCarUtils.formatTimeAndDay(mContext,dao.getCarModifyTime());
         holderPost.angelCarPost.setTime(datetime);
+
+        if (onClickImageProfile != null) {
+            holderPost.angelCarPost.setOnClickImageProfile(onClickImageProfile,position);
+        }
     }
 
 //    private  <T extends ViewHolderPost> T ViewHolder(T t){
@@ -193,9 +202,12 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
 
     public abstract class ViewHolderPost {
         @Bind(R.id.item_post) protected AngelCarPost angelCarPost;
+
+
         public ViewHolderPost(View v) {
             ButterKnife.bind(this,v);
         }
+
     }
 
     private class PlanetFilter extends Filter {

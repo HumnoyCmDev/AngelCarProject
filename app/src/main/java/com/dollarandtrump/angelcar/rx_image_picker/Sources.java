@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.rx_image;
+package com.dollarandtrump.angelcar.rx_image_picker;
 
 /********************************************
  * Created by HumNoy Developer on 16/6/2559.

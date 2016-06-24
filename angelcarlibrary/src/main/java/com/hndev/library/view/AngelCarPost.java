@@ -2,19 +2,18 @@ package com.hndev.library.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.widget.FrameLayout;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +29,10 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
  * Created by humnoy on 6/2/59.
  */
 public class AngelCarPost extends BaseCustomViewGroup {
+
+    public interface OnClickImageProfile {
+        void onClickImageProfileListener(int position);
+    }
 
     private RelativeLayout background;
 
@@ -245,4 +248,15 @@ public class AngelCarPost extends BaseCustomViewGroup {
         // Restore State from bundle here
     }
 
+    public void setOnClickImageProfile(final OnClickImageProfile onClickImageProfile, final int i){
+        // listener
+        final OnClickImageProfile mOnClickImageProfile = onClickImageProfile;
+        ic_Profile.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mOnClickImageProfile != null)
+                    mOnClickImageProfile.onClickImageProfileListener(i);
+            }
+        });
+    }
 }

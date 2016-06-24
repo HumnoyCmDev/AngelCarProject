@@ -3,6 +3,11 @@ package com.dollarandtrump.angelcar;
 import android.util.Log;
 
 import java.io.Serializable;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,69 +30,69 @@ import rx.schedulers.Schedulers;
  */
 public class SampleRx {
     public static void main(String[] str) {
-//       List<Integer> integers = new ArrayList<>();
-//        integers.add(1);
-//        integers.add(2);
-//        integers.add(3);
-//        integers.add(4);
-//        Observable.just(integers).subscribe(new Subscriber<List<Integer>>() {
-//            @Override
-//            public void onCompleted() {
-//
-//            }
-//
-//            @Override
-//            public void onError(Throwable e) {
-//
-//            }
-//
-//            @Override
-//            public void onNext(List<Integer> integers) {
-//                System.out.println(integers.size());
-//            }
-//        });
+        MyObject o = new MyObject("Jonathan", "Jo", "GREEN");
+        //อีกเทคนิคหนึ่งที่ใช้ร่วมกับ Annotation คือ reflect เพื่อเรียกดูข้อมูลของ Class
+        Class klazz = o.getClass();
+        //ดู field ทั้งหมดที่ประกาศ
+        for (Field f : klazz.getDeclaredFields()) {
+            MyColumn myCol = f.getAnnotation(MyColumn.class);
+            if (myCol != null)
+                System.out.println(
+                        "anno_name:" + myCol.name()+
+                                ",field_name:"+f.getName());
+        }
 
-        Observable<Integer> odds = Observable.just(1, 3, 5);
-        Observable<String> evens = Observable.just("ewr","wer","dfgd");
+    }
 
-        Observable<String> s = Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                        subscriber.onNext("sdfsdfsdfsdfsdf");
-            }
-        });
+    static class MyObject {
 
-        Observable.zip(odds, evens, s, new Func3<Integer, String, String, String>() {
-            @Override
-            public String call(Integer integer, String s, String s2) {
-                return null;
-            }
-        }).groupBy(new Func1<String, Integer>() {
-            @Override
-            public Integer call(String s) {
-                return null;
-            }
-        });
+        @MyColumn(name = "COL_NAME")
+        private String name;
+        @MyColumn(name = "COL_NICKNAME")
+        private String nickname;
+        @MyColumn(name = "COL_COLOR")
+        private String color;
 
-        Observable.merge(odds,evens,s)
-                .subscribe(new Subscriber<Serializable>() {
-                    @Override
-                    public void onCompleted() {
-                        System.out.print("Completed");
-                    }
+        public MyObject() {
 
-                    @Override
-                    public void onError(Throwable e) {
-                        System.out.print(e.toString());
-                    }
+        }
 
-                    @Override
-                    public void onNext(Serializable serializable) {
-                        System.out.println("Next");
-                    }
-                });
+        public MyObject(@MyColumn(name = "pName") String name, String nickname, String color) {
+            this.name = name;
+            this.nickname = nickname;
+            this.color = color;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getNickname() {
+            return nickname;
+        }
+
+        public void setNickname(String nickname) {
+            this.nickname = nickname;
+        }
+
+        public String getColor() {
+            return color;
+        }
+
+        public void setColor(String color) {
+            this.color = color;
+        }
+    }
 
 
+    @Retention(RetentionPolicy.RUNTIME) //กำหนดว่าใช้เวลา Runtime
+    @Target({ElementType.FIELD,ElementType.PARAMETER}) //กำหนดว่าใช้กับ Field
+    @interface MyColumn{
+        String name();
     }
 
     static class ModelCar<T> {

@@ -36,6 +36,8 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     private List<Integer> positionHeader;
 
+    private boolean isShop = true;
+
     public boolean isHeader(int position) {
         for (int i : positionHeader){
             if (i == position) return true;
@@ -50,6 +52,10 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 //        if (positionHeader != null)
 //        return dao.getListCar().size()+positionHeader.size();
         return dao.getListCar().size();
+    }
+
+    public void setShop(boolean shop) {
+        isShop = shop;
     }
 
     public void setDao(PostCarCollectionDao dao) {
@@ -118,7 +124,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                         .into(viewHolder.shopImage);
             String carName = item.getCarSub()+" "+item.getCarSubDetail();
                 viewHolder.carName.setText(carName);
-
+            viewHolder.shopSetting.setVisibility(isShop ? View.VISIBLE : View.GONE);
         }
 
     }

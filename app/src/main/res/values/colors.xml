@@ -12,7 +12,7 @@
     <color name="colorButtonGalleryPress">#ddffb13d</color>
 
     <color name="overlay_color">#80000000</color>
-    <color name="colorSelectorNormal">#FFC11E</color>
+    <color name="colorSelectorNormal">@color/colorAccent</color>
     <color name="colorSelectorPress">#adffc11e</color>
     <color name="colorHint">#f7f7f7</color>
     <color name="colorHintDark">#bebebe</color>

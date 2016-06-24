@@ -52,6 +52,9 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class DetailCarActivity extends AppCompatActivity implements HeaderChatCar.OnClickItemHeaderChatListener {
     private static final int RESULT_LOAD_IMAGE = 988;
@@ -117,6 +120,34 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
         Call<PictureCollectionDao> callLoadPictureAll =
                 HttpManager.getInstance().getService().loadAllPicture(String.valueOf(postCarDao.getCarId()));
         callLoadPictureAll.enqueue(loadPictureCallback);
+//        HttpManager.getInstance().getService().observableLoadAllImage(String.valueOf(postCarDao.getCarId()))
+//                .subscribeOn(Schedulers.newThread())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Subscriber<PictureCollectionDao>() {
+//                    @Override
+//                    public void onCompleted() {
+//                        Log.d(TAG, "onCompleted: ");
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//                        Log.e(TAG, "onError: ", e);
+//                    }
+//
+//                    @Override
+//                    public void onNext(PictureCollectionDao pic) {
+//                        pictureCollectionDao = pic;
+//
+//                        //Picture banner
+////                pictureCarDetail(response.body());
+//
+//                        adapter.setPictureDao(pictureCollectionDao);
+//                        adapter.setPostCarDao(postCarDao);
+//                        adapter.notifyDataSetChanged();
+//                    }
+//                });
+
+
 
         messageManager = new MessageManager();
 

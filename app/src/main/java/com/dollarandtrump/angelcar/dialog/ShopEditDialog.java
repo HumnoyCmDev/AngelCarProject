@@ -1,10 +1,7 @@
 package com.dollarandtrump.angelcar.dialog;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -19,19 +16,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.Results;
-import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
-import com.dollarandtrump.angelcar.rx_image.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_image.Sources;
-import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.rx_image_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_image_picker.Sources;
 import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
-import com.squareup.otto.Subscribe;
-
-import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

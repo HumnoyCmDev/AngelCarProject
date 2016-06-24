@@ -1,176 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context="com.dollarandtrump.angelcar.activity.ShopActivity">
-
-    <android.support.design.widget.AppBarLayout
-        android:background="@android:color/white"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="173dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:titleTextColor="@android:color/white"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/Toolbar.TitleText"/>
 
-        <android.support.design.widget.CollapsingToolbarLayout
-            app:title=" "
-            android:id="@+id/collapsingToolbarLayout"
-            app:contentScrim="@color/colorPrimary"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <RelativeLayout
-                app:layout_collapseMode="parallax"
-                android:layout_width="match_parent"
-                android:layout_height="173dp">
-
-                <ImageView
-                    android:scaleType="fitXY"
-                    android:src="@drawable/sample_bg_shop"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <com.github.siyamed.shapeimageview.CircularImageView
-                    android:layout_marginTop="13dp"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_hndeveloper"
-                    android:id="@+id/pictureShopProfile"
-                    android:layout_width="65dp"
-                    android:layout_height="65dp"/>
-
-                <TextView
-                    android:layout_marginTop="3dp"
-                    android:layout_below="@id/pictureShopProfile"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:id="@+id/tvShopName"
-                    android:textColor="#FDC82D"
-                    android:text="CEO CLS Development"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
-
-                <TextView
-                    android:gravity="center"
-                    android:background="@drawable/shape_bg_user_id"
-                    android:layout_marginTop="5dp"
-                    android:layout_below="@id/tvShopName"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:id="@+id/tvShopNumber"
-                    android:textColor="@android:color/white"
-                    android:text="581 - 959 - 004"
-                    android:layout_width="147dp"
-                    android:layout_height="24dp"/>
-
-                <TextView
-                    android:layout_marginTop="8dp"
-                    android:layout_below="@id/tvShopNumber"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="15sp"
-                    android:textStyle="bold"
-                    android:id="@+id/tvShopDescription"
-                    android:textColor="#4A4A4A"
-                    android:text="รถมือสองสสสส"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"/>
-
-            </RelativeLayout>
-
-            <android.support.v7.widget.Toolbar
-                app:title="Shop"
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:theme="@style/AppTheme.AppBarOverlay"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-
-    </android.support.design.widget.AppBarLayout>
-
-
-    <LinearLayout
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:orientation="vertical"
+    <FrameLayout
+        android:id="@+id/content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" />
 
-
-
-    <LinearLayout
-        android:gravity="center_vertical"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#9B9B9B" />
-
-        <!--TODO Recycle View-->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="@android:color/white"
-                android:text="แสดงทั้งหมด"
-                android:background="@drawable/shape_bg_button_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp" />
-            <Button
-                android:textColor="@android:color/white"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="Toyota"
-                android:background="@drawable/shape_bg_button_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp" />
-            <Button
-                android:textColor="@android:color/white"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:text="Benz"
-                android:background="@drawable/shape_bg_button_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp" />
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-
-            android:layout_marginBottom="8dp"
-            android:background="#9B9B9B" />
-    </LinearLayout>
-
-    <TextView
-        android:layout_gravity="center"
-        android:textSize="14sp"
-        android:textColor="#4A4A4A"
-        android:text="เลือกดูรถตามแบรนได้จากเมนูด้านบน"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_car"
-        android:layout_margin="9dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-
-    </LinearLayout>
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

@@ -1,10 +1,7 @@
 package com.dollarandtrump.angelcar.dialog;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -50,9 +47,8 @@ public class DetailAlertDialog extends DialogFragment {
     }
 
     private static String ARGS_MODEL_CAR = "ARG_MODEL_CAR";
-    private static String ARGS_USER_BY = "ARG_BY_USER"; // Shop,User
 
-    private String user;
+    private boolean isShop;
     private PostCarDao dao;
     private View decorView;
 
@@ -67,11 +63,11 @@ public class DetailAlertDialog extends DialogFragment {
 
     private OnClickEdit onClickEdit;
 
-    public static DetailAlertDialog newInstance(PostCarDao dao,String user) {
+    public static DetailAlertDialog newInstance(PostCarDao dao,boolean isShop) {
         Bundle args = new Bundle();
         DetailAlertDialog fragment = new DetailAlertDialog();
         args.putParcelable(ARGS_MODEL_CAR, Parcels.wrap(dao));
-        args.putString(ARGS_USER_BY,user);
+        args.putBoolean("is_shop",isShop);
         fragment.setArguments(args);
         return fragment;
     }
@@ -80,7 +76,7 @@ public class DetailAlertDialog extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        user = getArguments().getString(ARGS_USER_BY);
+        isShop = getArguments().getBoolean("is_shop");
         dao = Parcels.unwrap(getArguments().getParcelable(ARGS_MODEL_CAR));
 
     }
@@ -101,7 +97,7 @@ public class DetailAlertDialog extends DialogFragment {
             loadImage();
         }
 
-        if (user.contains("user"))
+        if (!isShop)
             btnEdit.setVisibility(View.GONE);
 
         // init
@@ -117,15 +113,19 @@ public class DetailAlertDialog extends DialogFragment {
 
     @OnClick(R.id.buttonPhone)
     public void callPhone(){
-        if (Build.VERSION.SDK_INT >=
-                Build.VERSION_CODES.M) {
-            Permission permission = new Permission(getActivity());
-            if (permission.isAsKForPermission(Manifest.permission.CALL_PHONE,"AngelCar ต้องการขอสิทธิ์ในการจัดการโทร")){
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dao.getPhone().trim().replaceAll(" ","")));
-                startActivity(intent);
-            }
-
-        }else {
+//        if (Build.VERSION.SDK_INT >=
+//                Build.VERSION_CODES.M) {
+//            Permission permission = new Permission(getActivity());
+//            if (permission.isAsKForPermission(Manifest.permission.CALL_PHONE,"AngelCar ต้องการขอสิทธิ์ในการจัดการโทร")){
+//                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dao.getPhone().trim().replaceAll(" ","")));
+//                startActivity(intent);
+//            }
+//
+//        }else {
+//            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dao.getPhone().trim().replaceAll(" ","")));
+//            startActivity(intent);
+//        }
+        if (Permission.callPhone(getActivity())){
             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + dao.getPhone().trim().replaceAll(" ","")));
             startActivity(intent);
         }
@@ -164,12 +164,6 @@ public class DetailAlertDialog extends DialogFragment {
 
     public void setOnClickEditListener(OnClickEdit onClickEdit){
         this.onClickEdit = onClickEdit;
-    }
-    Activity act ;
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-            act = activity;
     }
 
     @OnClick({R.id.buttonEdit,R.id.buttonClose})

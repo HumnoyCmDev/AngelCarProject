@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.rx_image;
+package com.dollarandtrump.angelcar.rx_image_picker;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,8 +12,6 @@ import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
-import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 
 import java.io.File;
 import java.io.IOException;

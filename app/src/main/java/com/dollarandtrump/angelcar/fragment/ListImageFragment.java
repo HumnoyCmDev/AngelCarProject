@@ -26,12 +26,11 @@ import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
 import com.dollarandtrump.angelcar.model.InfoCarModel;
-import com.dollarandtrump.angelcar.rx_image.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_image.Sources;
+import com.dollarandtrump.angelcar.rx_image_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_image_picker.Sources;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.dollarandtrump.angelcar.view.RecyclerGridAutoFit;
 import com.squareup.otto.Produce;
-import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 

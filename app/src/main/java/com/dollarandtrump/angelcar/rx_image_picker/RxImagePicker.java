@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.rx_image;
+package com.dollarandtrump.angelcar.rx_image_picker;
 
 import android.content.Context;
 import android.content.Intent;

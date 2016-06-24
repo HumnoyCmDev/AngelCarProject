@@ -1,42 +1,32 @@
 package com.dollarandtrump.angelcar.fragment;
 
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.ListCarImageActivity;
-import com.dollarandtrump.angelcar.rx_image.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_image.Sources;
-import com.jakewharton.rxbinding.view.RxView;
+import com.dollarandtrump.angelcar.rx_image_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_image_picker.Sources;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 
-import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 
 /***************************************
@@ -92,25 +82,6 @@ public class MenuFragment extends Fragment {
         ButterKnife.bind(this,rootView);
         // Init 'View' instance(s) with rootView.findViewById here
 
-
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                RxImagePicker.with(getContext())
-                        .requestImage(Sources.GALLERY).subscribe(new Action1<Uri>() {
-                    @Override
-                    public void call(Uri uri) {
-                        Glide.with(getActivity())
-                                .load(uri) // works for File or Uri
-                                .crossFade()
-                                .into(img);
-                    }
-                });
-            }
-        });
-
-
         final Pattern emailPattern = Pattern.compile(
                 "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                         + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
@@ -129,13 +100,6 @@ public class MenuFragment extends Fragment {
 
     }
 
-
-
-    @OnClick(R.id.btnTest)
-    public void sampleListCarGallery(){
-        Intent in = new Intent(getContext(),ListCarImageActivity.class);
-        startActivity(in);
-    }
     @Override
     public void onStart() {
         super.onStart();

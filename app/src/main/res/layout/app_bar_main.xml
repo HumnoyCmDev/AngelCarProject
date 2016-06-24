@@ -63,7 +63,7 @@
         fab:menu_colorPressed="@color/colorDarkItem"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true"
-        fab:menu_backgroundColor="#ccffffff"
+        fab:menu_backgroundColor="#c3000000"
         fab:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton

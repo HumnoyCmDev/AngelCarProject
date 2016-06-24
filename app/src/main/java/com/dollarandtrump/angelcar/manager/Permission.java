@@ -70,4 +70,16 @@ public class Permission {
             return true;
         }
     }
+
+    public static boolean callPhone(Activity mContext){
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.CALL_PHONE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(mContext,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    0);
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

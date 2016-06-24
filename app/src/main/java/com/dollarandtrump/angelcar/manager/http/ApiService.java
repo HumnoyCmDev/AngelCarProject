@@ -131,6 +131,9 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("android/api/getimage.php")
     Call<PictureCollectionDao> loadAllPicture(@Field("carid") String carId);
+    @FormUrlEncoded
+    @POST("android/api/getimage.php")
+    Observable<PictureCollectionDao> observableLoadAllImage(@Field("carid") String carId);
 
     //GET CarID
     @GET("android/api/getcarid.php")

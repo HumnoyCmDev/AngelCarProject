@@ -29,6 +29,10 @@ public class PostCarDao extends Model implements Serializable {
     @Column(name = "ShopRef")
     String shopRef;
 
+    @SerializedName("userref")
+    @Expose
+    String user;
+
     @SerializedName("brand_name")
     @Expose
     @Column(name = "BrandName")
@@ -118,6 +122,14 @@ public class PostCarDao extends Model implements Serializable {
     @SerializedName("carname") @Expose int carNameId;
     @SerializedName("cartyperef") @Expose int carSubId;
     @SerializedName("carmodelref") @Expose int carSubDetailId;
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
 
     public int getCarNameId() {
         return carNameId;

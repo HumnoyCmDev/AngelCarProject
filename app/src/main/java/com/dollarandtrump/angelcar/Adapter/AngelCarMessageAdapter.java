@@ -27,6 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 /**
  * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
@@ -42,13 +45,13 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     private Context mContext;
     // Dates and Clustering
     private final Map<Integer, Cluster> mClusterCache = new HashMap<>();
-    protected final Handler mUiThreadHandler;
+//    protected final Handler mUiThreadHandler;
     private final DateFormat mTimeFormat;
 
     public AngelCarMessageAdapter(Context context, String mMessageBy) {
         this.mContext = context;
         this.mMessageBy = mMessageBy;
-        mUiThreadHandler = new Handler(Looper.getMainLooper());
+//        mUiThreadHandler = new Handler(Looper.getMainLooper());
 //        mDateFormat = android.text.format.DateFormat.getDateFormat(context);
         mTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
     }
@@ -117,17 +120,17 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         //
 
         if (getItemViewType(position) == TYPE_ME){
-            createBackgroundMessage(viewHolder,Color.parseColor("#FFB13D"));
+//            createBackgroundMessage(viewHolder,Color.parseColor("#FFB13D"));
             viewHolder.mCell.setText(msgDao.getMessageText());
             viewHolder.mReceipt.setVisibility(View.GONE);
 
         }else {
-            createBackgroundMessage(viewHolder,Color.parseColor("#696969"));
+//            createBackgroundMessage(viewHolder,Color.parseColor("#696969"));
             viewHolder.mCell.setText(msgDao.getMessageText());
 
             // Sender name, only for first message in cluster // User > 2
             if (!oneOnOne && (cluster.mClusterWithPrevious == null || cluster.mClusterWithPrevious == ClusterType.NEW_SENDER)) {
-                if (msgDao.getDisplayName() != null) {
+                if (msgDao != null) {
                     viewHolder.mUserName.setText(msgDao.getDisplayName());
                 } else {
                     MessageDao nameProvider = mMessageDao.getListMessage().get(position-1);
@@ -158,17 +161,17 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
 
     }
 
-    private GradientDrawable createBackgroundMessage(CellViewHolder viewHolder,int color) {
-        GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setColor(color);
-        gradientDrawable.setCornerRadius(35);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            viewHolder.mCell.setBackground(gradientDrawable);
-        }else {
-            viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
-        }
-        return gradientDrawable;
-    }
+//    private GradientDrawable createBackgroundMessage(CellViewHolder viewHolder,int color) {
+//        GradientDrawable gradientDrawable = new GradientDrawable();
+//        gradientDrawable.setColor(color);
+//        gradientDrawable.setCornerRadius(35);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+//            viewHolder.mCell.setBackground(gradientDrawable);
+//        }else {
+//            viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
+//        }
+//        return gradientDrawable;
+//    }
 
 
     @Override
@@ -257,14 +260,14 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         return (d1.getYear() != d2.getYear()) || (d1.getMonth() != d2.getMonth()) || (d1.getDay() != d2.getDay());
     }
 
-    private void requestUpdate(final MessageDao messageDao, final int lastPosition) {
-        mUiThreadHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                notifyItemChanged(lastPosition,messageDao);
-            }
-        });
-    }
+//    private void requestUpdate(final MessageDao messageDao, final int lastPosition) {
+//        mUiThreadHandler.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                notifyItemChanged(lastPosition,messageDao);
+//            }
+//        });
+//    }
 
     private static class Cluster {
         public boolean mDateBoundaryWithPrevious;
@@ -331,7 +334,6 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         for (MessageDao d : dao.getListMessage())
             if (d.getMessageBy().equals("officer"))
                 return false;
-//            else if (d.equals(""))
         return true;
     }
 }
