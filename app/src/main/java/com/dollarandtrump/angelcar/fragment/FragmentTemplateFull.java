@@ -42,7 +42,7 @@ public class FragmentTemplateFull extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_template_full, container, false);
+        View rootView = inflater.inflate(R.layout.activity_main, container, false);
         initInstances(rootView, savedInstanceState);
         return rootView;
     }

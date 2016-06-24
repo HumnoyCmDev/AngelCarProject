@@ -24,23 +24,15 @@ import rx.functions.Func1;
 import rx.functions.Func3;
 import rx.observables.GroupedObservable;
 import rx.schedulers.Schedulers;
+import rx.subjects.AsyncSubject;
+import rx.subjects.PublishSubject;
+import rx.subjects.ReplaySubject;
 
 /**
  * Created by humnoyDeveloper on 21/4/59. 16:00
  */
 public class SampleRx {
     public static void main(String[] str) {
-        MyObject o = new MyObject("Jonathan", "Jo", "GREEN");
-        //อีกเทคนิคหนึ่งที่ใช้ร่วมกับ Annotation คือ reflect เพื่อเรียกดูข้อมูลของ Class
-        Class klazz = o.getClass();
-        //ดู field ทั้งหมดที่ประกาศ
-        for (Field f : klazz.getDeclaredFields()) {
-            MyColumn myCol = f.getAnnotation(MyColumn.class);
-            if (myCol != null)
-                System.out.println(
-                        "anno_name:" + myCol.name()+
-                                ",field_name:"+f.getName());
-        }
 
     }
 

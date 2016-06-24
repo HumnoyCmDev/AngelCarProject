@@ -1,8 +1,6 @@
 package com.dollarandtrump.angelcar.fragment;
 
-import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,11 +10,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.activity.ListCarImageActivity;
-import com.dollarandtrump.angelcar.rx_image_picker.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_image_picker.Sources;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 
@@ -24,7 +18,6 @@ import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.functions.Action1;
 import rx.functions.Func1;
 

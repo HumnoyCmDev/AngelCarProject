@@ -19,8 +19,8 @@ import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
-import com.dollarandtrump.angelcar.rx_image_picker.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_image_picker.Sources;
+import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_picker.Sources;
 import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
 

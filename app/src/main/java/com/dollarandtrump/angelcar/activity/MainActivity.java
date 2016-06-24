@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
@@ -63,7 +62,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private  final int EMAIL_RESOLUTION_REQUEST = 333;
     private  final int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -76,8 +75,6 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.menu_fab) FloatingActionMenu menuFab;
     @Bind(R.id.fab_ac_Deposit) FloatingActionButton fabAcDeposit;
     @Bind(R.id.fab_ac_Dealer) FloatingActionButton fabAcDealer;
-
-
 
     private static final String TAG = "MainActivity";
 
@@ -94,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.app_bar_main);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         initInstance();
@@ -104,10 +101,6 @@ public class MainActivity extends AppCompatActivity {
         fabAcDealer.setEnabled(false);
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
-
-//        Intent intent = new Intent(MainActivity.this, ChatActivity.class);
-//        startActivity(intent);
-
     }
 
 //  googlePicker
@@ -151,12 +144,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initInstance() {
-        boolean first = Registration.getInstance().isFirstApp();
-        checkRegistrationEmail(first);
-    }
-
-    private void checkRegistrationEmail(boolean first_init) {
-        if (!first_init){
+        if (!Registration.getInstance().isFirstApp()){
 //            if (!checkPermissionAccountApi23()){
 //                dialogConfirmFragment();
 //            }
@@ -173,6 +161,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
     private void dialogConfirmFragment() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -254,26 +244,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        registerReceiver();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        unregisterReceiver();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-//        BusProvider.getInstance().register(this);
         MainThreadBus.getInstance().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-//        BusProvider.getInstance().unregister(this);
         MainThreadBus.getInstance().unregister(this );
     }
 
@@ -333,12 +319,12 @@ public class MainActivity extends AppCompatActivity {
         mTabLayout.setOnTabSelectListener(onTabSelectListener);
     }
 
-    private View tabViewCustom(String title, int drawable){
-        TextView textView = new TextView(this);
-        textView.setText(title);
-        textView.setCompoundDrawablesWithIntrinsicBounds( 0 ,drawable, 0, 0);
-        return textView;
-    }
+//    private View tabViewCustom(String title, int drawable){
+//        TextView textView = new TextView(this);
+//        textView.setText(title);
+//        textView.setCompoundDrawablesWithIntrinsicBounds( 0 ,drawable, 0, 0);
+//        return textView;
+//    }
 
     private void initToolbars() {
         setSupportActionBar(toolbar);

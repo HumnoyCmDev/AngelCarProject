@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.rx_image_picker;
+package com.dollarandtrump.angelcar.rx_picker;
 
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +51,7 @@ public class RxImagePicker {
     private void startImagePickHiddenActivity(int imageSource) {
         Intent intent = new Intent(context, HiddenActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(HiddenActivity.IMAGE_SOURCE, imageSource);
+        intent.putExtra(HiddenActivity.RX_PICKER_SOURCE, imageSource);
         context.startActivity(intent);
     }
 }

@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
+
 
     <application
         android:name=".MainApplication"
@@ -79,6 +82,10 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAcE_P3xffVRk_EU8aOAGlBzFm6wamBCx8"/>
+
 
         <!-- [START firebase_service] -->
         <service
@@ -97,9 +104,8 @@
         </service>
         <!-- [END firebase_iid_service] -->
 
-        <activity android:name=".activity.ListCarImageActivity"/>
         <activity
-            android:name=".rx_image_picker.HiddenActivity"
+            android:name=".rx_picker.HiddenActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />

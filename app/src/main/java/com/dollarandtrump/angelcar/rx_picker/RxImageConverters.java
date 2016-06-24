@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.rx_image_picker;
+package com.dollarandtrump.angelcar.rx_picker;
 
 import android.content.Context;
 import android.graphics.Bitmap;

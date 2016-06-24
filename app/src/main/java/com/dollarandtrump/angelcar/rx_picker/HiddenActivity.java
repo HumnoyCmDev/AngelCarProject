@@ -1,7 +1,6 @@
-package com.dollarandtrump.angelcar.rx_image_picker;
+package com.dollarandtrump.angelcar.rx_picker;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -10,8 +9,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,19 +28,29 @@ import java.util.Locale;
  * AngelCarProject
  * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
  ********************************************/
-public class HiddenActivity extends Activity{
-    public static String IMAGE_SOURCE = "image_source";
+public class HiddenActivity extends FragmentActivity {//implements GoogleApiClient.OnConnectionFailedListener{
+    public static String RX_PICKER_SOURCE = "rx_picker_source";
 
     private static String TAG = "RxImagePicker";
 
     private static final int SELECT_PHOTO = 100;
     private static final int TAKE_PHOTO = 101;
+    private static final int LOCATION = 102;
 
     private Uri cameraPictureUrl;
-
+//    private GoogleApiClient mGoogleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        mGoogleApiClient = new GoogleApiClient
+//                .Builder(this)
+//                .addApi(LocationServices.API)
+////                .addApi(Places.GEO_DATA_API)
+////                .addApi(Places.PLACE_DETECTION_API)
+//                .enableAutoManage(this, this)
+//                .build();
+
         if (savedInstanceState == null) {
             handleIntent(getIntent());
         }
@@ -67,6 +81,9 @@ public class HiddenActivity extends Activity{
                 case TAKE_PHOTO:
                     RxImagePicker.with(this).onImagePicked(cameraPictureUrl);
                     break;
+                case LOCATION:
+                    RxLocationPicker.with(this).onLocationPicked(PlacePicker.getPlace(this,data));
+                    break;
             }
         }
         finish();
@@ -76,17 +93,18 @@ public class HiddenActivity extends Activity{
     protected void onDestroy() {
         super.onDestroy();
         RxImagePicker.with(this).onDestroy();
+        RxLocationPicker.with(this).onDestroy();
     }
 
     private void handleIntent(Intent intent) {
-        Sources sourceType = Sources.values()[intent.getIntExtra(IMAGE_SOURCE, 0)];
+        Sources sourceType = Sources.values()[intent.getIntExtra(RX_PICKER_SOURCE, 0)];
         int chooseCode = 0;
-        Intent pictureChooseIntent = null;
+        Intent pickerIntent = null;
         switch (sourceType) {
             case CAMERA:
                 cameraPictureUrl = Uri.fromFile(createImageFile());
-                pictureChooseIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                pictureChooseIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
+                pickerIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                pickerIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraPictureUrl);
                 chooseCode = TAKE_PHOTO;
                 break;
             case GALLERY:
@@ -95,19 +113,34 @@ public class HiddenActivity extends Activity{
                 }
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    pictureChooseIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                    pictureChooseIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
-                    pictureChooseIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                    pickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                    pickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+                    pickerIntent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
                 } else {
-                    pictureChooseIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                    pickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 }
-                pictureChooseIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
-                pictureChooseIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                pictureChooseIntent.setType("image/*");
+                pickerIntent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+                pickerIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                pickerIntent.setType("image/*");
                 chooseCode = SELECT_PHOTO;
                 break;
+            case LOCATION:
+
+//                LocationAvailability locationAvailability = LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient);
+//                if(locationAvailability.isLocationAvailable()) {
+                    try {
+                        pickerIntent = new PlacePicker.IntentBuilder().build(this);
+                        chooseCode = LOCATION;
+                    } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+                        Log.e(TAG, "handleIntent: ", e);
+                    }
+//                } else {
+//                    Log.d(TAG, "handleIntent: open gps");
+//                }
+                break;
         }
-        startActivityForResult(pictureChooseIntent, chooseCode);
+
+        startActivityForResult(pickerIntent, chooseCode);
     }
 
     private boolean checkPermission() {
@@ -151,4 +184,9 @@ public class HiddenActivity extends Activity{
         }
         return result;
     }
+
+//    @Override
+//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//        Log.e(TAG, "onConnectionFailed: "+connectionResult.getErrorMessage());
+//    }
 }

@@ -27,6 +27,8 @@ public class FireBaseMessaging extends FirebaseMessagingService{
             Log.d(TAG, "From: " + remoteMessage.getFrom());
             Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
             MainThreadBus.getInstance().post(remoteMessage);
+
+        Log.d(TAG, "onMessageReceived: "+remoteMessage.getData());
 //        sendNotification(remoteMessage.getNotification().getBody());
     }
 
