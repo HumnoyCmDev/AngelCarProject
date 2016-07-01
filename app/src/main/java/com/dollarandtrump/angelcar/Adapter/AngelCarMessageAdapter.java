@@ -45,13 +45,13 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     private Context mContext;
     // Dates and Clustering
     private final Map<Integer, Cluster> mClusterCache = new HashMap<>();
-//    protected final Handler mUiThreadHandler;
+    protected final Handler mUiThreadHandler;
     private final DateFormat mTimeFormat;
 
     public AngelCarMessageAdapter(Context context, String mMessageBy) {
         this.mContext = context;
         this.mMessageBy = mMessageBy;
-//        mUiThreadHandler = new Handler(Looper.getMainLooper());
+        mUiThreadHandler = new Handler(Looper.getMainLooper());
 //        mDateFormat = android.text.format.DateFormat.getDateFormat(context);
         mTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
     }
@@ -120,10 +120,9 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         //
 
         if (getItemViewType(position) == TYPE_ME){
-//            createBackgroundMessage(viewHolder,Color.parseColor("#FFB13D"));
+//          createBackgroundMessage(viewHolder,Color.parseColor("#FFB13D"));
             viewHolder.mCell.setText(msgDao.getMessageText());
             viewHolder.mReceipt.setVisibility(View.GONE);
-
         }else {
 //            createBackgroundMessage(viewHolder,Color.parseColor("#696969"));
             viewHolder.mCell.setText(msgDao.getMessageText());
@@ -196,6 +195,7 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     //==============================================================================================
 
     private Cluster getClustering(MessageCollectionDao mMessageDao, int position) {
+        MessageDao messageDao =  mMessageDao.getListMessage().get(position);
         Cluster result = mClusterCache.get(mMessageDao.getListMessage().get(position).getMessageId());
         if (result == null) {
             result = new Cluster();
@@ -203,25 +203,21 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         }
 
         int previousPosition = position - 1;
-        MessageDao previousMessage = (previousPosition >= 0) ? mMessageDao.getListMessage().get(position) : null;
+        MessageDao previousMessage = (previousPosition >= 0) ? mMessageDao.getListMessage().get(previousPosition) : null;
         if (previousMessage != null) {
+            result.mDateBoundaryWithPrevious = isDateBoundary(previousMessage.getMessagesTamp(), messageDao.getMessagesTamp());
+            result.mClusterWithPrevious = ClusterType.fromMessages(previousMessage, messageDao);
 
-            result.mDateBoundaryWithPrevious = isDateBoundary(mMessageDao.getListMessage().get(previousPosition).getMessagesTamp(),
-                    mMessageDao.getListMessage().get(position).getMessagesTamp());
-            result.mClusterWithPrevious = ClusterType.fromMessages(mMessageDao.getListMessage().get(previousPosition),
-                    mMessageDao.getListMessage().get(position));
-
-            Cluster previousCluster = mClusterCache.get(mMessageDao.getListMessage().get(position).getMessageId());
+            Cluster previousCluster = mClusterCache.get(previousMessage.getMessageId());
             if (previousCluster == null) {
                 previousCluster = new Cluster();
-                mClusterCache.put(mMessageDao.getListMessage().get(position).getMessageId(), previousCluster);
+                mClusterCache.put(previousMessage.getMessageId(), previousCluster);
             } else {
                 // does the previous need to change its clustering?
                 if ((previousCluster.mClusterWithNext != result.mClusterWithPrevious) ||
                         (previousCluster.mDateBoundaryWithNext != result.mDateBoundaryWithPrevious)) {
-
 //                    requestUpdate(previousMessage, previousPosition);
-//                    notifyItemChanged(previousPosition,mMessageDao);
+//                    notifyItemChanged(previousPosition,previousMessage);
                 }
             }
             previousCluster.mClusterWithNext = result.mClusterWithPrevious;
@@ -231,21 +227,19 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         int nextPosition = position + 1;
         MessageDao nextMessage = (nextPosition < getItemCount()) ? mMessageDao.getListMessage().get(nextPosition) : null;
         if (nextMessage != null) {
-            result.mDateBoundaryWithNext = isDateBoundary(mMessageDao.getListMessage().get(position).getMessagesTamp(),
-                    mMessageDao.getListMessage().get(nextPosition).getMessagesTamp());
-            result.mClusterWithNext = ClusterType.fromMessages(mMessageDao.getListMessage().get(position),
-                    mMessageDao.getListMessage().get(nextPosition));
+            result.mDateBoundaryWithNext = isDateBoundary(messageDao.getMessagesTamp(),nextMessage.getMessagesTamp());
+            result.mClusterWithNext = ClusterType.fromMessages(messageDao, nextMessage);
 
-            Cluster nextCluster = mClusterCache.get(mMessageDao.getListMessage().get(position).getMessageId());
+            Cluster nextCluster = mClusterCache.get(nextMessage.getMessageId());
             if (nextCluster == null) {
                 nextCluster = new Cluster();
-                mClusterCache.put(mMessageDao.getListMessage().get(position).getMessageId(), nextCluster);
+                mClusterCache.put(nextMessage.getMessageId(), nextCluster);
             } else {
                 // does the next need to change its clustering?
                 if ((nextCluster.mClusterWithPrevious != result.mClusterWithNext) ||
                         (nextCluster.mDateBoundaryWithPrevious != result.mDateBoundaryWithNext)) {
 //                    requestUpdate(nextMessage, nextPosition);
-//                    notifyItemChanged(nextPosition,mMessageDao);
+//                    notifyItemChanged(nextPosition,nextMessage);
                 }
             }
             nextCluster.mClusterWithPrevious = result.mClusterWithNext;
@@ -260,14 +254,14 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         return (d1.getYear() != d2.getYear()) || (d1.getMonth() != d2.getMonth()) || (d1.getDay() != d2.getDay());
     }
 
-//    private void requestUpdate(final MessageDao messageDao, final int lastPosition) {
-//        mUiThreadHandler.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                notifyItemChanged(lastPosition,messageDao);
-//            }
-//        });
-//    }
+    private void requestUpdate(final MessageDao messageDao, final int lastPosition) {
+        mUiThreadHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                notifyItemChanged(lastPosition,messageDao);
+            }
+        });
+    }
 
     private static class Cluster {
         public boolean mDateBoundaryWithPrevious;
@@ -331,9 +325,9 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     }
 
     boolean getParticipants(MessageCollectionDao dao) {
-        for (MessageDao d : dao.getListMessage())
-            if (d.getMessageBy().equals("officer"))
+//        for (MessageDao d : dao.getListMessage())
+//            if (d.getMessageBy().equals("officer"))
                 return false;
-        return true;
+//        return true;
     }
 }

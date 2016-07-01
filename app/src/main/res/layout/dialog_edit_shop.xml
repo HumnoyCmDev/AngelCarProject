@@ -102,7 +102,7 @@
                     android:background="@drawable/shape_bg_user_id"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvShopNumber"
+                    android:id="@+id/text_view_shop_number"
                     android:textColor="@android:color/black"
                     android:text="581 - 959 - 004"
                     android:layout_width="147dp"

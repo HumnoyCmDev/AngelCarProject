@@ -38,7 +38,6 @@ public class ChatAdapter extends BaseAdapter {
 
     public void setShowDate(int positionShowDate) {
         this.positionShowDate = positionShowDate;
-        Log.i("Adapter", "setShowDate: "+positionShowDate);
         if (viewTypeShowDate == View.GONE)
             viewTypeShowDate = View.VISIBLE;
         else
@@ -124,7 +123,6 @@ public class ChatAdapter extends BaseAdapter {
             return headerChatCar;
         }
 
-        Log.i("Adapter", "ps2 "+position);
         if (getItemViewType(position) == 3){
             HeaderAdminChatCar headerAdminChatCar;
             if (convertView != null){
@@ -164,10 +162,7 @@ public class ChatAdapter extends BaseAdapter {
 
         // Test Date Time
         if (positionShowDate == position) {
-            Log.i("Adapter", "true : "+position);
             holder.angelCarMessage.inflateDateTime(viewTypeShowDate);
-        }else {
-            Log.i("Adapter", "false : "+position);
         }
 
         return view;

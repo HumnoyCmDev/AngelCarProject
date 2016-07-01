@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -29,8 +30,9 @@ import butterknife.ButterKnife;
  */
 public class ChatSellFragment extends Fragment {
 //    public static final String ARGS_MESSAGE_BY = "user";
-    @Bind(R.id.list_view) ListView listView;
-
+    @Bind(R.id.list_view) ListView mListView;
+    @Bind(R.id.stub_text_view)
+    ViewStub mStubTextNoResult;
 
     ConversationAdapter adapter;
 //    MessageCollectionDao dao;
@@ -69,8 +71,8 @@ public class ChatSellFragment extends Fragment {
         adapter = new ConversationAdapter();
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(onItemClickListener);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(onItemClickListener);
     }
 
     @Override
@@ -103,8 +105,15 @@ public class ChatSellFragment extends Fragment {
     public void subScribeMessage(MessageManager msgManager){
         Log.i(TAG, "subScribeMessage: Sell"+msgManager.getMessageBuyDao().getListMessage().size());
         messageManager.setMessageDao(msgManager.getMessageBuyDao());
-        adapter.setDao(messageManager.getMessageDao().getListMessage());
-        adapter.notifyDataSetChanged();
+        if (messageManager.getCount()>0) {
+            adapter.setDao(messageManager.getMessageDao().getListMessage());
+            adapter.notifyDataSetChanged();
+            mListView.setVisibility(View.VISIBLE);
+            mStubTextNoResult.setVisibility(View.GONE);
+        }else {
+            mListView.setVisibility(View.GONE);
+            mStubTextNoResult.inflate();
+        }
     }
 
     @Override

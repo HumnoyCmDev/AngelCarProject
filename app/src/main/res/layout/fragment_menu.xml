@@ -1,106 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:fillViewport="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/menu_button_profile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:background="@drawable/selector_overlay"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="10dp">
+
+            <com.dollarandtrump.angelcar.view.ImageViewGlide
+                android:id="@+id/image_view_glide_profile"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_hndeveloper" />
 
             <LinearLayout
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.github.siyamed.shapeimageview.CircularImageView
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/ic_hndeveloper"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:textStyle="bold"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="20sp"
-                    android:text="Edit Profile"
+                    android:id="@+id/text_name"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:maxLines="1"
+                    android:text="[Name]"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/text_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:maxLines="1"
+                    android:text="[Descroption]"
+                    android:textSize="14sp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:background="#a4a4a4" />
 
             </LinearLayout>
 
+        </LinearLayout>
 
-
-            <View
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#9B9B9B" />
-
+        <LinearLayout
+            android:paddingBottom="10dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <TextView
-                android:id="@+id/btnTest"
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="6sp"
                 android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:text="Follow"
                 android:drawablePadding="16dp"
                 android:gravity="center_vertical"
-                android:textSize="16sp"
+                android:text="Menu 2"
+                android:textSize="16sp" />
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="48dp" />
+                android:layout_height="32dp"
+                android:layout_marginTop="6sp"
+                android:drawableLeft="@drawable/shape_list_button_follow_on"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:text="Menu 3"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="32dp"
+                android:layout_marginTop="6sp"
+                android:drawableLeft="@drawable/shape_list_button_follow_on"
+                android:drawablePadding="16dp"
+                android:gravity="center_vertical"
+                android:text="Menu 4"
+                android:textSize="16sp" />
+
 
             <ImageView
-                android:layout_gravity="center"
-                android:src="@drawable/ic_camera"
-                android:id="@+id/imageTest"
+                android:src="@drawable/ic_hndeveloper"
+                android:id="@+id/image_test_cache"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <TextView
-                android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:text="Menu 2"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="48dp" />
-
-            <TextView
-                android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:text="Menu 3"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="48dp" />
-
-            <TextView
-                android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:text="Menu 4"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:layout_width="match_parent"
-                android:layout_height="48dp" />
-
-            <EditText
-                android:id="@+id/edit_test"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        </LinearLayout>
 
 
 
-
-
-
-    </LinearLayout>
 
     </LinearLayout>
 

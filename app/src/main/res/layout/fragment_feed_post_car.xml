@@ -14,7 +14,7 @@
 
         <TextView
             android:layout_marginLeft="16dp"
-            android:id="@+id/countCarAll"
+            android:id="@+id/text_view_count_car_all"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center|left"
@@ -57,7 +57,7 @@
             android:clickable="true"
             android:gravity="center"
             android:visibility="gone"
-            android:id="@+id/tvNewPost"
+            android:id="@+id/text_view_new_post"
             android:textColor="@android:color/white"
             android:text="โพสใหม่+10"
             android:layout_marginTop="5dp"

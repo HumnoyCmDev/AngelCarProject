@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.PictureDao;
@@ -26,16 +27,17 @@ import butterknife.ButterKnife;
  * Created by humnoyDeveloper on 6/4/59. 15:31
  */
 public class ViewPictureFragment extends Fragment {
-    private static String ARGS_PICTURE = "ARGS_PICTURE";
+    private static final String ARGS_PICTURE = "base_url";
     private static final String BUNDLE_STATE = "ImageViewState";
 
-    @Bind(R.id.pictureFull) SubsamplingScaleImageView scaleImageView;
-    private Target target;
+    @Bind(R.id.pictureFull) SubsamplingScaleImageView mImageView;
+    @Bind(R.id.progressbar_load) ProgressBar mProgressBar;
+    private Target mTarget;
 
-    public static ViewPictureFragment newInstance(PictureDao dao) {
+    public static ViewPictureFragment newInstance(String url) {
         Bundle args = new Bundle();
         ViewPictureFragment fragment = new ViewPictureFragment();
-        args.putParcelable(ARGS_PICTURE, Parcels.wrap(dao));
+        args.putString(ARGS_PICTURE, url);
         fragment.setArguments(args);
         return fragment;
     }
@@ -43,13 +45,12 @@ public class ViewPictureFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_view_picture,container,false);
+        View v = inflater.inflate(R.layout.fragment_sub_sampling_scale_image_view,container,false);
         initInstance(v,savedInstanceState);
         return v;
     }
@@ -62,22 +63,25 @@ public class ViewPictureFragment extends Fragment {
             imageViewState = (ImageViewState)savedInstanceState.getSerializable(BUNDLE_STATE);
         }
 
-        PictureDao dao = Parcels.unwrap(getArguments().getParcelable(ARGS_PICTURE));
-//        String src = "http://angelcar.com/"+dao.getCarImagePath().replace("carimages","thumbnailcarimages");
-        String src  = dao.getCarImageThumbnailPath();
-        target = new Target(imageViewState);
+        mImageView.setPanEnabled(true);
+        mImageView.setZoomEnabled(true);
+        mImageView.setDoubleTapZoomDpi(160);
+        mImageView.setMinimumDpi(80);
 
+        String src  = getArguments().getString(ARGS_PICTURE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mTarget = new Target(imageViewState);
         Glide.with(this).load(src)
                 .asBitmap()
                 .placeholder(R.drawable.loading)
-                .into(target);
+                .into(mTarget);
 
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Glide.clear(target);
+        Glide.clear(mTarget);
     }
 
     @Override
@@ -95,7 +99,8 @@ public class ViewPictureFragment extends Fragment {
 
         @Override
         public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-            scaleImageView.setImage(ImageSource.cachedBitmap(resource),imageViewState);
+            mImageView.setImage(ImageSource.cachedBitmap(resource),imageViewState);
+            mProgressBar.setVisibility(View.GONE);
         }
     }
 
@@ -105,7 +110,7 @@ public class ViewPictureFragment extends Fragment {
 
         View rootView = getView();
         if (rootView != null) {
-            ImageViewState state = scaleImageView.getState();
+            ImageViewState state = mImageView.getState();
             if (state != null) {
                 outState.putSerializable(BUNDLE_STATE, state);
             }

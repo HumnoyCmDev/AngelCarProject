@@ -15,19 +15,19 @@ import com.dollarandtrump.angelcar.dao.ProfileDao;
 @Table(name = "CacheShop")
 public class CacheShop  extends Model{
 
-//    @Column(name = "Profile")
-//    public ProfileDao profileDao;
+    @Column(name = "Profile")
+    public ProfileDao profileDao;
 
     @Column(name = "Post")
     public PostCarDao postCarDao;
 
-//    public ProfileDao getProfileDao() {
-//        return profileDao;
-//    }
+    public ProfileDao getProfileDao() {
+        return profileDao;
+    }
 
-//    public void setProfileDao(ProfileDao profileDao) {
-//        this.profileDao = profileDao;
-//    }
+    public void setProfileDao(ProfileDao profileDao) {
+        this.profileDao = profileDao;
+    }
 
     public PostCarDao getPostCarDao() {
         return postCarDao;

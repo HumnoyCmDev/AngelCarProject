@@ -38,7 +38,7 @@ import retrofit2.Response;
 public class ChatActivity extends AppCompatActivity {
     @Bind(R.id.list_view) ListView listView;
 
-    @Bind(R.id.input_chat) EditText messageText;
+    @Bind(R.id.edit_text_input_chat) EditText messageText;
 
     private ChatAdapter chatAdapter;
 

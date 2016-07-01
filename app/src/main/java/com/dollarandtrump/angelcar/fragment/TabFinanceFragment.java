@@ -29,10 +29,7 @@ public class TabFinanceFragment extends Fragment {
     }
 
     public static TabFinanceFragment newInstance() {
-        TabFinanceFragment fragment = new TabFinanceFragment();
-//        Bundle args = new Bundle();
-//        fragment.setArguments(args);
-        return fragment;
+        return new TabFinanceFragment();
     }
 
     @Override

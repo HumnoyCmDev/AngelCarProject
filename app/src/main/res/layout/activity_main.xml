@@ -51,7 +51,7 @@
     <include layout="@layout/activity_main_contener" />
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/menu_fab"
+        android:id="@+id/floating_action_menu_fab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"

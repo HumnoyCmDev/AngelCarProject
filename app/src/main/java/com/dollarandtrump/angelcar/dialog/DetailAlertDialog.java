@@ -53,7 +53,7 @@ public class DetailAlertDialog extends DialogFragment {
     private View decorView;
 
     @Bind(R.id.tvGear) TextView tvGear;
-    @Bind(R.id.tvTopicCar) TextView tvTopicCar;
+    @Bind(R.id.text_view_topic_car) TextView tvTopicCar;
     @Bind(R.id.tvTopic) TextView tvTopic;
     @Bind(R.id.tvDetail) TextView tvDetail;
     @Bind(R.id.tvName) TextView tvName;

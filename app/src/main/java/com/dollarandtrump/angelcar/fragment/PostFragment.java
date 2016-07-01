@@ -23,7 +23,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -71,23 +70,23 @@ import rx.schedulers.Schedulers;
  * ลงวันที่ 5/2/59. เวลา 10:41
  ***************************************/
 public class PostFragment extends Fragment {
-
-    @Bind(R.id.etDescription) EditText editTextDescription;
-    @Bind(R.id.tgGear) ToggleButton tgGear;
-    @Bind(R.id.etName) EditText editTextName;
-    @Bind(R.id.etPrice) EditText editTextPrice;
-    @Bind(R.id.etRegister) EditText editTextRegister;
-    @Bind(R.id.etTelephone) EditText editTextTelephone;
-    @Bind(R.id.etTopic) EditText editTextTopic;
-
-    @Bind(R.id.tvTopicCar) TextView tvTopicCar;
-    @Bind(R.id.spinnerProvince) Spinner spinnerProvince;
-    @Bind(R.id.buttonPost) Button btnPost;
-
     private static final String TAG = "PostFragment";
 
-    private int id_province = 1;
-    private InfoCarModel carModel;
+    @Bind(R.id.edit_text_description) EditText mDescription;
+    @Bind(R.id.edit_text_telephone) EditText mTelephone;
+    @Bind(R.id.edit_text_register) EditText mRegister;
+    @Bind(R.id.edit_text_price) EditText mPrice;
+    @Bind(R.id.edit_text_topic) EditText mTopic;
+    @Bind(R.id.edit_text_Name) EditText mName;
+
+    @Bind(R.id.spinner_province) Spinner mSpinnerProvince;
+    @Bind(R.id.text_view_topic_car) TextView mTopicCar;
+    @Bind(R.id.toggle_buuton_gear) ToggleButton mGear;
+    @Bind(R.id.button_post) Button mBtnPost;
+
+
+    private int mIdProvince = 1;
+    private InfoCarModel mCarModel;
 
     public PostFragment() {
         super();
@@ -97,14 +96,6 @@ public class PostFragment extends Fragment {
         PostFragment fragment = new PostFragment();
         return fragment;
     }
-
-//    public static PostFragment newInstance(InfoCarModel infoCarModel) {
-//        PostFragment fragment = new PostFragment();
-//        Bundle args = new Bundle();
-//        args.putParcelable("infoCar",Parcels.wrap(infoCarModel));
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -124,50 +115,26 @@ public class PostFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-//        carModel = Parcels.unwrap(getArguments().getParcelable("infoCar"));
+
     }
 
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-/*
-        String topic = carModel.getBrandDao().getBrandName().toUpperCase()+" "+
-                carModel.getSubDao().getSubName()+" "+
-                carModel.getSubDetailDao().getSubName()+" ปี"+
-                carModel.getYear();
-        tvTopicCar.setText(topic);
-        Log.d(TAG, "4 : "+carModel.isEditInfo());
-        if (carModel.isEditInfo()){
-            //init data (Edit)
-            tvTopicCar.setText(carModel.getPostCarDao().toTopicCar());
-            tgGear.setChecked(carModel.getPostCarDao().getGear() == 0);
-            spinnerProvince.setSelection(carModel.getPostCarDao().getProvinceId()); // make
-            editTextRegister.setText(carModel.getPostCarDao().getPlate());
-            editTextTelephone.setText(carModel.getPostCarDao().getPhone());
-            editTextName.setText(carModel.getPostCarDao().getName());
-            editTextPrice.setText(carModel.getPostCarDao().getCarPrice());
-            editTextTopic.setText(carModel.getPostCarDao().getCarTitle());
-            editTextDescription.setText(AngelCarUtils.convertLineUp(carModel.getPostCarDao().getCarDetail()));
-            btnPost.setText("SAVE");
-        }*/
-
-
         // Text Format
-        editTextTelephone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        editTextDescription.setOnEditorActionListener(onEditorActionListener);
+        mTelephone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+        mDescription.setOnEditorActionListener(onEditorActionListener);
         initDataProvince();
-
-//        editTextPrice.addTextChangedListener(AutoCommaListener);
-        initObservableView();
+        observableEditTextView();
     }
 
-    void initObservableView(){
+    void observableEditTextView(){
 
-        Observable<Boolean> registerValid = createObservableLength(editTextRegister,2);
-        Observable<Boolean> telephoneValid = createObservableLength(editTextTelephone,11);
-        Observable<Boolean> nameValid = createObservableLength(editTextName,3);
-        Observable<Boolean> priceValid = createObservableLength(editTextPrice,5);
-        Observable<Boolean> topicValid = createObservableLength(editTextTopic,20);
-        Observable<Boolean> descriptionValid = createObservableLength(editTextDescription,20);
+        Observable<Boolean> registerValid = createObservableLength(mRegister,2);
+        Observable<Boolean> telephoneValid = createObservableLength(mTelephone,11);
+        Observable<Boolean> nameValid = createObservableLength(mName,3);
+        Observable<Boolean> priceValid = createObservableLength(mPrice,5);
+        Observable<Boolean> topicValid = createObservableLength(mTopic,20);
+        Observable<Boolean> descriptionValid = createObservableLength(mDescription,20);
 
         Observable.combineLatest(registerValid, telephoneValid, nameValid, priceValid, topicValid, descriptionValid,
                 new Func6<Boolean, Boolean, Boolean, Boolean, Boolean, Boolean, Boolean>() {
@@ -179,7 +146,7 @@ public class PostFragment extends Fragment {
                 }).subscribe(new Action1<Boolean>() {
             @Override
             public void call(Boolean aBoolean) {
-                btnPost.setEnabled(aBoolean);
+                mBtnPost.setEnabled(aBoolean);
             }
         });
     }
@@ -198,13 +165,13 @@ public class PostFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("SAVE_CAR_MODEL",Parcels.wrap(carModel));
+        outState.putParcelable("SAVE_CAR_MODEL",Parcels.wrap(mCarModel));
 
     }
 
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-        carModel = Parcels.unwrap(savedInstanceState.getParcelable("SAVE_CAR_MODEL"));
+        mCarModel = Parcels.unwrap(savedInstanceState.getParcelable("SAVE_CAR_MODEL"));
     }
 
 
@@ -218,14 +185,12 @@ public class PostFragment extends Fragment {
                 (getActivity(), android.R.layout.simple_spinner_item,list);
         dataAdapter.setDropDownViewResource
                 (android.R.layout.simple_spinner_dropdown_item);
-        spinnerProvince.setAdapter(dataAdapter);
+        mSpinnerProvince.setAdapter(dataAdapter);
 
-        spinnerProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpinnerProvince.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(parent.getContext(),parent.getItemAtPosition(position).toString(),
-//                        Toast.LENGTH_LONG).show();
-                id_province = position+1;
+                mIdProvince = position+1;
             }
 
             @Override
@@ -235,38 +200,35 @@ public class PostFragment extends Fragment {
         });
     }
 
-    @OnClick(R.id.buttonPost)
+    @OnClick(R.id.button_post)
     public void onClickPost(){
         
-        String topic = editTextTopic.getText().toString();
-        String detail = AngelCarUtils.formatLineUp(editTextDescription.getText().toString().trim());
-        String carPrice = editTextPrice.getText().toString().trim();// ราคารถ
-        String province = String.valueOf(id_province).trim(); // 1 - 77
-        String gear = tgGear.isChecked() ? "1" : "2"; // 0 or 1
-        String plate = editTextRegister.getText().toString().trim(); // text ทะเบียนน
-        String name = editTextName.getText().toString().trim(); // ชื่อ นามสกุล
-        String phone = editTextTelephone.getText().toString().trim();
+        String topic = mTopic.getText().toString();
+        String detail = AngelCarUtils.formatLineUp(mDescription.getText().toString().trim());
+        String carPrice = mPrice.getText().toString().trim();// ราคารถ
+        String province = String.valueOf(mIdProvince).trim(); // 1 - 77
+        String gear = mGear.isChecked() ? "1" : "2"; // 0 or 1
+        String plate = mRegister.getText().toString().trim(); // text ทะเบียนน
+        String name = mName.getText().toString().trim(); // ชื่อ นามสกุล
+        String phone = mTelephone.getText().toString().trim();
 
-        if (!carModel.isEditInfo()) {
+        if (!mCarModel.isEditInfo()) {
             String shopPref = Registration.getInstance().getShopRef(); // 1
-//            String carName = carModel.getBrandDao().getBrandName().toUpperCase(); // toyota
             Call<Results> call = HttpManager.getInstance().getService().postCar(shopPref,
-                    carModel.getBrandDao().getBrandId(),
-                    carModel.getSubDao().getSubId(),
-                    carModel.getSubDetailDao().getSubId(),
-                    topic, detail, carModel.getYear(),
+                    mCarModel.getBrandDao().getBrandId(),
+                    mCarModel.getSubDao().getSubId(),
+                    mCarModel.getSubDetailDao().getSubId(),
+                    topic, detail, mCarModel.getYear(),
                     carPrice, "online", province, gear, plate, name, phone);
             call.enqueue(postCallback);
 
-//            OnSelectData onSelectData = (OnSelectData) getActivity();
-//            onSelectData.onSelectedCallback(PostActivity.CALL_FINISH_POST);
 
         }else {
             Log.d(TAG, "onClickPost: ");
              HttpManager.getInstance().getService()
-                     .observableUpdatePostCar(carModel.getPostCarDao().getCarId(),
-                             carModel.getBrandDao().getBrandId(),carModel.getSubDao().getSubId(),carModel.getSubDetailDao().getSubId(),
-                             topic,detail,carModel.getYear(),carPrice,province,gear,name,phone)
+                     .observableUpdatePostCar(mCarModel.getPostCarDao().getCarId(),
+                             mCarModel.getBrandDao().getBrandId(), mCarModel.getSubDao().getSubId(), mCarModel.getSubDetailDao().getSubId(),
+                             topic,detail, mCarModel.getYear(),carPrice,province,gear,name,phone)
              .subscribeOn(Schedulers.newThread())
              .observeOn(AndroidSchedulers.mainThread())
              .subscribe(new Subscriber<Results>() {
@@ -343,7 +305,7 @@ public class PostFragment extends Fragment {
 
     @Subscribe
     public void eventBusProduceData(InfoCarModel carModel){
-        this.carModel = carModel;
+        this.mCarModel = carModel;
 
         Log.i(TAG, "eventBusProduceData: "+carModel.getBrandDao().getBrandName());
 //init data
@@ -351,19 +313,18 @@ public class PostFragment extends Fragment {
                 carModel.getSubDao().getSubName()+" "+
                 carModel.getSubDetailDao().getSubName()+" ปี"+
                 carModel.getYear();
-        tvTopicCar.setText(topic);
+        mTopicCar.setText(topic);
         if (carModel.isEditInfo()){
             //init data (Edit)
-//                tvTopicCar.setText(carModel.getPostCarDao().toTopicCar());
-                tgGear.setChecked(carModel.getPostCarDao().getGear() == 0);
-                spinnerProvince.setSelection(carModel.getPostCarDao().getProvinceId()); // make
-                editTextRegister.setText(carModel.getPostCarDao().getPlate());
-                editTextTelephone.setText(carModel.getPostCarDao().getPhone());
-                editTextName.setText(carModel.getPostCarDao().getName());
-                editTextPrice.setText(carModel.getPostCarDao().getCarPrice());
-                editTextTopic.setText(carModel.getPostCarDao().getCarTitle());
-                editTextDescription.setText(AngelCarUtils.convertLineUp(carModel.getPostCarDao().getCarDetail()));
-                btnPost.setText("SAVE");
+                mGear.setChecked(carModel.getPostCarDao().getGear() == 0);
+                mSpinnerProvince.setSelection(carModel.getPostCarDao().getProvinceId()); // make
+                mRegister.setText(carModel.getPostCarDao().getPlate());
+                mTelephone.setText(carModel.getPostCarDao().getPhone());
+                mName.setText(carModel.getPostCarDao().getName());
+                mPrice.setText(carModel.getPostCarDao().getCarPrice());
+                mTopic.setText(carModel.getPostCarDao().getCarTitle());
+                mDescription.setText(AngelCarUtils.convertLineUp(carModel.getPostCarDao().getCarDetail()));
+                mBtnPost.setText("SAVE");
         }
     }
 
@@ -374,36 +335,11 @@ public class PostFragment extends Fragment {
         @Override
         public void onResponse(Call<Results> call, Response<Results> response) {
             if (response.isSuccessful()) {
-                // upload picture
-//                uploadPicture(response.body().getSuccess(),filesPhotoList, responseCallbackUpFile);
-//                List<File> fileList = new ArrayList<>();
-//                for (int i = 0; i < filesPhotoList.size(); i++) {
-//                    fileList.add(filesPhotoList.get(i));
-//                }
-
                 RxUploadFile.with(getContext())
                         .postCar()
                         .setId(response.body().getSuccess())
-                        .setGallery(carModel.getGallery())
+                        .setGallery(mCarModel.getGallery())
                         .subscriber();
-
-//                HttpUploadManager.uploadFilePostCar(getContext(),carModel.getGallery(), response.body().getSuccess(),
-//                        new Subscriber<String>() {
-//                    @Override
-//                    public void onCompleted() {
-//                        Log.i(TAG, "onCompleted: ");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Log.e(TAG, "onError: ",e );
-//                    }
-//
-//                    @Override
-//                    public void onNext(String s) {
-//                        Log.i(TAG, "onNext: "+s);
-//                    }
-//                });
 
                 Toast.makeText(Contextor.getInstance().getContext(),
                         "Completed"+response.body().getSuccess(), Toast.LENGTH_SHORT).show();
@@ -426,27 +362,6 @@ public class PostFragment extends Fragment {
         }
     };
 
-    okhttp3.Callback responseCallbackUpFile = new okhttp3.Callback() {
-        @Override
-        public void onFailure(okhttp3.Call call, IOException e) {
-            Log.e(TAG, "onFailure: ", e);
-        }
-
-        @Override
-        public void onResponse(okhttp3.Call call, okhttp3.Response response) {
-            if (response.isSuccessful()) {
-                try {
-                    Log.i(TAG, "UpFile Completed: " + response.body().string());
-                } catch (IOException e) {
-//                    e.printStackTrace();
-                    Log.e(TAG, "UpFile Error: ", e);
-                }
-            } else {
-                Log.i(TAG, "onResponse: ");
-            }
-        }
-    };
-
     TextView.OnEditorActionListener onEditorActionListener = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -458,7 +373,7 @@ public class PostFragment extends Fragment {
         }
     };
 
-    TextWatcher AutoCommaListener = new TextWatcher() {
+    /*TextWatcher AutoCommaListener = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
         @Override
@@ -467,7 +382,7 @@ public class PostFragment extends Fragment {
         public void afterTextChanged(Editable s) {
             if (s != null) {
                 try {
-                    editTextPrice.removeTextChangedListener(this);
+                    mPrice.removeTextChangedListener(this);
                     String givenString = s.toString();
                     if (givenString.contains(",")) {
                         givenString = givenString.replaceAll(",", "");
@@ -475,13 +390,13 @@ public class PostFragment extends Fragment {
                     double doubleValue = Double.parseDouble(givenString);
                     DecimalFormat formatter = new DecimalFormat("#,###,###");
                     String formattedString = formatter.format(doubleValue);
-                    editTextPrice.setText(formattedString);
+                    mPrice.setText(formattedString);
 
                 } catch (NumberFormatException e) {
                 }
-                    editTextPrice.addTextChangedListener(this);
+                    mPrice.addTextChangedListener(this);
             }
         }
-    };
+    };*/
 
 }

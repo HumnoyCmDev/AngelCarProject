@@ -21,7 +21,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.manager.ActivityResultEvent;
+import com.dollarandtrump.angelcar.model.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;

@@ -21,6 +21,7 @@ import okhttp3.Response;
 /**
  * Class OkHttpManager ใช้สำหรับ @ส่งMessage @ส่งรูป
  */
+@Deprecated
 public class OkHttpManager {
 
     public interface CallBackMainThread {

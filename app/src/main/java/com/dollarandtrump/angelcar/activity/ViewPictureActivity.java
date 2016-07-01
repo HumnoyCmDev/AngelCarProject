@@ -66,7 +66,8 @@ public class ViewPictureActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return ViewPictureFragment.newInstance(dao.getListPicture().get(position));
+            String url = dao.getListPicture().get(position).getCarImageThumbnailPath();
+            return ViewPictureFragment.newInstance(url);
         }
 
         @Override

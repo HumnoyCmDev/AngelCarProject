@@ -47,7 +47,7 @@ public class ShopEditDialog extends DialogFragment {
 
     @Bind(R.id.editShopName) EditText editShopName;
     @Bind(R.id.editShopDescription) EditText editShopDescription;
-    @Bind(R.id.tvShopNumber) TextView tvShopNumber;
+    @Bind(R.id.text_view_shop_number) TextView tvShopNumber;
     @Bind(R.id.shopProfileImage) CircularImageView profileImage;
 
     EditShopCallback editShopCallback;

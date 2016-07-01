@@ -1,7 +1,6 @@
 package com.dollarandtrump.angelcar.fragment;
 
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -9,8 +8,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +18,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
@@ -66,6 +62,7 @@ import retrofit2.Response;
 
 
 public class FeedPostFragment extends Fragment{
+    private static final String TAG = "FeedPostFragment";
 
     public static final int REQUEST_CODE_BRAND = 1;
     public static final int REQUEST_CODE_SUB = 2;
@@ -78,30 +75,28 @@ public class FeedPostFragment extends Fragment{
 
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
-//    @Bind(R.id.countCarMonth) TextView countCarMonth;
-    @Bind(R.id.countCarAll) TextView countCarAll;
-//    @Bind(R.id.countCarDay) TextView countCarDay;
-    @Bind(R.id.list_view) ListView listView;
-    @Bind(R.id.ctFilter) ScrollView ctFilter;
-    @Bind(R.id.btFilter) ImageView btFilter;
-    @Bind(R.id.tvNewPost) TextView tvNewPost;
+    @Bind(R.id.text_view_count_car_all) TextView mCountCarAll;
+    @Bind(R.id.list_view) ListView mListView;
+    @Bind(R.id.scroll_view_filter) ScrollView mScrollFilter;
+    @Bind(R.id.text_view_new_post) TextView mTextNewPost;
 
     //Filter
-    @Bind(R.id.filterSubDetail) TextView tvSubDetail;
-    @Bind(R.id.filterBrand) TextView tvBrand;
-    @Bind(R.id.filterYear) TextView tvYear;
-    @Bind(R.id.filterSub) TextView tvSub;
-    @Bind(R.id.etPriceStart) EditText etPriceStart;
-    @Bind(R.id.etPriceEnd) EditText etPriceEnd;
+    @Bind(R.id.edit_text_price_start) EditText mEditTextPriceStart;
+    @Bind(R.id.edit_text_price_end) EditText mEditTextPriceEnd;
+    @Bind(R.id.text_view_sub_detail) TextView mTextSubDetail;
+    @Bind(R.id.text_view_brand) TextView mTextBrand;
+    @Bind(R.id.text_view_year) TextView mTextYear;
+    @Bind(R.id.text_view_sub) TextView mTextSub;
 
-    private static final String TAG = "FeedPostFragment";
-    private InfoCarModel infoCarModel;
-    private InfoCarModel copyInformLoadMore;
-    private MutableInteger lastPositionInteger;
+    private MutableInteger mLastPositionInteger;
+    private InfoCarModel mCopyInformLoadMore;
+    private InfoCarModel mInfoCarModel;
+
     private boolean isLoadingMore = false;
     private boolean isStopLoadingMore = false; // หยุดการ LoadMore
+
     private PostCarManager mPostManager;
-    private FeedPostCarAdapter adapter;
+    private FeedPostCarAdapter mAdapter;
 
     private boolean isFilter = false;
 
@@ -138,20 +133,19 @@ public class FeedPostFragment extends Fragment{
     @SuppressWarnings("UnusedParameters")
     private void init(Bundle savedInstanceState) {
         // Init Fragment level's variable(s) here
-        infoCarModel = new InfoCarModel();
+        mInfoCarModel = new InfoCarModel();
         mPostManager = new PostCarManager();
-        lastPositionInteger = new MutableInteger(-1);
+        mLastPositionInteger = new MutableInteger(-1);
 //        dao = new PostCarCollectionDao();
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
-        // Init 'View' instance(s) with rootView.findViewById here
         ButterKnife.bind(this,rootView);
 
-        adapter = new FeedPostCarAdapter(getContext(),lastPositionInteger);
-        adapter.setDao(mPostManager.getDao());
-        listView.setAdapter(adapter);
+        mAdapter = new FeedPostCarAdapter(getContext(),mLastPositionInteger);
+        mAdapter.setDao(mPostManager.getDao());
+        mListView.setAdapter(mAdapter);
         mSwipeRefresh.setColorSchemeColors(
                 Color.parseColor("#104F94"),
                 Color.parseColor("#104F94"),
@@ -159,36 +153,15 @@ public class FeedPostFragment extends Fragment{
                 Color.parseColor("#FFC11E"));
 
         mSwipeRefresh.setOnRefreshListener(pullRefresh);
-        listView.setOnItemClickListener(onItemClickListViewListener);
-        listView.setOnItemLongClickListener(onItemLongClickListener);
-        listView.setOnScrollListener(onScrollListener);
-
-//        btFilter.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (ctFilter.getVisibility() == View.GONE) {
-//                    ResizeHeight resizeHeight = new ResizeHeight(ctFilter,1000,true);
-//                    resizeHeight.setInterpolator(new BounceInterpolator());
-//                    resizeHeight.setDuration(1000);
-//                    ctFilter.startAnimation(resizeHeight);
-//                    ctFilter.setVisibility(View.VISIBLE);
-//                } else {
-//                    ResizeHeight resizeHeight = new ResizeHeight(ctFilter,0,false);
-//                    resizeHeight.setDuration(500);
-//                    ctFilter.startAnimation(resizeHeight);
-//                }
-//
-//            }
-//        });
-
-//        etPriceStart.addTextChangedListener(new TextWatcherListener(etPriceStart));
-//        etPriceEnd.addTextChangedListener(new TextWatcherListener(etPriceEnd));
+        mListView.setOnItemClickListener(onItemClickListViewListener);
+        mListView.setOnItemLongClickListener(onItemLongClickListener);
+        mListView.setOnScrollListener(onScrollListener);
 
         if (savedInstanceState == null) {
             refreshData();
         }
         // view shop
-        adapter.setOnClickImageProfile(new AngelCarPost.OnClickImageProfile() {
+        mAdapter.setOnClickImageProfile(new AngelCarPost.OnClickImageProfile() {
             @Override
             public void onClickImageProfileListener(int position) {
                 String user = mPostManager.getDao().getListCar().get(position).getUser();
@@ -197,7 +170,6 @@ public class FeedPostFragment extends Fragment{
                 intentShop.putExtra("user", user);
                 intentShop.putExtra("shop", shop);
                 startActivity(intentShop);
-                Log.d(TAG, "onClickImageProfileListener: " + position);
             }
         });
 
@@ -216,7 +188,6 @@ public class FeedPostFragment extends Fragment{
     private void reloadDataNewer() {
         loadCountCar();
         // load post newer
-        Log.i(TAG, "reloadDataNewer: "+ mPostManager.firstDateDao());
         Call<PostCarCollectionDao> call =
                 HttpManager.getInstance().getService().loadNewerPostCar(mPostManager.firstDateDao());
         call.enqueue(new PostCarCallback(PostCarCallback.MODE_RELOAD_NEWER));
@@ -241,8 +212,7 @@ public class FeedPostFragment extends Fragment{
         if (isStopLoadingMore || isLoadingMore) return;
 
         isLoadingMore = true;
-        adapter.setLoading(true);
-        Log.i(TAG, "LoadMore1 : "+ isStopLoadingMore +" load = "+isLoadingMore);
+        mAdapter.setLoading(true);
         Call<PostCarCollectionDao> callLoadingMore = HttpManager.getInstance()
                 .getService().loadMorePostCar(mPostManager.lastDateDao());
         callLoadingMore.enqueue(new PostCarCallback(PostCarCallback.MODE_LOAD_MORE));
@@ -254,12 +224,12 @@ public class FeedPostFragment extends Fragment{
         if (isStopLoadingMore || isLoadingMore) return;
 
         isLoadingMore = true;
-        adapter.setLoading(true);
-        if (copyInformLoadMore == null) return;
+        mAdapter.setLoading(true);
+        if (mCopyInformLoadMore == null) return;
         // get date
-        copyInformLoadMore.setDateMore(mPostManager.lastDateDao());
+        mCopyInformLoadMore.setDateMore(mPostManager.lastDateDao());
         Call<PostCarCollectionDao> call = HttpManager.getInstance()
-                .getService().loadFilterFeed(copyInformLoadMore.getMapFilter());
+                .getService().loadFilterFeed(mCopyInformLoadMore.getMapFilter());
         call.enqueue(new FilterCallback(1));
     }
 
@@ -270,51 +240,48 @@ public class FeedPostFragment extends Fragment{
 //        outState.putParcelable(SAVE_STATE_GAO,Parcels.wrap(dao));
           mPostManager.onSaveInstanceState();
           outState.putBundle("lastPositionInteger",
-                lastPositionInteger.onSaveInstanceState());
+                  mLastPositionInteger.onSaveInstanceState());
     }
 
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-//        dao = Parcels.unwrap(savedInstanceState.getParcelable(SAVE_STATE_GAO));
           mPostManager.onRestoreInstanceState(savedInstanceState);
-          lastPositionInteger.onRestoreInstanceState(
+        mLastPositionInteger.onRestoreInstanceState(
                 savedInstanceState.getBundle("lastPositionInteger"));
-//        adapter.setDao(dao);
-//        adapter.notifyDataSetChanged();
     }
 
     @OnClick(R.id.btFilter)
     public void ShowHideFilter(){
-        if (ctFilter.getVisibility() == View.GONE) {
-            ResizeHeight resizeHeight = new ResizeHeight(ctFilter,1000,true);
+        if (mScrollFilter.getVisibility() == View.GONE) {
+            ResizeHeight resizeHeight = new ResizeHeight(mScrollFilter,1000,true);
             resizeHeight.setInterpolator(new OvershootInterpolator());//(new BounceInterpolator());
             resizeHeight.setDuration(1000);
-            ctFilter.startAnimation(resizeHeight);
-            ctFilter.setVisibility(View.VISIBLE);
+            mScrollFilter.startAnimation(resizeHeight);
+            mScrollFilter.setVisibility(View.VISIBLE);
         } else {
-            ResizeHeight resizeHeight = new ResizeHeight(ctFilter,0,false);
+            ResizeHeight resizeHeight = new ResizeHeight(mScrollFilter,0,false);
             resizeHeight.setDuration(300);
-            ctFilter.startAnimation(resizeHeight);
+            mScrollFilter.startAnimation(resizeHeight);
         }
     }
 
-    @OnClick({R.id.filterBrand,R.id.filterSub,R.id.filterSubDetail,R.id.filterYear,R.id.buttonSearch})
+    @OnClick({R.id.text_view_brand,R.id.text_view_sub,R.id.text_view_sub_detail,R.id.text_view_year,R.id.buttonSearch})
     public void OnclickFilter(View v){
-        @SuppressLint("CommitTransaction") FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         switch (v.getId()){
 
             case R.id.buttonSearch:
                 loadFilter();
                 ShowHideFilter();
-                tvBrand.setText("All");
+                mTextBrand.setText("All");
                 clearObject();
 
                 break;
 
-            case R.id.filterBrand:
+            case R.id.text_view_brand:
                 //Clear Object
                 clearObject();
-                Fragment fragment = getFragmentManager().findFragmentByTag("FilterBrandDialog");
+                Fragment fragment = getChildFragmentManager().findFragmentByTag("FilterBrandDialog");
                 if (fragment != null){
                     ft.remove(fragment);
                 }
@@ -322,39 +289,39 @@ public class FeedPostFragment extends Fragment{
 
                 FilterBrandDialog dialog = new FilterBrandDialog();
                 dialog.setTargetFragment(this,REQUEST_CODE_BRAND);
-                dialog.show(getFragmentManager(),"FilterBrandDialog");
+                dialog.show(getChildFragmentManager(),"FilterBrandDialog");
                 break;
 
-            case R.id.filterSub:
-                if (isNullFilter(infoCarModel,0)) {
-                    Fragment fragmentSub = getFragmentManager().findFragmentByTag("FilterSubDialog");
+            case R.id.text_view_sub:
+                if (isNullFilter(mInfoCarModel,0)) {
+                    Fragment fragmentSub = getChildFragmentManager().findFragmentByTag("FilterSubDialog");
                     if (fragmentSub != null) {
                         ft.remove(fragmentSub);
                     }
                     ft.addToBackStack(null);
                     FilterSubDialog dialogSub = FilterSubDialog
-                            .newInstance(infoCarModel);
+                            .newInstance(mInfoCarModel);
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB);
-                    dialogSub.show(getFragmentManager(), "FilterSubDialog");
+                    dialogSub.show(getChildFragmentManager(), "FilterSubDialog");
                 }
                 break;
 
-            case R.id.filterSubDetail:
-                if (isNullFilter(infoCarModel,1)){
-                    Fragment fragmentSubDetail = getFragmentManager().findFragmentByTag("FilterSubDialog");
+            case R.id.text_view_sub_detail:
+                if (isNullFilter(mInfoCarModel,1)){
+                    Fragment fragmentSubDetail = getChildFragmentManager().findFragmentByTag("FilterSubDialog");
                     if (fragmentSubDetail != null) {
                         ft.remove(fragmentSubDetail);
                     }
                     ft.addToBackStack(null);
                     FilterSubDetailDialog dialogSub = FilterSubDetailDialog
-                            .newInstance(infoCarModel);
+                            .newInstance(mInfoCarModel);
                     dialogSub.setTargetFragment(this, REQUEST_CODE_SUB_DETAIL);
-                    dialogSub.show(getFragmentManager(), "FilterSubDialog");
+                    dialogSub.show(getChildFragmentManager(), "FilterSubDialog");
                 }
                 break;
 
-            case R.id.filterYear:
-                Fragment fragmentYear = getFragmentManager().findFragmentByTag("YearDialog");
+            case R.id.text_view_year:
+                Fragment fragmentYear = getChildFragmentManager().findFragmentByTag("YearDialog");
                 if (fragmentYear != null){
                     ft.remove(fragmentYear);
                 }
@@ -362,7 +329,7 @@ public class FeedPostFragment extends Fragment{
                 YearDialog dialogYear = new YearDialog();
 //                dialogYear.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
                 dialogYear.setTargetFragment(this,REQUEST_CODE_YEAR);
-                dialogYear.show(getFragmentManager(),"YearDialog");
+                dialogYear.show(getChildFragmentManager(),"YearDialog");
                 break;
             default: // button Search
                 break;
@@ -372,14 +339,14 @@ public class FeedPostFragment extends Fragment{
 
     private void loadFilter() {
         isFilter = true;
-        if (infoCarModel != null) {
+        if (mInfoCarModel != null) {
             /* **set Price */
-            infoCarModel.setPriceStart(etPriceStart.getText().toString());
-            infoCarModel.setPriceEnd(etPriceEnd.getText().toString());
-            copyInformLoadMore = infoCarModel;
+            mInfoCarModel.setPriceStart(mEditTextPriceStart.getText().toString());
+            mInfoCarModel.setPriceEnd(mEditTextPriceEnd.getText().toString());
+            mCopyInformLoadMore = mInfoCarModel;
             Call<PostCarCollectionDao> callFilter =
                     HttpManager.getInstance().getService()
-                            .loadFilterFeed(infoCarModel.getMapFilter());
+                            .loadFilterFeed(mInfoCarModel.getMapFilter());
             callFilter.enqueue(new FilterCallback(0));
         }
     }
@@ -388,13 +355,13 @@ public class FeedPostFragment extends Fragment{
     void radioButtonGear(View view){
         boolean checked = ((RadioButton) view).isChecked();
         if (view.getId() == R.id.radioGearMt){
-            infoCarModel.setGear(checked ? "1" : "0");
+            mInfoCarModel.setGear(checked ? "1" : "0");
         }else if (view.getId() == R.id.radioGearAt){
-            infoCarModel.setGear(checked ? "2" : "0");
+            mInfoCarModel.setGear(checked ? "2" : "0");
         }else {// all
-            infoCarModel.setGear("gear");
+            mInfoCarModel.setGear("gear");
         }
-        Log.i(TAG, "radioButtonGear: "+ infoCarModel.getGear());
+        Log.i(TAG, "radioButtonGear: "+ mInfoCarModel.getGear());
     }
 
     private boolean isNullFilter(InfoCarModel infoCarModel, int mode){
@@ -411,34 +378,34 @@ public class FeedPostFragment extends Fragment{
     }
 
     private void clearObject() {
-        if (infoCarModel != null) {
-            infoCarModel.clear();
-            infoCarModel = null;
-            infoCarModel = new InfoCarModel();
+        if (mInfoCarModel != null) {
+            mInfoCarModel.clear();
+            mInfoCarModel = null;
+            mInfoCarModel = new InfoCarModel();
         }
     }
 
     private void showTextNewPost(){
-        tvNewPost.setVisibility(View.VISIBLE);
+        mTextNewPost.setVisibility(View.VISIBLE);
         Animation animation = AnimationUtils.loadAnimation(
                 Contextor.getInstance().getContext(),
                 R.anim.zoom_face_in);
-        tvNewPost.startAnimation(animation);
+        mTextNewPost.startAnimation(animation);
     }
 
     private void hideTextNewPost(){
-        if (tvNewPost.getVisibility() == View.VISIBLE) {
-            tvNewPost.setVisibility(View.GONE);
+        if (mTextNewPost.getVisibility() == View.VISIBLE) {
+            mTextNewPost.setVisibility(View.GONE);
             Animation animation = AnimationUtils.loadAnimation(
                     Contextor.getInstance().getContext(),
                     R.anim.zoom_face_out);
-            tvNewPost.startAnimation(animation);
+            mTextNewPost.startAnimation(animation);
         }
     }
 
-    @OnClick(R.id.tvNewPost)
+    @OnClick(R.id.text_view_new_post)
     public void showButtonNewPost(){
-        listView.smoothScrollToPosition(0);
+        mListView.smoothScrollToPosition(0);
         hideTextNewPost();
     }
 
@@ -449,31 +416,29 @@ public class FeedPostFragment extends Fragment{
 
                 case REQUEST_CODE_BRAND: // brand
                     CarBrandDao model = Parcels.unwrap(data.getParcelableExtra(ARG_BRAND));
-//                    int drawableLogo = data.getIntExtra(ARG_DRAWABLE_LOGO,R.drawable.toyota);
-//                    typedArray.recycle();
-                    infoCarModel.setBrandDao(model);
-                    tvBrand.setText(model.getBrandName());
-                    tvSub.setText("All");
-                    tvSubDetail.setText("All");
+                    mInfoCarModel.setBrandDao(model);
+                    mTextBrand.setText(model.getBrandName());
+                    mTextSub.setText("All");
+                    mTextSubDetail.setText("All");
                     break;
 
                 case REQUEST_CODE_SUB: // sub
                     CarSubDao modelSub = Parcels.unwrap(data.getParcelableExtra(ARG_SUB));
-                    infoCarModel.setSubDao(modelSub);
-                    tvSub.setText(modelSub.getSubName());
-                    tvSubDetail.setText("All");
+                    mInfoCarModel.setSubDao(modelSub);
+                    mTextSub.setText(modelSub.getSubName());
+                    mTextSubDetail.setText("All");
                     break;
 
                 case REQUEST_CODE_SUB_DETAIL: // sub detail
                     CarSubDao modelSubDetail = Parcels.unwrap(data.getParcelableExtra(ARG_SUB_DETAIL));
-                    infoCarModel.setSubDetailDao(modelSubDetail);
-                    tvSubDetail.setText(modelSubDetail.getSubName());
+                    mInfoCarModel.setSubDetailDao(modelSubDetail);
+                    mTextSubDetail.setText(modelSubDetail.getSubName());
                     break;
 
                 case REQUEST_CODE_YEAR: // year
                     int resultYear = data.getIntExtra("TAG_YEAR",2016);
-                    infoCarModel.setYear(resultYear);
-                    tvYear.setText(String.valueOf(resultYear));
+                    mInfoCarModel.setYear(resultYear);
+                    mTextYear.setText(String.valueOf(resultYear));
                     break;
             }
         }
@@ -515,7 +480,7 @@ public class FeedPostFragment extends Fragment{
         }
         @Override
         public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-            if (view == listView) {
+            if (view == mListView) {
                 mSwipeRefresh.setEnabled(firstVisibleItem == 0);
                 if (firstVisibleItem + visibleItemCount >= totalItemCount) {
                     if (mPostManager.getCount() > 0) {
@@ -552,17 +517,6 @@ public class FeedPostFragment extends Fragment{
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             if (Registration.getInstance().getUserId() != null) {
                 PostCarDao modelCar = mPostManager.getDao().getListCar().get(position);
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                Fragment fragment = getFragmentManager().findFragmentByTag("DetailAlertDialog");
-//                if (fragment != null){
-//                    ft.remove(fragment);
-//                }
-//                ft.addToBackStack(null);
-//                boolean user = modelCar.getShopRef().contains(Registration.getInstance().getShopRef()) ? true : false;
-//                DetailAlertDialog dialog = DetailAlertDialog.newInstance(modelCar,user);
-//                dialog.setOnClickEditListener(onClickEditListener);
-//                dialog.show(getFragmentManager(),"DetailAlertDialog");
-
                 boolean isShop = modelCar.getShopRef().contains(Registration.getInstance().getShopRef()) ? true : false;
                 Intent inViewDetail = new Intent(getActivity(), ViewDetailActivity.class);
                 inViewDetail.putExtra("is_shop",isShop);
@@ -621,12 +575,7 @@ public class FeedPostFragment extends Fragment{
                 CountCarCollectionDao.CountCarGao countCarGao = response.body().getRows().get(0);
                 String textAll = countCarGao.getCountAll() +"/"+
                         countCarGao.getCountMonth() +"/"+ countCarGao.getCountDay()+" คัน"; // "ทั้งหมด " + countCarGao.getCountAll() + " คัน";
-//                String textMonth = "เดือนนี้ " + countCarGao.getCountMonth() + " คัน";
-//                String textDay = "วันนี้ " + countCarGao.getCountDay() + " คัน";
-                countCarAll.setText(textAll);
-//                countCarMonth.setText(textMonth);
-//                countCarDay.setText(textDay);
-
+                mCountCarAll.setText(textAll);
             } else {
                 try {
                     Log.i(TAG, "onResponse: " + response.errorBody().string());
@@ -674,20 +623,20 @@ public class FeedPostFragment extends Fragment{
             if(mSwipeRefresh != null)
                 mSwipeRefresh.setRefreshing(false);
 
-            adapter.setLoading(false);
+            mAdapter.setLoading(false);
 
             if (response.isSuccessful()) {
                 PostCarCollectionDao dao = response.body();
 
-                int firstVisiblePosition = listView.getFirstVisiblePosition();
-                View c = listView.getChildAt(0);
+                int firstVisiblePosition = mListView.getFirstVisiblePosition();
+                View c = mListView.getChildAt(0);
                 int top = c == null ? 0 : c.getTop();
 
                 if (mode == MODE_RELOAD_NEWER) {
                     mPostManager.insertDaoAtTopPosition(dao);
                     if (dao != null && dao.getListCar() != null) {
-                        String textNewPost = "โพสใหม่+" + dao.getListCar().size();
-                        tvNewPost.setText(textNewPost);
+                        String textNewPost = "โพสใหม่";// + dao.getListCar().size();
+                        mTextNewPost.setText(textNewPost);
                     }
                 } else if (mode == MODE_LOAD_MORE) {
                     mPostManager.appendDataToBottomPosition(dao);
@@ -699,15 +648,15 @@ public class FeedPostFragment extends Fragment{
                     mPostManager.setDao(dao);
                 }
                 clearLoadingMoreFlagIfCapable(mode);
-                adapter.setDao(mPostManager.getDao());
-                adapter.notifyDataSetChanged();
+                mAdapter.setDao(mPostManager.getDao());
+                mAdapter.notifyDataSetChanged();
 
                 if (mode == MODE_RELOAD_NEWER){
                     int additionalSize =
                             (dao != null && dao.getListCar()!= null)
                                     ? dao.getListCar().size() : 0;
-                    adapter.increaseLastPosition(additionalSize);
-                    listView.setSelectionFromTop(firstVisiblePosition+additionalSize,top);
+                    mAdapter.increaseLastPosition(additionalSize);
+                    mListView.setSelectionFromTop(firstVisiblePosition+additionalSize,top);
 
                     if (additionalSize > 0){
                         showTextNewPost();
@@ -726,7 +675,7 @@ public class FeedPostFragment extends Fragment{
         public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
             isStopLoadingMore = true;
             mSwipeRefresh.setRefreshing(false);
-            adapter.setLoading(false);
+            mAdapter.setLoading(false);
             clearLoadingMoreFlagIfCapable(mode);
             Log.e(TAG, "onFailure: ", t);
         }
@@ -747,11 +696,10 @@ public class FeedPostFragment extends Fragment{
         }
         @Override
         public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
-            adapter.setLoading(false);
+            mAdapter.setLoading(false);
             if (response.isSuccessful()) {
                 if (mode == 0) {
                     if (response.body() != null && response.body().getListCar() != null)
-                    Log.i(TAG, "onResponse: size = "+response.body().getListCar().size());
                     mPostManager.setDao(response.body());
                 }else if (mode == 1){
                     mPostManager.appendDataToBottomPosition(response.body());
@@ -759,10 +707,10 @@ public class FeedPostFragment extends Fragment{
                         isStopLoadingMore = true;
                     }
                 }
-                adapter.setDao(mPostManager.getDao());
-                adapter.notifyDataSetChanged();
+                mAdapter.setDao(mPostManager.getDao());
+                mAdapter.notifyDataSetChanged();
             } else {
-                adapter.setLoading(false);
+                mAdapter.setLoading(false);
                 isStopLoadingMore = true;
                 Log.e(TAG, "onResponse: " + response.errorBody().toString());
             }
@@ -772,40 +720,7 @@ public class FeedPostFragment extends Fragment{
         public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
             isStopLoadingMore = true;
-            adapter.setLoading(false);
-        }
-    }
-
-    private class TextWatcherListener implements TextWatcher{
-        EditText editText;
-
-        public TextWatcherListener(EditText editText) {
-            this.editText = editText;
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
-        @Override
-        public void afterTextChanged(Editable s) {
-            editText.removeTextChangedListener(this);
-            try {
-                String givenString = s.toString();
-                if (givenString.contains(",")) {
-                    givenString = givenString.replaceAll(",", "");
-                }
-//                double doubleValue = Double.parseDouble(givenString);
-
-                if (editText.getId() == R.id.etPriceStart){
-                    infoCarModel.setPriceStart(givenString);
-                }else {
-                    infoCarModel.setPriceEnd(givenString);
-                }
-            } catch (NumberFormatException e) {
-            }
-            editText.addTextChangedListener(this);
+            mAdapter.setLoading(false);
         }
     }
 }

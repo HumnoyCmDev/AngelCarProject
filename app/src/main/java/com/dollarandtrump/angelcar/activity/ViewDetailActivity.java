@@ -46,15 +46,17 @@ import rx.schedulers.Schedulers;
  ********************************************/
 public class ViewDetailActivity extends AppCompatActivity {
     private static final String TAG = "ViewDetailActivity";
+
     private boolean isShop;
     private PostCarDao mDao;
-    @Bind(R.id.tv_gear) TextView mGear;
+
     @Bind(R.id.tv_topic_car) TextView mTopicCar;
-    @Bind(R.id.tv_topic) TextView mTopic;
-    @Bind(R.id.tv_detail) TextView mDetail;
-    @Bind(R.id.tv_name) TextView mName;
     @Bind(R.id.tv_address) TextView mAddress;
+    @Bind(R.id.tv_detail) TextView mDetail;
+    @Bind(R.id.tv_topic) TextView mTopic;
     @Bind(R.id.tv_phone) TextView mPhone;
+    @Bind(R.id.tv_gear) TextView mGear;
+    @Bind(R.id.tv_name) TextView mName;
     @Bind(R.id.button_edit) Button mButtonEdit;
 
     @Override

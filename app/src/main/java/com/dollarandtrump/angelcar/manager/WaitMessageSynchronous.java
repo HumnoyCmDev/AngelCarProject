@@ -7,11 +7,7 @@ import android.util.Log;
 
 import com.dollarandtrump.angelcar.interfaces.WaitMessageOnBackground;
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย humnoy Android Developer
- * ลงวันที่ 1/3/59. เวลา 11:59
- ***************************************/
+@Deprecated
 public class WaitMessageSynchronous extends AsyncTask<Void,Void,Void>{
     /*************************
     *Template Task Synchronous

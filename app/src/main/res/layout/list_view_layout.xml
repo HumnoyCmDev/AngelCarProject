@@ -9,7 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@null">
-
-
     </ListView>
+
+    <ViewStub
+        android:id="@+id/stub_text_view"
+        android:inflatedId="@+id/text_no_result"
+        android:layout="@layout/inflate_text_view_no_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

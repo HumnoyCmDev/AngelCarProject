@@ -19,7 +19,7 @@
             android:freezesText="true"
             android:textColor="@android:color/holo_red_light"
             android:background="@drawable/shape_rectangle_bg_topic"
-            android:id="@+id/tvTopicCar"
+            android:id="@+id/text_view_topic_car"
             android:padding="10dp"
             android:gravity="center"
             android:text="Toyota fortuner 1.2v ปี 2016"
@@ -62,7 +62,7 @@
                         android:text=""
                         android:textOff=""
                         android:textOn=""
-                        android:id="@+id/tgGear"
+                        android:id="@+id/toggle_buuton_gear"
                         android:background="@drawable/selector_gear_toggle_button"
                         android:layout_width="74dp"
                         android:layout_height="36dp" />
@@ -70,7 +70,7 @@
                         <EditText
                             android:hint="เลขทะเบียน"
                             android:inputType="text"
-                            android:id="@+id/etRegister"
+                            android:id="@+id/edit_text_register"
                             android:background="@drawable/background_edit_register"
                             android:layout_width="match_parent"
                             android:layout_height="45dp"
@@ -85,19 +85,19 @@
                         android:background="@drawable/background_edit_phone"
                         android:inputType="phone|text"
                         android:maxLength="14"
-                        android:id="@+id/etTelephone"
+                        android:id="@+id/edit_text_telephone"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:textColorHint="#BDBDBD"/>
 
                     <Spinner
                         android:background="@drawable/background_province"
-                        android:id="@+id/spinnerProvince"
+                        android:id="@+id/spinner_province"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"/>
 
                     <EditText
-                        android:id="@+id/etName"
+                        android:id="@+id/edit_text_Name"
                         android:background="@drawable/background_edit_name"
                         android:hint="ชื่อ-นามสกุล"
                         android:layout_width="match_parent"
@@ -107,7 +107,7 @@
                     <EditText
                         android:inputType="numberDecimal"
                         android:digits="0123456789.,"
-                        android:id="@+id/etPrice"
+                        android:id="@+id/edit_text_price"
                         android:background="@drawable/background_edit_price"
                         android:hint="กรุณาระบุราคา"
                         android:layout_width="match_parent"
@@ -115,7 +115,7 @@
                         android:textColorHint="#BDBDBD" />
 
                     <EditText
-                        android:id="@+id/etTopic"
+                        android:id="@+id/edit_text_topic"
                         android:background="@drawable/background_edit_topic"
                         android:hint="ระบุข้อความ สั้นๆ..."
                         android:layout_width="match_parent"
@@ -125,7 +125,7 @@
                 <EditText
                     android:scrollbars="vertical"
                     android:textSize="18sp"
-                    android:id="@+id/etDescription"
+                    android:id="@+id/edit_text_description"
                     android:layout_width="match_parent"
                     android:layout_height="135dp"
                     android:background="@drawable/background_edit_detail"
@@ -146,7 +146,7 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:textColor="@android:color/white"
-            android:id="@+id/buttonPost"
+            android:id="@+id/button_post"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/selector_menu_bottom"

@@ -8,7 +8,7 @@
     tools:context="com.dollarandtrump.angelcar.activity.ShopActivity">
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/app_barLayout"
         android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -46,7 +46,7 @@
                         android:layout_height="wrap_content"/>
 
                     <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recyclerImageHeaderShop"
+                        android:id="@+id/recycler_image_header_shop"
                         android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="55dp" />
@@ -59,7 +59,7 @@
                     android:padding="3dp"
                     android:layout_gravity="end"
                     android:textStyle="bold"
-                    android:id="@+id/tvViewShop"
+                    android:id="@+id/text_view_view_shop"
                     android:textColor="@android:color/black"
                     android:text="[view shop]"
                     android:layout_width="match_parent"
@@ -117,7 +117,7 @@
                     android:layout_centerHorizontal="true"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvShopName"
+                    android:id="@+id/text_view_shop_name"
                     android:textColor="@android:color/white"
                     android:text="[shop name]"
                     android:layout_width="wrap_content"
@@ -127,11 +127,11 @@
                     android:layout_marginTop="2dp"
                     android:gravity="center"
                     android:background="@drawable/shape_bg_user_id"
-                    android:layout_below="@id/tvShopName"
+                    android:layout_below="@id/text_view_shop_name"
                     android:layout_centerHorizontal="true"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvShopNumber"
+                    android:id="@+id/text_view_shop_number"
                     android:textColor="@android:color/black"
                     android:text="[shop number]"
                     android:layout_width="147dp"
@@ -139,11 +139,11 @@
 
                 <TextView
                     android:layout_marginTop="2dp"
-                    android:layout_below="@id/tvShopNumber"
+                    android:layout_below="@id/text_view_shop_number"
                     android:layout_centerHorizontal="true"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/tvShopDescription"
+                    android:id="@+id/text_view_shop_decription"
                     android:textColor="@android:color/white"
                     android:text="[description]"
                     android:layout_width="wrap_content"
@@ -160,7 +160,7 @@
             </RelativeLayout>
 
             <com.dollarandtrump.angelcar.view.ListHashTag
-                android:id="@+id/listHashTag"
+                android:id="@+id/list_hash_tag"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
@@ -207,17 +207,17 @@
 
 
 
-    <ImageView
-            app:layout_anchor="@id/appBarLayout"
+    <com.dollarandtrump.angelcar.view.ImageViewGlide
+            app:layout_anchor="@id/app_barLayout"
             app:layout_anchorGravity="left|bottom"
             android:layout_marginLeft="10dp"
-            android:id="@+id/image_profile"
+            android:id="@+id/image_view_glide_profile"
             android:layout_width="64dp"
             android:layout_height="64dp"/>
 
 
     <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/menu_fab"
+        android:id="@+id/floating_action_menu_fab"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
@@ -265,7 +265,7 @@
 
     <FrameLayout
         android:visibility="gone"
-        android:id="@+id/group_progressbar"
+        android:id="@+id/frame_layout_progressbar"
         android:background="#c3000000"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

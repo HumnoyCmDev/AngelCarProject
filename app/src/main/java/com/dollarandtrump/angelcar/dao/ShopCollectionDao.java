@@ -39,7 +39,7 @@ public class ShopCollectionDao /*implements Serializable*/ {
         this.postCarDao = postCarDao;
     }
 
-    public PostCarCollectionDao getPostCarCellection(){
+    public PostCarCollectionDao getPostCarCollection(){
         PostCarCollectionDao dao = new PostCarCollectionDao();
         dao.setListCar(postCarDao);
         return dao;
@@ -47,6 +47,9 @@ public class ShopCollectionDao /*implements Serializable*/ {
 
     /*Insert all data*/
     public void insertAll(){
+        if (profileDao != null){
+            profileDao.save();
+        }
         if (postCarDao != null) {
             ActiveAndroid.beginTransaction();
             try {
@@ -54,6 +57,7 @@ public class ShopCollectionDao /*implements Serializable*/ {
                     d.save();
                     CacheShop cacheShop = new CacheShop();
                     cacheShop.setPostCarDao(d);
+                    cacheShop.setProfileDao(profileDao);
                     cacheShop.save();
                 }
                 ActiveAndroid.setTransactionSuccessful();
@@ -65,6 +69,7 @@ public class ShopCollectionDao /*implements Serializable*/ {
     public void deleteAll(){
         new Delete().from(CacheShop.class).execute();
         new Delete().from(PostCarDao.class).execute();
+        new Delete().from(ProfileDao.class).execute();
     }
 
     public PostCarCollectionDao queryPostCar(){//all

@@ -32,7 +32,7 @@
             android:layout_marginLeft="5dp"
             android:padding="2dp"
             android:orientation="horizontal"
-            android:background="@drawable/background_chat"
+            android:background="@drawable/message_item_call_them"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 

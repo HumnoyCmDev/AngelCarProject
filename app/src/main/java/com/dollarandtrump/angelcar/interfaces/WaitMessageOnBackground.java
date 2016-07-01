@@ -5,6 +5,7 @@ package com.dollarandtrump.angelcar.interfaces;
  * โดย humnoy Android Developer
  * ลงวันที่ 1/3/59. เวลา 13:26
  ***************************************/
+@Deprecated
 public abstract class WaitMessageOnBackground {
     private  boolean isLoopWaitMessage = true;
     private  long timeSleep = 1000L;

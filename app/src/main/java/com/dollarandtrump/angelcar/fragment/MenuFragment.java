@@ -1,25 +1,34 @@
 package com.dollarandtrump.angelcar.fragment;
 
-import android.graphics.Color;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.R;
-import com.jakewharton.rxbinding.widget.RxTextView;
-import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
-
-import java.util.regex.Pattern;
+import com.dollarandtrump.angelcar.activity.ShopActivity;
+import com.dollarandtrump.angelcar.utils.PhotoLoad;
+import com.dollarandtrump.angelcar.manager.Registration;
+import com.dollarandtrump.angelcar.model.CacheShop;
+import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_picker.Sources;
+import com.dollarandtrump.angelcar.utils.FileUtils;
+import com.dollarandtrump.angelcar.view.ImageViewGlide;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import rx.Observer;
 import rx.functions.Action1;
-import rx.functions.Func1;
 
 
 /***************************************
@@ -30,13 +39,14 @@ import rx.functions.Func1;
 @SuppressWarnings("unused")
 public class MenuFragment extends Fragment {
 
+    @Bind(R.id.image_view_glide_profile) ImageViewGlide mImageProfile;
+    @Bind(R.id.text_name) TextView mName;
+    @Bind(R.id.text_description) TextView mDescription;
 
-    @Bind(R.id.imageTest)
-    ImageView img;
+    @Bind(R.id.image_test_cache)
+    ImageView imageTestCache;
 
-    @Bind(R.id.edit_test)
-    EditText editText;
-
+    CacheShop mCacheShop;
     public MenuFragment() {
         super();
     }
@@ -67,30 +77,28 @@ public class MenuFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        // Init Fragment level's variable(s) here
+        mCacheShop = new Select().from(CacheShop.class).executeSingle();
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-        // Init 'View' instance(s) with rootView.findViewById here
 
-        final Pattern emailPattern = Pattern.compile(
-                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
-        RxTextView.textChangeEvents(editText).map(new Func1<TextViewTextChangeEvent, Boolean>() {
-            @Override
-            public Boolean call(TextViewTextChangeEvent textViewTextChangeEvent) {
-                return emailPattern.matcher(textViewTextChangeEvent.text()).matches();
-            }
-        }).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
-                editText.setTextColor(aBoolean ? Color.BLACK : Color.RED);
-            }
-        });
+        if (mCacheShop != null) {
+            mImageProfile.setImageUrl(getActivity(),mCacheShop.getProfileDao().getUrlShopLogo());
+            mName.setText(mCacheShop.getProfileDao().getShopName());
+            mDescription.setText(mCacheShop.getProfileDao().getShopDescription());
+        }
 
+    }
+
+    @OnClick(R.id.menu_button_profile)
+    public void showProfileActivity(){
+        Intent i = new Intent(getActivity(), ShopActivity.class);
+        i.putExtra("user",Registration.getInstance().getUserId());
+        i.putExtra("shop",Registration.getInstance().getShopRef());
+        startActivity(i);
     }
 
     @Override
@@ -118,6 +126,35 @@ public class MenuFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore Instance State here
+    }
+
+    @OnClick(R.id.image_test_cache)
+    public void imageTest(){
+
+        RxImagePicker.with(getContext()).requestImage(Sources.GALLERY).subscribe(new Action1<Uri>() {
+            @Override
+            public void call(Uri uri) {
+                PhotoLoad load = new PhotoLoad();
+                load.loadBitmap(FileUtils.getPath(getContext(), uri), new Observer<Bitmap>() {
+                    @Override
+                    public void onCompleted() {
+                        Log.d("cache image", "onCompleted: ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Bitmap bitmap) {
+                        Log.d("cache image", "onNext: ");
+                        imageTestCache.setImageBitmap(bitmap);
+                    }
+                });
+            }
+        });
+
     }
 
 }

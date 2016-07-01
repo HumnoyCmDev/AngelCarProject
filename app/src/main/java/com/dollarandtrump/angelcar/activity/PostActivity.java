@@ -22,7 +22,9 @@ import com.dollarandtrump.angelcar.fragment.PostFragment;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.model.InfoCarModel;
+import com.dollarandtrump.angelcar.utils.ViewFindUtils;
 import com.dollarandtrump.angelcar.view.AngelCarViewPager;
+import com.flyco.tablayout.SegmentTabLayout;
 import com.squareup.otto.Produce;
 import com.viewpagerindicator.LinePageIndicator;
 
@@ -56,6 +58,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     @Bind(R.id.indicator) LinePageIndicator indicator;
     @Bind(R.id.btnNext) Button next;
     @Bind(R.id.btnPrevious) Button previous;
+
     InfoCarModel infoCarModel;
     List<Fragment> mFragment;
     private PostAdapterViewpager adapter;
@@ -74,6 +77,9 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         MainThreadBus.getInstance().register(this);
         ButterKnife.bind(this);
         initInstance();
+        /*String[] mTitles_3 = {"首页", "消息", "联系人", "更多"};
+        SegmentTabLayout segment = ViewFindUtils.find(getWindow().getDecorView(),R.id.segment_tab);
+        segment.setTabData(mTitles_3);*/
 
     }
 

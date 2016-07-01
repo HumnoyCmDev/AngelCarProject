@@ -1,10 +1,8 @@
-package com.dollarandtrump.angelcar.manager;
+package com.dollarandtrump.angelcar.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.ImageView;
-
-import com.dollarandtrump.angelcar.R;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,10 +30,11 @@ public class PhotoLoad {
     public void loadBitmap(String pathImage,Observer<Bitmap> bitmapObserver) {
         final File f = new File(pathImage);
         final String imageKey = f.getName();
-
-        final Bitmap bitmap = photoCache.getBitmapFromCache(imageKey);
+        Log.d("c", "loadBitmap: "+photoCache.isCached(imageKey));
+        Bitmap bitmap = photoCache.getBitmapFromCache(imageKey);
         if (bitmap != null) {
             if (bitmapObserver != null)
+                Log.d("c", "loadBitmap: not null");
                 bitmapObserver.onNext(bitmap);
         } else {
             Observable<Bitmap> observer = Observable.create(new Observable.OnSubscribe<Bitmap>() {
@@ -47,7 +46,7 @@ public class PhotoLoad {
                         o.inJustDecodeBounds = true;
                         BitmapFactory.decodeStream(new FileInputStream(f), null, o);
                         // The new size we want to scale to
-                        final int REQUIRED_SIZE = 50;
+                        final int REQUIRED_SIZE = 200;
                         // Find the correct scale value. It should be the power of 2.
                         int scale = 1;
                         while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
@@ -60,6 +59,7 @@ public class PhotoLoad {
 
                         Bitmap b = BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
                         photoCache.addBitmapToCache(imageKey,b);
+                        Log.d("c", "loadBitmap: null");
                         subscriber.onNext(b);
                         subscriber.onCompleted();
                     } catch (FileNotFoundException e) {

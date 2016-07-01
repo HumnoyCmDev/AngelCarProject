@@ -24,7 +24,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tvTopicCar"
+                android:id="@+id/text_view_topic_car"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="9dp"
                 android:layout_marginRight="9dp"

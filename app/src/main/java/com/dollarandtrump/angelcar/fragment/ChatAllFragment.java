@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -33,11 +34,14 @@ import butterknife.ButterKnife;
  */
 public class ChatAllFragment extends Fragment {
 
-    @Bind(R.id.list_view) ListView listView;
+    @Bind(R.id.list_view) ListView mListView;
+    @Bind(R.id.stub_text_view) ViewStub mStubTextNoResult;
+
     private static final String TAG = "ChatAllFragment";
 
     private MessageManager messageManager;
     private ConversationAdapter adapter;
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,9 +72,9 @@ public class ChatAllFragment extends Fragment {
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
 
-        listView.setAdapter(adapter);
-        listView.setOnItemLongClickListener(onItemLongClickListener);
-        listView.setOnItemClickListener(onItemClickListener);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemLongClickListener(onItemLongClickListener);
+        mListView.setOnItemClickListener(onItemClickListener);
 
     }
 
@@ -95,8 +99,15 @@ public class ChatAllFragment extends Fragment {
     public void subScribeMessage(MessageManager msgManager){
         Log.i(TAG, "subScribeMessage: All");
         messageManager.setMessageDao(msgManager.getMessageDao());
-        adapter.setDao(messageManager.getMessageDao().getListMessage());
-        adapter.notifyDataSetChanged();
+        if (messageManager.getCount() > 0) {
+            adapter.setDao(messageManager.getMessageDao().getListMessage());
+            adapter.notifyDataSetChanged();
+            mListView.setVisibility(View.VISIBLE);
+            mStubTextNoResult.setVisibility(View.GONE);
+        }else {
+            mListView.setVisibility(View.GONE);
+            mStubTextNoResult.inflate();
+        }
     }
 
     @Override

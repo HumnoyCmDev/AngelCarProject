@@ -2,11 +2,10 @@ package com.dollarandtrump.angelcar.manager;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.activeandroid.ActiveAndroid;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
+import com.dollarandtrump.angelcar.utils.Cache;
 
 import org.parceler.Parcels;
 

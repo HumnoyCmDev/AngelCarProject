@@ -37,9 +37,8 @@ import retrofit2.Response;
  */
 public class FollowActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @Bind(R.id.listView) ListView listView;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.listView) ListView mListView;
 
     private PostCarCollectionDao dao;
     private FollowAdapter adapter;
@@ -57,19 +56,20 @@ public class FollowActivity extends AppCompatActivity {
     }
 
     private void loadFollowCarModel() {
-        Call<PostCarCollectionDao> call = HttpManager.getInstance().getService().loadFollowCarModel(Registration.getInstance().getShopRef());
+        Call<PostCarCollectionDao> call = HttpManager.getInstance().getService()
+                .loadFollowCarModel(Registration.getInstance().getShopRef());
         call.enqueue(callbackPostCarModel);
     }
 
     private void initInstance() {
-        setSupportActionBar(toolbar);
+        setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         adapter = new FollowAdapter();
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(onItemClickListener);
-        listView.setOnItemLongClickListener(onItemLongClickListener);
+        mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(onItemClickListener);
+        mListView.setOnItemLongClickListener(onItemLongClickListener);
 
     }
 

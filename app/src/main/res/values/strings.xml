@@ -14,7 +14,7 @@
     <string name="all">All</string>
     <string name="pre">Previous</string>
     <string name="next">Next</string>
-    
+    <string name="menu_text">เมนู</string>
     <string name="baseUrlImg_thumbnail">http://angelcar.com/ios/data/gadata/thumbnailcarimages/</string>
     <string name="baseUrlImg_full">http://angelcar.com/ios/data/gadata/carimages/</string>
 

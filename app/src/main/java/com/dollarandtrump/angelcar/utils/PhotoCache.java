@@ -1,19 +1,21 @@
-package com.dollarandtrump.angelcar.manager;
+package com.dollarandtrump.angelcar.utils;
 
 import android.graphics.Bitmap;
 import android.util.LruCache;
 
 public class PhotoCache {
 
-    public PhotoCache(){
-        this.mPhotoCache = new LruCache<String, Bitmap>(cacheSize);
-    }
+
 
     //Get max available memory, stored in KB
     private final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
     private final int cacheSize = maxMemory / 16;
 
     private LruCache<String, Bitmap> mPhotoCache;
+
+    public PhotoCache(){
+        this.mPhotoCache = new LruCache<>(cacheSize);
+    }
 
     public void addBitmapToCache(String key, Bitmap bitmap){
         if(getBitmapFromCache(key) == null){

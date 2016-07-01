@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.manager;
+package com.dollarandtrump.angelcar.utils;
 
 import android.content.Context;
 

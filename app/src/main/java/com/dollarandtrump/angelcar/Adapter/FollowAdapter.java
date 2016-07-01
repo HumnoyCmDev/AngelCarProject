@@ -49,7 +49,8 @@ public class FollowAdapter extends BaseAdapter {
     }
 
     public int getItemViewType(int position) {
-        return position % 2 == 0 ? 1 : 0;
+//        return position % 2 == 0 ? 1 : 0;
+    return 1;
     }
 
     public View getView(int position, View view, ViewGroup parent) {

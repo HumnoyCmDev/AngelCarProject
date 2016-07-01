@@ -10,17 +10,17 @@ import com.dollarandtrump.angelcar.dao.PostCarDao;
  *
  * @AngelCarProject
  */
-@Table(name = "CacheFeed")
-public class CacheFeed extends Model{
-
-    @Column(name = "Post")
-    public PostCarDao postCarDao;
-
-    public PostCarDao getPostCarDao() {
-        return postCarDao;
-    }
-
-    public void setPostCarDao(PostCarDao postCarDao) {
-        this.postCarDao = postCarDao;
-    }
-}
+//@Table(name = "CacheFeed")
+//public class CacheFeed extends Model{
+//
+//    @Column(name = "Post")
+//    public PostCarDao postCarDao;
+//
+//    public PostCarDao getPostCarDao() {
+//        return postCarDao;
+//    }
+//
+//    public void setPostCarDao(PostCarDao postCarDao) {
+//        this.postCarDao = postCarDao;
+//    }
+//}

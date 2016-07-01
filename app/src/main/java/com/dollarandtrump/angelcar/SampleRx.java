@@ -1,38 +1,44 @@
 package com.dollarandtrump.angelcar;
 
-import android.util.Log;
-
-import java.io.Serializable;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.functions.Func3;
-import rx.observables.GroupedObservable;
-import rx.schedulers.Schedulers;
+import rx.Observer;
 import rx.subjects.AsyncSubject;
-import rx.subjects.PublishSubject;
-import rx.subjects.ReplaySubject;
 
 /**
  * Created by humnoyDeveloper on 21/4/59. 16:00
  */
 public class SampleRx {
     public static void main(String[] str) {
+
+        AsyncSubject<Integer> subject =  AsyncSubject.create();
+        subject.subscribe(new Observer<Integer>() {
+            @Override
+            public void onCompleted() {
+                System.out.println("Completed");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onNext(Integer integer) {
+                System.out.println(integer);
+            }
+        });
+        subject.onNext(0);
+        subject.onNext(1);
+        subject.onNext(2);
+        subject.onNext(3);
+        subject.onNext(4);
+        subject.onCompleted();
+
+
 
     }
 

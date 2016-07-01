@@ -70,10 +70,15 @@
             android:name=".activity.FollowActivity"
             android:label="Follow" />
         <activity android:name=".activity.GuideLineActivity" />
-        <activity android:name=".activity.ViewPictureActivity"/>
-        <activity android:name=".activity.SingleViewImageActivity"/>
+        <activity android:name=".activity.ViewPictureActivity" android:theme="@style/AppThemeDark"/>
+        <activity android:name=".activity.SingleViewImageActivity" android:theme="@style/AppThemeDark"/>
         <activity android:name=".activity.EditPostActivity"/>
         <activity android:name=".activity.ViewDetailActivity"/>
+        <activity
+            android:name=".rx_picker.HiddenActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <meta-data android:name="AA_DB_NAME" android:value="AngelCar.db" />
         <meta-data android:name="AA_DB_VERSION" android:value="5" />
@@ -103,12 +108,6 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
-
-        <activity
-            android:name=".rx_picker.HiddenActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
     </application>
 

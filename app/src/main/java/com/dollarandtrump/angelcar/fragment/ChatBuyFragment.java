@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -30,7 +31,9 @@ import butterknife.ButterKnife;
 public class ChatBuyFragment extends Fragment {
 //    public static final String ARGS_MESSAGE_BY = "shop";
 
-    @Bind(R.id.list_view) ListView listView;
+    @Bind(R.id.list_view) ListView mListView;
+    @Bind(R.id.stub_text_view)
+    ViewStub mStubTextNoResult;
 
     ConversationAdapter adapter;
     MessageManager messageManager;
@@ -66,7 +69,7 @@ public class ChatBuyFragment extends Fragment {
         adapter = new ConversationAdapter();
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
-        listView.setAdapter(adapter);
+        mListView.setAdapter(adapter);
 //        loadMessage();
         initListener();
     }
@@ -93,7 +96,7 @@ public class ChatBuyFragment extends Fragment {
 //    }
 
     private void initListener() {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MessageDao messageDao =
@@ -129,8 +132,15 @@ public class ChatBuyFragment extends Fragment {
     public void subScribeMessage(MessageManager msgManager){
         Log.i(TAG, "subScribeMessage: Buy"+msgManager.getMessageSellDao().getListMessage().size());
         messageManager.setMessageDao(msgManager.getMessageSellDao());
-        adapter.setDao(messageManager.getMessageDao().getListMessage());
-        adapter.notifyDataSetChanged();
+        if (messageManager.getCount() > 0) {
+            adapter.setDao(messageManager.getMessageDao().getListMessage());
+            adapter.notifyDataSetChanged();
+            mListView.setVisibility(View.VISIBLE);
+            mStubTextNoResult.setVisibility(View.GONE);
+        }else {
+            mListView.setVisibility(View.GONE);
+            mStubTextNoResult.inflate();
+        }
     }
 
     /**************

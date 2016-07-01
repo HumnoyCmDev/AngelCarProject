@@ -117,15 +117,6 @@ public class  ListImageFragment extends Fragment {
         }else {
             rxPickerPicker(Sources.GALLERY);
         }
-
-//        if (Permission.storeage(getActivity())) {
-//            if (id == R.id.tvGallery || (id == R.id.group_gallery &&
-//                    mGallery.getListGallery().size() == 0)) {
-               /* Intent i = new Intent(Intent.ACTION_PICK,
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i, 44);*/
-//            }
-//        }
     }
 
     @OnClick(R.id.tvCamera)
@@ -137,27 +128,27 @@ public class  ListImageFragment extends Fragment {
     private void rxPickerPicker(Sources sources){
         RxImagePicker.with(getActivity()).requestImage(sources)
                 .subscribe(new Action1<Uri>() {
-            @Override
-            public void call(Uri uri) {
-                ImageModel imageModel = new ImageModel();
-                imageModel.setUri(uri);
-                mGallery.setListGallery(imageModel);
-                mAdapter.setGallery(mGallery);
-                mAdapter.notifyDataSetChanged();
-                mCount++;
-                initVisibility();
-                checkGallery();
-            }
-        });
+                    @Override
+                    public void call(Uri uri) {
+                        ImageModel imageModel = new ImageModel();
+                        imageModel.setUri(uri);
+                        mGallery.setListGallery(imageModel);
+                        mAdapter.setGallery(mGallery);
+                        mAdapter.notifyDataSetChanged();
+                        mCount++;
+                        initVisibility();
+                        checkGallery();
+                    }
+                });
     }
 
 
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 44 && resultCode == Activity.RESULT_OK && data != null){
-            String picturePath = AngelCarUtils.getFilesPath(getContext(),data);
-            Log.i(TAG, "onActivityResult: "+picturePath);
+        if (requestCode == 44 && resultCode == Activity.RESULT_OK && data != null) {
+            String picturePath = AngelCarUtils.getFilesPath(getContext(), data);
+            Log.i(TAG, "onActivityResult: " + picturePath);
             ImageModel imageModel = new ImageModel();
             imageModel.setFileImage(new File(picturePath));
             imageModel.setUri(data.getData());
@@ -169,7 +160,7 @@ public class  ListImageFragment extends Fragment {
             checkGallery();
 
         }
-    }
+    }*/
 
     private void checkGallery(){
         OnSelectData selectData = (OnSelectData) getActivity();
@@ -222,11 +213,7 @@ public class  ListImageFragment extends Fragment {
 //        MainThreadBus.getInstance().unregister(this);
     }
 
-//    @Subscribe
-//    public void eventBusProduceData(InfoCarModel carModel){
-//        mInfoCarModel = carModel;
-//        Log.d(TAG, "3 : "+carModel.isEditInfo());
-//    }
+
 
     /*
      * Save Instance State Here

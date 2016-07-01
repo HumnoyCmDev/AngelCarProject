@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.Html;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +19,7 @@ import android.widget.TextView;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.github.siyamed.shapeimageview.RoundedImageView;
 import com.hndev.library.R;
+import com.hndev.library.view.Transformtion.RoundedTransform;
 import com.hndev.library.view.Transformtion.ScalingUtilities;
 import com.hndev.library.view.sate.BundleSavedState;
 import com.squareup.picasso.Picasso;
@@ -98,7 +98,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
 
         message.setText(msg);
         message.setTextColor(colorMessage);
-        setBackground(colorBackground,radius);
+//        setBackground(colorBackground,radius);
 
     }
 
@@ -164,6 +164,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
             Picasso.with(getContext())
                     .load(rulImage)
                     .transform(new PictureReSize())
+//                    .transform(new RoundedTransform(25f))
                     .placeholder(R.drawable.loading)
                     .into(image);
 
@@ -183,16 +184,16 @@ public class AngelCarMessage extends BaseCustomViewGroup {
                 .into(iconProfile);
     }
 
-    public void setBackground(int color,float radius){
-        GradientDrawable gradientDrawable = new GradientDrawable();
-        gradientDrawable.setColor(color);
-        gradientDrawable.setCornerRadius(radius);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-            background.setBackground(gradientDrawable);
-        }else {
-            background.setBackgroundDrawable(gradientDrawable);
-        }
-    }
+//    public void setBackground(int color,float radius){
+//        GradientDrawable gradientDrawable = new GradientDrawable();
+//        gradientDrawable.setColor(color);
+//        gradientDrawable.setCornerRadius(radius);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
+//            background.setBackground(gradientDrawable);
+//        }else {
+//            background.setBackgroundDrawable(gradientDrawable);
+//        }
+//    }
 
     public void setBackground(int color){
         GradientDrawable gradientDrawable = new GradientDrawable();

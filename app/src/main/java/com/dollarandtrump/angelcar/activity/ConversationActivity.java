@@ -47,7 +47,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     @Bind(R.id.tl_8) SlidingTabLayout slidingTabLayout;
     private Subscription subscriptionMessage;
     private Subscription subscriptionCarId;
-//    private MessageManager mgsManager;
+    private MessageManager mgsManager;
 
     private final String[] mTitles = {"ทั้งหมด", "คุยกับคนซื้อ", "คุยกับคนขาย"};
 
@@ -61,6 +61,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         if (savedInstanceState == null)
             loadAllCarId();
 
+//        MainThreadBus.getInstance().register(this);
     }
 
     private void loadAllCarId() {
@@ -112,10 +113,15 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
                     @Override
                     public void onNext(MessageManager messageManager) {
-//                         mgsManager = messageManager;
-                        MainThreadBus.getInstance().post(messageManager);
+                         mgsManager = messageManager;
+                        MainThreadBus.getInstance().post(produceMsgManager());
                     }
                 });
+    }
+
+    @Produce
+    public MessageManager produceMsgManager(){
+        return mgsManager;
     }
 
     private void initViewPager() {
@@ -124,9 +130,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         slidingTabLayout.setViewPager(viewPager,mTitles);
     }
 
-
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -134,19 +137,20 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
             subscriptionMessage.unsubscribe();
         if (subscriptionCarId != null)
             subscriptionCarId.unsubscribe();
+//        MainThreadBus.getInstance().unregister(this);
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        MainThreadBus.getInstance().register(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        MainThreadBus.getInstance().unregister(this);
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        MainThreadBus.getInstance().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        MainThreadBus.getInstance().unregister(this);
+    }
 
     /**************
     *Listener Zone*
@@ -216,10 +220,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         }
     };
 */
-//    @Produce
-//    public MessageManager produceMsgManager(){
-//        return mgsManager;
-//    }
 
     @Override
     public void onClickItemMessage(final MessageDao messageDao) {

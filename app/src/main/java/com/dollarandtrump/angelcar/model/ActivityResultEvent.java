@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.manager;
+package com.dollarandtrump.angelcar.model;
 
 import android.content.Intent;
 
