@@ -57,7 +57,7 @@
 
 
         <activity
-            android:name=".activity.ChatActivity"
+            android:name=".activity.TopicChatActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity

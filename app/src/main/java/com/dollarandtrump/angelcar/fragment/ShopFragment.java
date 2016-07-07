@@ -106,7 +106,7 @@ public class ShopFragment extends Fragment {
     private int mLast = -100;
 
 
-    private ShopFragment() {
+    public ShopFragment() {
         super();
     }
 

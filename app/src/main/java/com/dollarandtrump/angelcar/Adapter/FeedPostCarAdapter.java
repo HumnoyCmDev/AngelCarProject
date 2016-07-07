@@ -202,8 +202,6 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
 
     public abstract class ViewHolderPost {
         @Bind(R.id.item_post) protected AngelCarPost angelCarPost;
-
-
         public ViewHolderPost(View v) {
             ButterKnife.bind(this,v);
         }

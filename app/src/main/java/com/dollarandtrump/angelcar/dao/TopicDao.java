@@ -3,6 +3,8 @@ package com.dollarandtrump.angelcar.dao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 import java.util.Date;
 
 /***************************************
@@ -10,22 +12,22 @@ import java.util.Date;
  * โดย humnoy Android Developer
  * ลงวันที่ 3/3/59. เวลา 16:10
  ***************************************/
+@Parcel
 public class TopicDao {
 
-    @SerializedName("topicid")      @Expose int topicId;
+    @SerializedName("topicid")      @Expose int id;
     @SerializedName("userid")       @Expose String userId;
-    @SerializedName("topicmessage") @Expose String topicMessage;
-    @SerializedName("topicstatus")  @Expose String topicStatus;
-    @SerializedName("topicstamp")   @Expose Date topicStamp;
-    @SerializedName("topictype")    @Expose String topicType;
+    @SerializedName("topicmessage") @Expose String message;
+    @SerializedName("topicstatus")  @Expose String status;
+    @SerializedName("topicstamp")   @Expose Date stamp;
+    @SerializedName("topictype")    @Expose String type;
 
-
-    public int getTopicId() {
-        return topicId;
+    public int getId() {
+        return id;
     }
 
-    public void setTopicId(int topicId) {
-        this.topicId = topicId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUserId() {
@@ -36,35 +38,35 @@ public class TopicDao {
         this.userId = userId;
     }
 
-    public String getTopicMessage() {
-        return topicMessage;
+    public String getMessage() {
+        return message;
     }
 
-    public void setTopicMessage(String topicMessage) {
-        this.topicMessage = topicMessage;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getTopicStatus() {
-        return topicStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setTopicStatus(String topicStatus) {
-        this.topicStatus = topicStatus;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public Date getTopicStamp() {
-        return topicStamp;
+    public Date getStamp() {
+        return stamp;
     }
 
-    public void setTopicStamp(Date topicStamp) {
-        this.topicStamp = topicStamp;
+    public void setStamp(Date stamp) {
+        this.stamp = stamp;
     }
 
-    public String getTopicType() {
-        return topicType;
+    public String getType() {
+        return type;
     }
 
-    public void setTopicType(String topicType) {
-        this.topicType = topicType;
+    public void setType(String type) {
+        this.type = type;
     }
 }

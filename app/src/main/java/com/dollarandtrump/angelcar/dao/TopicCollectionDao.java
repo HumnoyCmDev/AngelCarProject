@@ -3,6 +3,8 @@ package com.dollarandtrump.angelcar.dao;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.parceler.Parcel;
+
 import java.util.List;
 
 /***************************************
@@ -10,6 +12,7 @@ import java.util.List;
  * โดย humnoy Android Developer
  * ลงวันที่ 3/3/59. เวลา 16:09
  ***************************************/
+@Parcel
 public class TopicCollectionDao {
 
     @SerializedName("topic") @Expose List<TopicDao> topic;

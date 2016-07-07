@@ -30,6 +30,9 @@
 
     <string name="time_today">วันนี้</string>
     <string name="time_yesterday">เมื่อวาน</string>
+    <string name="text_finance">จัดไฟแนนซ์</string>
+    <string name="text_refinance">รีไฟแนนซ์</string>
+    <string name="text_pawn">จำนำทะเบียน</string>
 
     <string-array name="province">
         <item>ราชบุรี</item>

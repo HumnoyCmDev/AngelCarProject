@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
-import com.dollarandtrump.angelcar.fragment.TabFinanceFragment;
+import com.dollarandtrump.angelcar.fragment.TabTopicFragment;
 import com.dollarandtrump.angelcar.fragment.MenuFragment;
 import com.dollarandtrump.angelcar.fragment.ShopFragment;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -25,7 +25,7 @@ public class MainViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0: return FeedPostFragment.newInstance();
-            case 1: return TabFinanceFragment.newInstance();
+            case 1: return TabTopicFragment.newInstance();
             case 2: return ShopFragment.newInstance(Registration.getInstance().getUserId(),
                     Registration.getInstance().getShopRef());
             default: return MenuFragment.newInstance();

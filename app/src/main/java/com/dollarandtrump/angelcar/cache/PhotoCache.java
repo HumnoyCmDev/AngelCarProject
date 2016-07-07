@@ -1,6 +1,7 @@
-package com.dollarandtrump.angelcar.utils;
+package com.dollarandtrump.angelcar.cache;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 public class PhotoCache {
@@ -20,6 +21,7 @@ public class PhotoCache {
     public void addBitmapToCache(String key, Bitmap bitmap){
         if(getBitmapFromCache(key) == null){
             mPhotoCache.put(key, bitmap);
+            Log.d("cache", "addBitmapToCache: ");
         }
     }
 

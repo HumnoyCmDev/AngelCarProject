@@ -1,6 +1,9 @@
 package com.dollarandtrump.angelcar.manager;
 
+import android.util.Log;
+
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
+import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 
 import java.io.IOException;
@@ -16,6 +19,11 @@ import rx.Subscriber;
  * AngelCarProject
  ********************************************/
 public class WaitMessageObservable implements Observable.OnSubscribe<String> {
+
+    public enum Type {
+        CHAT_CAR,CHAT_TOPIC
+    }
+
     private int mIdMessage;
     private String mCarId;
     private String mMessageFromUser;
@@ -23,7 +31,10 @@ public class WaitMessageObservable implements Observable.OnSubscribe<String> {
     private boolean isLoopSuccess= true;
     private final long timeSleep = 1000L;
 
-    public WaitMessageObservable(int mIdMessage, String mCarId, String mMessageFromUser) {
+    private Type mType;
+
+    public WaitMessageObservable(Type type,int mIdMessage, String mCarId, String mMessageFromUser) {
+        mType = type;
         this.mIdMessage = mIdMessage;
         this.mCarId = mCarId;
         this.mMessageFromUser = mMessageFromUser;
@@ -31,27 +42,51 @@ public class WaitMessageObservable implements Observable.OnSubscribe<String> {
 
     @Override
     public void call(Subscriber<? super String> subscriber) {
-        if (!isLoopSuccess) subscriber.onCompleted();
+        if (!isLoopSuccess) {
+            subscriber.onCompleted();
+            subscriber.unsubscribe();
+        }
             while (isLoopSuccess){
-                Call<MessageCollectionDao> call =
-                        HttpManager.getInstance()
-                                .getService(60 * 1000) // Milliseconds (1 นาที)
-                                .waitMessage(mCarId+"||"+ mMessageFromUser +"||" + mIdMessage);
-                try {
-                    Response<MessageCollectionDao> result = call.execute();
-                    if (result.isSuccessful()){
-                        MessageCollectionDao dao = result.body();
-                        if (dao != null && dao.getListMessage().size() > 0 ){
-                            RxMessageObservable.with().onInitMessage(dao);
-                            mIdMessage = getMaximumId(dao);
+                if (mType == Type.CHAT_CAR) {
+                    Call<MessageCollectionDao> call =
+                            HttpManager.getInstance()
+                                    .getService(60 * 1000) // Milliseconds (1 นาที)
+                                    .waitMessage(mCarId + "||" + mMessageFromUser + "||" + mIdMessage);
+                    try {
+                        Response<MessageCollectionDao> result = call.execute();
+                        if (result.isSuccessful()) {
+                            MessageCollectionDao dao = result.body();
+                            if (dao != null && dao.getListMessage().size() > 0) {
+//                            RxMessageObservable.with().onInitMessage(dao);
+                                MainThreadBus.getInstance().post(dao);
+                                mIdMessage = getMaximumId(dao);
+                            }
                         }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        subscriber.onError(e);
                     }
-
-                    Thread.sleep(timeSleep);
-                } catch (IOException | InterruptedException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
+                }else if (mType == Type.CHAT_TOPIC){
+                    Call<MessageCollectionDao> cell = HttpManager.getInstance()
+                            .getService(60 * 1000).waitMessageTopic(mCarId+"||"+mMessageFromUser+"||"+mIdMessage);
+                    try {
+                        Response<MessageCollectionDao> response = cell.execute();
+                        if (response.isSuccessful()){
+                            MessageCollectionDao dao = response.body();
+                            if (dao != null && dao.getListMessage().size() > 0) {
+//                            RxMessageObservable.with().onInitMessage(dao);
+                                MainThreadBus.getInstance().post(dao);
+                                mIdMessage = getMaximumId(dao);
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+                try {
+                    Thread.sleep(timeSleep);
+                } catch (InterruptedException e) {}
             }
 
     }
@@ -71,7 +106,7 @@ public class WaitMessageObservable implements Observable.OnSubscribe<String> {
         this.mIdMessage = idMessage;
     }
 
-    public void unSubscribe() {
+    public void unsubscribe() {
         isLoopSuccess = false;
     }
 }

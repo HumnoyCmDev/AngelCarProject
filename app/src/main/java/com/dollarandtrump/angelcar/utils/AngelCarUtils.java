@@ -50,6 +50,17 @@ public class AngelCarUtils {
         return s.replaceAll("<n>"," ");
     }
 
+    public static String subUrlMessage(String msg){
+        if (!isMessageText(msg)){
+            return msg.replace("/","").replace("<image>","").trim();
+        }
+        return msg;
+    }
+
+    public static boolean isMessageText(String msg){
+        return !msg.contains("<image>") && !msg.contains("</image>");
+    }
+
     @NonNull
     public static String subTopic(@NonNull String s){
         if (!s.contains("``")) return s;//false return string

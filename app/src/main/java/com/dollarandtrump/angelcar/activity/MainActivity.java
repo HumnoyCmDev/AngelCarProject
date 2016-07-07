@@ -236,10 +236,6 @@ public class MainActivity extends AppCompatActivity{
         }else if (id == R.id.action_follow){
             startActivity(initIntent(FollowActivity.class));
             overridePendingTransition(R.anim.activity_slide_left_in,R.anim.activity_out);
-        }else if (id == R.id.action_simple_chat){
-            Intent i = new Intent(MainActivity.this,ChatActivity.class);
-            startActivity(i);
-            return  true;
         }
         return super.onOptionsItemSelected(item);
     }

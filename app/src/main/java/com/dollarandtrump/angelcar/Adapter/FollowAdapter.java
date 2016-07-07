@@ -3,6 +3,7 @@ package com.dollarandtrump.angelcar.Adapter;
 /**
  * Created by Developer on 12/15/2015. 14:35
  */
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,8 @@ import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.hndev.library.view.AngelCarPost;
 
+import java.text.DecimalFormat;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -23,7 +26,11 @@ public class FollowAdapter extends BaseAdapter {
 
     private PostCarCollectionDao dao;
     private int lastPositionInteger = -1;
+    private Context mContext;
 
+    public FollowAdapter(Context mContext) {
+        this.mContext = mContext;
+    }
 
     public void setDao(PostCarCollectionDao dao) {
         this.dao = dao;
@@ -56,9 +63,9 @@ public class FollowAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup parent) {
         int switching_position = getItemViewType(position);
         switch (switching_position){
-            case 0: view = inflaterLayoutRight(view,parent,getItem(position));
+            case 0: view = inflaterLayoutRight(view,parent,getItem(position),position);
                 break;
-            case 1: view = inflaterLayoutLeft(view,parent,getItem(position));
+            case 1: view = inflaterLayoutLeft(view,parent,getItem(position),position);
                 break;
         }
 
@@ -72,7 +79,7 @@ public class FollowAdapter extends BaseAdapter {
         return view;
     }
 
-    private View inflaterLayoutLeft(View view, ViewGroup parent, PostCarDao postItem){
+    private View inflaterLayoutLeft(View view, ViewGroup parent, PostCarDao postCarDao,int position){
         ViewHolderItemLeft holder;
         if(view != null) {
             holder = (ViewHolderItemLeft) view.getTag();
@@ -81,18 +88,11 @@ public class FollowAdapter extends BaseAdapter {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-            String topic = postItem.getCarTitle();
-            String detail = AngelCarUtils.convertLineUp(postItem.getCarDetail());
-            String carName = postItem.getCarName();
-            holder.angelCarPost.setPictureProfile("http://cls.paiyannoi.me/profileimages/default.png");
-            holder.angelCarPost.setPictureProduct(postItem.getCarImageThumbnailPath());
-            holder.angelCarPost.setTitle(topic);
-            holder.angelCarPost.setDetails(carName +" "+ detail.replaceAll("<n>"," "));
-
+        initPost(holder,postCarDao,"#ff0000","#ff0000",position);
         return view;
     }
 
-    private View inflaterLayoutRight(View view, ViewGroup parent, PostCarDao postItem){
+    private View inflaterLayoutRight(View view, ViewGroup parent, PostCarDao postCarDao,int position){
         ViewHolderItemRight holder;
         if(view != null) {
             holder = (ViewHolderItemRight) view.getTag();
@@ -101,30 +101,47 @@ public class FollowAdapter extends BaseAdapter {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-            String topic = postItem.getCarTitle();
-            String detail = AngelCarUtils.convertLineUp(postItem.getCarDetail());
-            String carName = postItem.getCarName();
-            holder.angelCarPost.setPictureProduct(postItem.getCarImageThumbnailPath());
-            holder.angelCarPost.setTitle(topic);
-            holder.angelCarPost.setDetails(carName +" "+ detail.replaceAll("<n>"," "));
-
+        initPost(holder,postCarDao,"#FFB13D","#FFB13D",position);
         return view;
     }
 
-    public class ViewHolderItemLeft {
-        @Bind(R.id.item_post)
-        AngelCarPost angelCarPost;
+    private void initPost(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2,int position){
+        String topic = dao.getCarTitle();
+        holderPost.angelCarPost.setPictureProfile("http://angelcar.com/ios/data/clsdata/"+dao.getShopLogo());
+        holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
+        holderPost.angelCarPost.setTitle(topic);
+        double amount = Double.parseDouble(dao.getCarPrice());
+//        DecimalFormat formatter = new DecimalFormat("#,###").format(amount);
+        String price = new DecimalFormat("#,###").format(amount);
+        String strTitle = dao.getCarName() + " " +
+                dao.getCarSub() + " " + dao.getCarSubDetail();
+        String strDetail = "ปี "+ AngelCarUtils.textFormatHtml(color1,""+dao.getCarYear())+
+                " ราคา "+ AngelCarUtils.textFormatHtml(color2, price) +" บาท";
+        holderPost.angelCarPost.setDetails(strTitle);
+        holderPost.angelCarPost.setDetails2Html(strDetail);
+        String datetime = AngelCarUtils.formatTimeAndDay(mContext,dao.getCarModifyTime());
+        holderPost.angelCarPost.setTime(datetime);
+
+    }
+
+    public class ViewHolderItemLeft extends ViewHolderPost{
         public ViewHolderItemLeft(View v) {
-            ButterKnife.bind(this,v);
+            super(v);
         }
     }
 
-    public class ViewHolderItemRight {
-        @Bind(R.id.item_post)
-        AngelCarPost angelCarPost;
+    public class ViewHolderItemRight extends ViewHolderPost{
         public ViewHolderItemRight(View v) {
+            super(v);
+        }
+    }
+
+    public abstract class ViewHolderPost {
+        @Bind(R.id.item_post) protected AngelCarPost angelCarPost;
+        public ViewHolderPost(View v) {
             ButterKnife.bind(this,v);
         }
+
     }
 
 }

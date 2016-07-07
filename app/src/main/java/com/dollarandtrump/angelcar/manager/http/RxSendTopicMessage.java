@@ -22,7 +22,7 @@ import rx.Subscriber;
  * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
  * AngelCarProject
  ********************************************/
-public class RxSendMessage implements Observable.OnSubscribe<String> {
+public class RxSendTopicMessage implements Observable.OnSubscribe<String> {
 
     public enum SendMessageType {
         SEND,UPLOAD_FILES
@@ -32,38 +32,25 @@ public class RxSendMessage implements Observable.OnSubscribe<String> {
 
     private Uri mUri;
     private SendMessageType type;
-    private String mBastUrl ="http://angelcar.com/ios/api/ga_chatcar.php?operation=new&message=%s||%s||%s||%s||%s";
-    private String mMessage;
-    private String mId;
-    private String mMessageBy;
-    private String mUser;
-    private String mMessageFromUser;
+    private String mBastUrl ="http://angelcar.com/ios/api/ga_chatadmin.php?operation=new&message=%s||%s||%s||%s";
     private Context mContext = Contextor.getInstance().getContext();
 
     /**Constructor Send Message File image**/
-    public RxSendMessage(Uri uri,
-                         String id,String messageFromUser,String messageBy,String user) {
+    @Deprecated
+    public RxSendTopicMessage(Uri uri,
+                              String id, String messageFromUser) {
+        this.mUri = uri;
         this.type = SendMessageType.UPLOAD_FILES;
-        mId = id;
-        mUri = uri;
-        mMessage = "%s";
-        mMessageFromUser = messageFromUser;
-        mMessageBy = messageBy;
-        mUser = user;
         mClient = new OkHttpClient();
-        mBastUrl = String.format(mBastUrl,mId,mMessageFromUser,mMessage,mMessageBy,mUser);
+        mBastUrl = String.format(mBastUrl,id,messageFromUser,"%s","user");
+
     }
 
     /**Constructor Send Message text**/
-    public RxSendMessage(String id,String messageFromUser,String message,String messageBy,String user) {
+    public RxSendTopicMessage(String id, String messageFromUser, String message) {
         this.type = SendMessageType.SEND;
-        mId = id;
-        mMessage = message;
-        mMessageFromUser = messageFromUser;
-        mMessageBy = messageBy;
-        mUser = user;
         mClient = new OkHttpClient();
-        mBastUrl = String.format(mBastUrl,mId,mMessageFromUser,mMessage,mMessageBy,mUser);
+        mBastUrl = String.format(mBastUrl,id,messageFromUser,message,"user");
     }
 
     @Override
@@ -78,8 +65,6 @@ public class RxSendMessage implements Observable.OnSubscribe<String> {
         }
 
     }
-
-
 
     /** Method Send Massage**/
     private void sendMessage(final Subscriber<? super String> subscriber){

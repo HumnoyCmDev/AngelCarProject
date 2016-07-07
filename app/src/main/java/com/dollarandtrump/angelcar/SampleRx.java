@@ -12,34 +12,23 @@ import rx.subjects.AsyncSubject;
  * Created by humnoyDeveloper on 21/4/59. 16:00
  */
 public class SampleRx {
+    enum Type {
+        REFINANCE {
+            @Override
+            public String toString() {
+                return "refinance";
+            }
+        },PAWN {
+            @Override
+            public String toString() {
+                return "pawn";
+            }
+        }
+    }
     public static void main(String[] str) {
 
-        AsyncSubject<Integer> subject =  AsyncSubject.create();
-        subject.subscribe(new Observer<Integer>() {
-            @Override
-            public void onCompleted() {
-                System.out.println("Completed");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(Integer integer) {
-                System.out.println(integer);
-            }
-        });
-        subject.onNext(0);
-        subject.onNext(1);
-        subject.onNext(2);
-        subject.onNext(3);
-        subject.onNext(4);
-        subject.onCompleted();
-
-
-
+       String msg = "hhhhhhhhhhhhhhhhhhhhhhhhhhh";
+        System.out.print(!msg.contains("<image>") && !msg.contains("</image>"));
     }
 
     static class MyObject {

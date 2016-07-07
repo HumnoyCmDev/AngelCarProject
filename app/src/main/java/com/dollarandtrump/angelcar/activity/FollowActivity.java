@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -21,6 +20,7 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.utils.Log;
 
 import org.parceler.Parcels;
 
@@ -56,6 +56,7 @@ public class FollowActivity extends AppCompatActivity {
     }
 
     private void loadFollowCarModel() {
+        if (Log.isLoggable(Log.DEBUG)) Log.d(Registration.getInstance().getShopRef()+"");
         Call<PostCarCollectionDao> call = HttpManager.getInstance().getService()
                 .loadFollowCarModel(Registration.getInstance().getShopRef());
         call.enqueue(callbackPostCarModel);
@@ -66,7 +67,7 @@ public class FollowActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        adapter = new FollowAdapter();
+        adapter = new FollowAdapter(this);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(onItemClickListener);
         mListView.setOnItemLongClickListener(onItemLongClickListener);
@@ -95,7 +96,7 @@ public class FollowActivity extends AppCompatActivity {
 
             } else {
                 try {
-                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                    if (Log.isLoggable(Log.DEBUG)) Log.d(""+response.errorBody().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -104,7 +105,7 @@ public class FollowActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
-            Log.e(TAG, "onFailure: ", t);
+           if (Log.isLoggable(Log.ERROR)) Log.e("Error",t);
         }
     };
 
@@ -150,10 +151,10 @@ public class FollowActivity extends AppCompatActivity {
         @Override
         public void onResponse(Call<Results> call, Response<Results> response) {
             if (response.isSuccessful()) {
-                Log.i(TAG, "onResponse:" + response.body().success);
+                if (Log.isLoggable(Log.DEBUG)) Log.d(""+response.body().success);
             } else {
                 try {
-                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+                    if (Log.isLoggable(Log.DEBUG)) Log.d(""+response.errorBody().string());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -162,7 +163,7 @@ public class FollowActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<Results> call, Throwable t) {
-            Log.e(TAG, "onFailure: ", t);
+            if (Log.isLoggable(Log.ERROR)) Log.e("Error",t);
         }
     };
 }

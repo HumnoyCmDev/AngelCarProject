@@ -1,22 +1,29 @@
 package com.dollarandtrump.angelcar.fragment;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
-import com.dollarandtrump.angelcar.utils.PhotoLoad;
+import com.dollarandtrump.angelcar.cache.PhotoLoadCache;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.model.CacheShop;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
@@ -27,8 +34,9 @@ import com.dollarandtrump.angelcar.view.ImageViewGlide;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 /***************************************
@@ -43,8 +51,10 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.text_name) TextView mName;
     @Bind(R.id.text_description) TextView mDescription;
 
-    @Bind(R.id.image_test_cache)
-    ImageView imageTestCache;
+    @Bind(R.id.image_test_cache) ImageView imageTestCache;
+    @Bind(R.id.text_view_animation_values) TextView mValuesAnimation;
+    @Bind(R.id.bg) LinearLayout layout;
+
 
     CacheShop mCacheShop;
     public MenuFragment() {
@@ -84,13 +94,43 @@ public class MenuFragment extends Fragment {
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
 
-
         if (mCacheShop != null) {
             mImageProfile.setImageUrl(getActivity(),mCacheShop.getProfileDao().getUrlShopLogo());
             mName.setText(mCacheShop.getProfileDao().getShopName());
             mDescription.setText(mCacheShop.getProfileDao().getShopDescription());
         }
 
+    }
+
+    @OnClick(R.id.text_view_animation_values)
+    public void startAnimationValues(){
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 1000);
+        valueAnimator.setDuration(1000);
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int value = (Integer) animation.getAnimatedValue();
+                mValuesAnimation.setText("Values " + value);
+            }
+        });
+        valueAnimator.start();
+
+        Integer colorFrom = Color.TRANSPARENT;
+        Drawable background = layout.getBackground();
+        if (background instanceof ColorDrawable){
+            colorFrom = ((ColorDrawable) background).getColor();
+        }
+        Integer colorTo = Color.RED;
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.setDuration(3000);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                layout.setBackgroundColor((Integer) animator.getAnimatedValue());
+            }
+        });
+        colorAnimation.start();
     }
 
     @OnClick(R.id.menu_button_profile)
@@ -134,21 +174,13 @@ public class MenuFragment extends Fragment {
         RxImagePicker.with(getContext()).requestImage(Sources.GALLERY).subscribe(new Action1<Uri>() {
             @Override
             public void call(Uri uri) {
-                PhotoLoad load = new PhotoLoad();
-                load.loadBitmap(FileUtils.getPath(getContext(), uri), new Observer<Bitmap>() {
+                PhotoLoadCache.getInstance()
+                        .loadBitmap(FileUtils.getFile(getContext(),uri),300)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Bitmap>() {
                     @Override
-                    public void onCompleted() {
-                        Log.d("cache image", "onCompleted: ");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Bitmap bitmap) {
-                        Log.d("cache image", "onNext: ");
+                    public void call(Bitmap bitmap) {
                         imageTestCache.setImageBitmap(bitmap);
                     }
                 });

@@ -13,8 +13,4 @@
         android:icon="@drawable/ic_action_follow"
         app:showAsAction="always"
         />
-    <item android:id="@+id/action_simple_chat"
-        android:title="chat"
-        app:showAsAction="never"
-        />
 </menu>

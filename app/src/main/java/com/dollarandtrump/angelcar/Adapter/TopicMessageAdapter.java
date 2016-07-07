@@ -2,24 +2,23 @@ package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Space;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
-import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.dao.TopicCollectionDao;
+import com.dollarandtrump.angelcar.dao.TopicDao;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.Log;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -27,47 +26,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
 
 /**
  * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
  *
  * @AngelCarProject
  */
-public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessageAdapter.ViewHolder> {
+public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapter.ViewHolder> {
     private final static int TYPE_THEM = 0;
     private final static int TYPE_ME = 1;
-    private MessageCollectionDao mMessageDao;
-    private String mMessageBy;
+    private TopicCollectionDao mTopicDao;
+    private String mUserId;
 
     private Context mContext;
     // Dates and Clustering
     private final Map<Integer, Cluster> mClusterCache = new HashMap<>();
-    protected final Handler mUiThreadHandler;
+    private final Handler mUiThreadHandler;
     private final DateFormat mTimeFormat;
+    private OnClickItemChatListener onClickItemChatListener;
 
-    public AngelCarMessageAdapter(Context context, String mMessageBy) {
+    public TopicMessageAdapter(Context context, String userId) {
         this.mContext = context;
-        this.mMessageBy = mMessageBy;
+        this.mUserId = userId;
         mUiThreadHandler = new Handler(Looper.getMainLooper());
 //        mDateFormat = android.text.format.DateFormat.getDateFormat(context);
         mTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
     }
 
-    public void setmMessageBy(String mMessageBy) {
-        this.mMessageBy = mMessageBy;
+    public void setmUserId(String userId) {
+        this.mUserId = userId;
     }
 
-    public void setMessageDao(MessageCollectionDao mMessageDao) {
-        this.mMessageDao = mMessageDao;
+    public void setOnClickItemChatListener(OnClickItemChatListener onClickItemChatListener){
+        this.onClickItemChatListener = onClickItemChatListener;
+    }
+
+    public void setTopicDao(TopicCollectionDao topicDao) {
+        this.mTopicDao = topicDao;
     }
 
     @Override
     public int getItemViewType(int position) {
-        MessageDao item = mMessageDao.getListMessage().get(position);
-        return userTypeView(mMessageBy,item.getMessageBy());
+        TopicDao item = mTopicDao.getTopic().get(position);
+        return userTypeView(mUserId,item.getUserId());
     }
 
     @Override
@@ -89,17 +90,17 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     }
 
     public void bindCellViewHolder(CellViewHolder viewHolder, int position) {
-         MessageDao msgDao  = mMessageDao.getListMessage().get(position);
+         TopicDao topic  = mTopicDao.getTopic().get(position);
 
-        boolean oneOnOne = getParticipants(mMessageDao); // User == 2 = true ; > 2 = false;
+        boolean oneOnOne = false; //getParticipants(mMessageDao); // User == 2 = true ; > 2 = false;
         //Clustering and dates
-        Cluster cluster = getClustering(mMessageDao,position);
+        Cluster cluster = getClustering(mTopicDao,position);
         if (cluster.mClusterWithPrevious == null){
             viewHolder.mClusterSpaceGap.setVisibility(View.GONE);
             viewHolder.mTimeGroup.setVisibility(View.GONE);
         }else if (cluster.mDateBoundaryWithPrevious || cluster.mClusterWithPrevious == ClusterType.MORE_THAN_HOUR) {
             // Crossed into a new day, or > 1hr lull in conversation
-            Date receivedAt = msgDao.getMessagesTamp();
+            Date receivedAt = topic.getStamp();
             if (receivedAt == null) receivedAt = new Date();
             String timeBarDayText = AngelCarUtils.formatTimeDay(viewHolder.mCell.getContext(), receivedAt);
             viewHolder.mTimeGroupDay.setText(timeBarDayText);
@@ -117,23 +118,37 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
             viewHolder.mTimeGroup.setVisibility(View.GONE);
         }
 
-        //
+//        // chat text or image
+//        View view = LayoutInflater.from(mContext).inflate(R.layout.call_chat_text,null);
+//        view.setBackgroundResource(getItemViewType(position) == TYPE_ME ? R.drawable.message_item_call_me :R.drawable.message_item_call_them);
+//        TextView textView = (TextView) view.findViewById(R.id.call_text);
+
 
         if (getItemViewType(position) == TYPE_ME){
-//          createBackgroundMessage(viewHolder,Color.parseColor("#FFB13D"));
-            viewHolder.mCell.setText(msgDao.getMessageText());
-            viewHolder.mReceipt.setVisibility(View.GONE);
+
+            if (AngelCarUtils.isMessageText(topic.getMessage()))
+                viewHolder.mCallText.setText(topic.getMessage());
+            else
+                viewHolder.mCallText.setText("คุณส่งรูปภาพ 1 รูป");
+            viewHolder.mCallText.setBackgroundResource(R.drawable.topic_item_call_me);
+
         }else {
-//            createBackgroundMessage(viewHolder,Color.parseColor("#696969"));
-            viewHolder.mCell.setText(msgDao.getMessageText());
+
+            if (AngelCarUtils.isMessageText(topic.getMessage()))
+                viewHolder.mCallText.setText(topic.getMessage());
+            else
+                viewHolder.mCallText.setText(topic.getUserId()+"ส่งรูปภาพ 1 รูป");
+            viewHolder.mCallText.setTextColor(Color.WHITE);
+            viewHolder.mCallText.setBackgroundResource(R.drawable.topic_item_call_them);
 
             // Sender name, only for first message in cluster // User > 2
             if (!oneOnOne && (cluster.mClusterWithPrevious == null || cluster.mClusterWithPrevious == ClusterType.NEW_SENDER)) {
-                if (msgDao != null) {
-                    viewHolder.mUserName.setText(msgDao.getDisplayName());
+                TopicDao topicDao = mTopicDao.getTopic().get(position);
+                if (topicDao != null) {
+                    viewHolder.mUserName.setText("สมาชิก "+topicDao.getUserId());
                 } else {
-                    MessageDao nameProvider = mMessageDao.getListMessage().get(position-1);
-                    viewHolder.mUserName.setText(nameProvider != null ? nameProvider.getDisplayName() : "Unknown user");
+                    TopicDao nameProvider = mTopicDao.getTopic().get(position+1);
+                    viewHolder.mUserName.setText(nameProvider != null ? "*สมาชิก " : "Unknown user");
                 }
                 viewHolder.mUserName.setVisibility(View.VISIBLE);
             } else {
@@ -175,18 +190,29 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
 
     @Override
     public int getItemCount() {
-        if (mMessageDao == null) return 0;
-        if (mMessageDao.getListMessage() == null) return 0;
-        return mMessageDao.getListMessage().size();
+        if (mTopicDao == null) return 0;
+        if (mTopicDao.getTopic() == null) return 0;
+        return mTopicDao.getTopic().size();
     }
 
-    private int userTypeView(String messageBy, String daoMessageBy) {
-        return messageBy.equals(daoMessageBy) ? TYPE_ME : TYPE_THEM;
+    private int userTypeView(String userId, String userIdDao) {
+        return userId.equals(userIdDao) ? TYPE_ME : TYPE_THEM;
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (Log.isLoggable(Log.DEBUG)) Log.d(""+getAdapterPosition());
+
+            if (onClickItemChatListener != null){
+                onClickItemChatListener.onSelectItem(mTopicDao.getTopic().get(getAdapterPosition()),getAdapterPosition());
+            }
+
         }
     }
 
@@ -194,29 +220,29 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
     // การจัดกลุ่ม
     //==============================================================================================
 
-    private Cluster getClustering(MessageCollectionDao mMessageDao, int position) {
-        MessageDao messageDao =  mMessageDao.getListMessage().get(position);
-        Cluster result = mClusterCache.get(mMessageDao.getListMessage().get(position).getMessageId());
+    private Cluster getClustering(TopicCollectionDao mTopicDao, int position) {
+        TopicDao topic = mTopicDao.getTopic().get(position);
+        Cluster result = mClusterCache.get(topic.getId());
         if (result == null) {
             result = new Cluster();
-            mClusterCache.put(mMessageDao.getListMessage().get(position).getMessageId(), result);
+            mClusterCache.put(topic.getId(), result);
         }
 
         int previousPosition = position - 1;
-        MessageDao previousMessage = (previousPosition >= 0) ? mMessageDao.getListMessage().get(previousPosition) : null;
+        TopicDao previousMessage = (previousPosition >= 0) ? mTopicDao.getTopic().get(previousPosition) : null;
         if (previousMessage != null) {
-            result.mDateBoundaryWithPrevious = isDateBoundary(previousMessage.getMessagesTamp(), messageDao.getMessagesTamp());
-            result.mClusterWithPrevious = ClusterType.fromMessages(previousMessage, messageDao);
+            result.mDateBoundaryWithPrevious = isDateBoundary(previousMessage.getStamp(), topic.getStamp());
+            result.mClusterWithPrevious = ClusterType.fromMessages(previousMessage, topic);
 
-            Cluster previousCluster = mClusterCache.get(previousMessage.getMessageId());
+            Cluster previousCluster = mClusterCache.get(previousMessage.getId());
             if (previousCluster == null) {
                 previousCluster = new Cluster();
-                mClusterCache.put(previousMessage.getMessageId(), previousCluster);
+                mClusterCache.put(previousMessage.getId(), previousCluster);
             } else {
                 // does the previous need to change its clustering?
                 if ((previousCluster.mClusterWithNext != result.mClusterWithPrevious) ||
                         (previousCluster.mDateBoundaryWithNext != result.mDateBoundaryWithPrevious)) {
-//                    requestUpdate(previousMessage, previousPosition);
+                    requestUpdate(previousMessage, previousPosition);
 //                    notifyItemChanged(previousPosition,previousMessage);
                 }
             }
@@ -225,20 +251,20 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         }
 
         int nextPosition = position + 1;
-        MessageDao nextMessage = (nextPosition < getItemCount()) ? mMessageDao.getListMessage().get(nextPosition) : null;
+        TopicDao nextMessage = (nextPosition < getItemCount()) ? mTopicDao.getTopic().get(nextPosition) : null;
         if (nextMessage != null) {
-            result.mDateBoundaryWithNext = isDateBoundary(messageDao.getMessagesTamp(),nextMessage.getMessagesTamp());
-            result.mClusterWithNext = ClusterType.fromMessages(messageDao, nextMessage);
+            result.mDateBoundaryWithNext = isDateBoundary(topic.getStamp(),nextMessage.getStamp());
+            result.mClusterWithNext = ClusterType.fromMessages(topic, nextMessage);
 
-            Cluster nextCluster = mClusterCache.get(nextMessage.getMessageId());
+            Cluster nextCluster = mClusterCache.get(nextMessage.getId());
             if (nextCluster == null) {
                 nextCluster = new Cluster();
-                mClusterCache.put(nextMessage.getMessageId(), nextCluster);
+                mClusterCache.put(nextMessage.getId(), nextCluster);
             } else {
                 // does the next need to change its clustering?
                 if ((nextCluster.mClusterWithPrevious != result.mClusterWithNext) ||
                         (nextCluster.mDateBoundaryWithPrevious != result.mDateBoundaryWithNext)) {
-//                    requestUpdate(nextMessage, nextPosition);
+                    requestUpdate(nextMessage, nextPosition);
 //                    notifyItemChanged(nextPosition,nextMessage);
                 }
             }
@@ -254,11 +280,11 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         return (d1.getYear() != d2.getYear()) || (d1.getMonth() != d2.getMonth()) || (d1.getDay() != d2.getDay());
     }
 
-    private void requestUpdate(final MessageDao messageDao, final int lastPosition) {
+    private void requestUpdate(final TopicDao topicDao, final int lastPosition) {
         mUiThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                notifyItemChanged(lastPosition,messageDao);
+                notifyItemChanged(lastPosition,topicDao);
             }
         });
     }
@@ -271,9 +297,9 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         public ClusterType mClusterWithNext;
     }
 
-    static class CellViewHolder extends ViewHolder {
-        public final static int RESOURCE_ID_ME = R.layout.angelcar_message_item_me;
-        public final static int RESOURCE_ID_THEM = R.layout.angelcer_message_item_them;
+    class CellViewHolder extends ViewHolder {
+        public final static int RESOURCE_ID_ME = R.layout.angelcar_topic_item_me;
+        public final static int RESOURCE_ID_THEM = R.layout.angelcer_topic_item_them;
 
         // View cache
         protected TextView mUserName;
@@ -282,8 +308,10 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         protected TextView mTimeGroupTime;
         protected Space mClusterSpaceGap;
         protected ImageView mAvatar;
-        protected TextView mCell;
-        protected TextView mReceipt;
+//        protected TextView mCell;
+        protected FrameLayout mCell;
+
+        protected TextView mCallText;
 
         public CellViewHolder(View itemView) {
             super(itemView);
@@ -292,11 +320,10 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
             mTimeGroupDay = (TextView) itemView.findViewById(R.id.time_group_day);
             mTimeGroupTime = (TextView) itemView.findViewById(R.id.time_group_time);
             mClusterSpaceGap = (Space) itemView.findViewById(R.id.cluster_space);
-            mCell = (TextView) itemView.findViewById(R.id.cell);
-            mReceipt = (TextView) itemView.findViewById(R.id.receipt);
+            mCell = (FrameLayout) itemView.findViewById(R.id.cell);
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
 
-
+            mCallText = (TextView) itemView.findViewById(R.id.call_text);
         }
     }
 
@@ -309,13 +336,13 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         private static final long MILLIS_MINUTE = 60 * 1000;
         private static final long MILLIS_HOUR = 60 * MILLIS_MINUTE;
 
-        public static ClusterType fromMessages(MessageDao older, MessageDao newer) {
+        public static ClusterType fromMessages(TopicDao older, TopicDao newer) {
             // Different users?
-            if (!older.getMessageBy().equals(newer.getMessageBy())) return NEW_SENDER;
+            if (!older.getUserId().equals(newer.getUserId())) return NEW_SENDER;
 
             // Time clustering for same user?
-            Date oldReceivedAt = older.getMessagesTamp();
-            Date newReceivedAt = newer.getMessagesTamp();
+            Date oldReceivedAt = older.getStamp();
+            Date newReceivedAt = newer.getStamp();
             if (oldReceivedAt == null || newReceivedAt == null) return LESS_THAN_MINUTE;
             long delta = Math.abs(newReceivedAt.getTime() - oldReceivedAt.getTime());
             if (delta <= MILLIS_MINUTE) return LESS_THAN_MINUTE;
@@ -324,10 +351,7 @@ public class AngelCarMessageAdapter extends RecyclerView.Adapter<AngelCarMessage
         }
     }
 
-    boolean getParticipants(MessageCollectionDao dao) {
-//        for (MessageDao d : dao.getListMessage())
-//            if (d.getMessageBy().equals("officer"))
-                return false;
-//        return true;
+    public interface OnClickItemChatListener{
+        public void onSelectItem(TopicDao topicDao, int position);
     }
 }

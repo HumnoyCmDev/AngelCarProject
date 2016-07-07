@@ -65,5 +65,6 @@ dependencies {
 //ActiveAndroid
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile "com.google.firebase:firebase-messaging:${versionServices}"
+//    compile 'com.google.firebase:firebase-config:9.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

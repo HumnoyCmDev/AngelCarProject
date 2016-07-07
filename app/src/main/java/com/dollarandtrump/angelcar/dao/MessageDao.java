@@ -20,6 +20,17 @@ public class MessageDao {
     @SerializedName("userprofileimage") @Expose String userProfileImage;
     @SerializedName("messagestamp")     @Expose Date messagesTamp;
 
+    // Topic
+    @SerializedName("messagetopicid") @Expose String messageTopId;
+
+    public String getMessageTopId() {
+        return messageTopId;
+    }
+
+    public void setMessageTopId(String messageTopId) {
+        this.messageTopId = messageTopId;
+    }
+
     public int getMessageId() {
         return messageId;
     }

@@ -199,7 +199,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
                             @Override
                             public void onNext(MessageManager messageManager) {
 //                                mgsManager = messageManager;
-                                BusProvider.getInstance().post(messageManager);
+                                //Event bus
                             }
                         });
 
@@ -252,7 +252,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         });
 
     }
-
 
     /************
     *Inner Class*

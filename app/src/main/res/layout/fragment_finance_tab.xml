@@ -1,32 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.flyco.tablayout.SegmentTabLayout
-        android:id="@+id/tabLayoutSegment"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_gravity="center_horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:tl_textBold="true"
-        app:tl_textSelectColor="@android:color/black"
-        app:tl_indicator_anim_enable="true"
-        app:tl_bar_color="#ffffff"
-        app:tl_indicator_color="@color/colorAccent"
-        app:tl_indicator_margin_bottom="2dp"
-        app:tl_indicator_margin_left="2dp"
-        app:tl_indicator_margin_right="2dp"
-        app:tl_indicator_margin_top="2dp"
-        app:tl_indicator_corner_radius="2dp"
-        app:tl_tab_width="100dp"/>
-
-    <FrameLayout
-        android:id="@+id/fl_change"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
 
-</LinearLayout>
+        <com.flyco.tablayout.SegmentTabLayout
+            android:layout_marginTop="5dp"
+            android:id="@+id/tabLayoutSegment"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:tl_textBold="true"
+            app:tl_textSelectColor="@android:color/black"
+            app:tl_indicator_anim_enable="true"
+            app:tl_bar_color="#ffffff"
+            app:tl_indicator_color="@color/colorAccent"
+            app:tl_indicator_margin_bottom="2dp"
+            app:tl_indicator_margin_left="2dp"
+            app:tl_indicator_margin_right="2dp"
+            app:tl_indicator_margin_top="2dp"
+            app:tl_indicator_corner_radius="20dp"
+            app:tl_tab_width="100dp"/>
+
+        <FrameLayout
+            android:layout_marginTop="8dp"
+            android:id="@+id/fl_change"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </LinearLayout>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/floating_action_menu_fab"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        app:menu_icon="@drawable/ic_post_small"
+        app:menu_colorNormal="@color/colorFAbButton"
+        app:menu_colorPressed="@color/colorDarkItem"
+        app:menu_labels_ellipsize="end"
+        app:menu_labels_singleLine="true"
+        app:menu_backgroundColor="#c3000000"
+        app:menu_labels_position="left">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_finance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorDarkItem"
+            app:fab_size="mini"
+            app:fab_label="@string/text_finance" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_refinance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorDarkItem"
+            app:fab_size="mini"
+            app:fab_label="@string/text_refinance" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_pawn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorDarkItem"
+            app:fab_size="mini"
+            app:fab_label="@string/text_pawn" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+
+
+</FrameLayout>

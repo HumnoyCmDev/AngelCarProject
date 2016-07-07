@@ -55,6 +55,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -231,8 +232,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     }
 
     private void sendImageMessage(final String user, final Uri uri) {
-        RxSendMessage rxSendMessage = new RxSendMessage(RxSendMessage.SendMessageType.UPLOAD_FILES,
-                uri,
+        RxSendMessage rxSendMessage = new RxSendMessage(uri,
                 ""+ mPostCarDao.getCarId(),mMessageFromUser, mMessageBy,user);
         Observable.create(rxSendMessage)
                 .subscribeOn(Schedulers.newThread())
@@ -246,8 +246,8 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     }
 
     private void sendMessage(final String user, final String s) {
-        RxSendMessage rxSendMessage = new RxSendMessage(RxSendMessage.SendMessageType.SEND,
-                "" + mPostCarDao.getCarId(), mMessageFromUser, s, mMessageBy, user);
+        RxSendMessage rxSendMessage = new RxSendMessage("" + mPostCarDao.getCarId(),
+                mMessageFromUser, s, mMessageBy, user);
         Observable.create(rxSendMessage)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -290,21 +290,21 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
 
     private void loadDataMessage() {
 
-        RxMessageObservable.with().publishSubject()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<MessageCollectionDao>() {
-                    @Override
-                    public void call(MessageCollectionDao dao) {
-                        if (dao != null) {
-                            mMessageManager.appendDataToBottomPosition(dao);
-                            // คอมเม้นไว้ หาก list เด้งลงมา Last Position
-                            mAdapter.setMessages(mMessageManager.getMessageDao().getListMessage());
-                            mAdapter.notifyDataSetChanged();
-                        }else {
-                            Log.d(TAG, "call: null");
-                        }
-                    }
-                });
+//        RxMessageObservable.with().publishSubject()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new Action1<MessageCollectionDao>() {
+//                    @Override
+//                    public void call(MessageCollectionDao dao) {
+//                        if (dao != null) {
+//                            mMessageManager.appendDataToBottomPosition(dao);
+//                            // คอมเม้นไว้ หาก list เด้งลงมา Last Position
+//                            mAdapter.setMessages(mMessageManager.getMessageDao().getListMessage());
+//                            mAdapter.notifyDataSetChanged();
+//                        }else {
+//                            Log.d(TAG, "call: null");
+//                        }
+//                    }
+//                });
 
         Log.i(TAG, "loadDataMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         Call<MessageCollectionDao> call =
@@ -325,10 +325,11 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
 //                    mSynchronous.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     /**observable wait message **/
-                    mWaitMessage = new WaitMessageObservable(mMessageManager.getMaximumId(),
+                    mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_CAR,mMessageManager.getMaximumId(),
                             String.valueOf(mPostCarDao.getCarId()), mMessageFromUser);
                     mSubscription = Observable.create(mWaitMessage)
                             .subscribeOn(Schedulers.newThread()).subscribe();
+                    
                 }else {
                     try {
                         Toast.makeText(DetailCarActivity.this,response.errorBody().string(),Toast.LENGTH_SHORT).show();
@@ -368,8 +369,7 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
     }
 
     @Subscribe
-    public void produceMessage(MessageCollectionDao messageGa){ //รับภายในคลาส
-        Log.i(TAG, "produceMessage: mainthread");
+    public void produceMessage(MessageCollectionDao messageGa){ //รับภายใน WaitMessageObservable
         if (messageGa.getListMessage().size() > 0) {
             mMessageManager.appendDataToBottomPosition(messageGa);
             // คอมเม้นไว้ หาก list เด้งลงมา Last Position
@@ -386,11 +386,11 @@ public class DetailCarActivity extends AppCompatActivity implements HeaderChatCa
 //        }
 
         if (mWaitMessage != null)
-            mWaitMessage.unSubscribe();
+            mWaitMessage.unsubscribe();
 
         if (mSubscription != null)
             mSubscription.unsubscribe();
-            RxMessageObservable.with().onDestroy();
+//            RxMessageObservable.with().onDestroy();
 
     }
 

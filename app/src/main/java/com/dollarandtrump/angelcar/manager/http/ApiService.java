@@ -13,6 +13,7 @@ import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
+import com.dollarandtrump.angelcar.dao.TopicCollectionDao;
 
 import java.util.Map;
 
@@ -51,6 +52,15 @@ public interface ApiService {
     Call<MessageAdminCollectionDao> messageAdmin(@Query("message") String message);
     @GET("ios/api/ga_chatcar.php?operation=viewadminarray")
     Observable<MessageAdminCollectionDao> observableMessageAdmin(@Query("message") String message);
+
+    //View Chat Topic
+    @GET("ios/api/ga_chatadmin.php?operation=view")
+    Observable<MessageCollectionDao> observableViewMessageTopic(@Query("message") String message);
+    @GET("ios/api/ga_chatadmin.php?operation=wait")
+    Call<MessageCollectionDao> waitMessageTopic(@Query("message") String message);
+    // Create Topic
+    @GET("ios/api/ga_chatadmin.php?operation=newtopic")
+    Observable<Results> observableCreateTopic(@Query("message") String message);
 
 
     //Insert Post Car
@@ -205,4 +215,7 @@ public interface ApiService {
     @POST("android/api/registerfirebase.php")
     Observable<Results> sendTokenRegistration(@Field("userref") String userRef,@Field("shopref") String shopRef,@Field("firebaseid") String token);
 
+    /**Feed Topic**/
+    @GET("ios/api/ga_chatadmin.php?operation=viewtopic")
+    Observable<TopicCollectionDao> observableFeedTopic(@Query("message") String message);
 }
