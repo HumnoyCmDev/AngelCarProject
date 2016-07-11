@@ -1,6 +1,7 @@
 package com.dollarandtrump.angelcar.Adapter;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +12,11 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,14 +33,19 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 public class ConversationAdapter extends BaseAdapter{
 
     private List<MessageDao> mListDao;
-    private SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");
-
-
+    private DateFormat mDateFormat;
+    private DateFormat mTimeFormat;
+    Context context;
     public ConversationAdapter() {
     }
 
     public void setDao(List<MessageDao> mListDao) {
         this.mListDao = mListDao;
+
+        context = Contextor.getInstance().getContext();
+        mDateFormat = android.text.format.DateFormat.getDateFormat(context);
+        mTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
+
         Collections.sort(mListDao, new Comparator<MessageDao>() {
             @Override
             public int compare(MessageDao lhs, MessageDao rhs) {
@@ -88,8 +96,9 @@ public class ConversationAdapter extends BaseAdapter{
         }else {
             holder.lastMessage.setText(message.getMessageText());
         }
-        String time = AngelCarUtils.formatTimeDay(parent.getContext(),message.getMessagesTamp())
-                .replaceAll(",","");
+//        String time = AngelCarUtils.formatTimeDay(parent.getContext(),message.getMessagesTamp())
+//                .replaceAll(",","");
+        String time = AngelCarUtils.formatTime(context, message.getMessagesTamp(), mTimeFormat, mDateFormat);
         holder.time.setText(time);
         return convertView;
     }

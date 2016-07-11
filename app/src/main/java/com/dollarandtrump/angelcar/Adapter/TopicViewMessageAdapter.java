@@ -1,6 +1,7 @@
 package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +19,12 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.Log;
+import com.github.siyamed.shapeimageview.RoundedImageView;
+import com.hndev.library.view.MessageCallMe;
+import com.hndev.library.view.Transformtion.ScalingUtilities;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -51,13 +58,15 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         mTimeFormat = android.text.format.DateFormat.getTimeFormat(context);
     }
 
-    public void setmMessageBy(String mMessageBy) {
-        this.mMessageBy = mMessageBy;
+    public void setMessageBy(String messageBy) {
+        this.mMessageBy = messageBy;
     }
 
     public void setMessageDao(MessageCollectionDao mMessageDao) {
         this.mMessageDao = mMessageDao;
     }
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -80,12 +89,11 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-       bindCellViewHolder((CellViewHolder) holder,position);
+            bindCellViewHolder((CellViewHolder) holder,position);
     }
 
     public void bindCellViewHolder(CellViewHolder viewHolder, int position) {
          MessageDao msgDao  = mMessageDao.getListMessage().get(position);
-
         boolean oneOnOne = getParticipants(mMessageDao); // User == 2 = true ; > 2 = false;
         //Clustering and dates
         Cluster cluster = getClustering(mMessageDao,position);
@@ -96,7 +104,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             // Crossed into a new day, or > 1hr lull in conversation
             Date receivedAt = msgDao.getMessagesTamp();
             if (receivedAt == null) receivedAt = new Date();
-            String timeBarDayText = AngelCarUtils.formatTimeDay(viewHolder.mCell.getContext(), receivedAt);
+            String timeBarDayText = AngelCarUtils.formatTimeDay(mContext, receivedAt);
             viewHolder.mTimeGroupDay.setText(timeBarDayText);
             String timeBarTimeText = mTimeFormat.format(receivedAt.getTime());
             viewHolder.mTimeGroupTime.setText(" " + timeBarTimeText);
@@ -113,21 +121,59 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         }
 
 
+//        for (int i = 0; i < viewHolder.mCell.getChildCount(); i++) {
+//            viewHolder.mCell.removeViewAt(i);
+//            Log.d("delete view "+ i);
+//        }
+
+        viewHolder.mCell.removeAllViews();
 
         if (getItemViewType(position) == TYPE_ME){
             viewHolder.mReceipt.setVisibility(View.GONE);
+
             if (AngelCarUtils.isMessageText(msgDao.getMessageText())){ // text
-                viewHolder.mCallText.setText(msgDao.getMessageText());
-                viewHolder.mCallText.setBackgroundResource(R.drawable.message_item_call_me);
+//                initTextMessage(viewHolder, msgDao,R.drawable.message_item_call_me);
+
+                TextView textMessage = new TextView(mContext);
+                textMessage.setBackgroundResource(R.drawable.message_item_call_me);
+                textMessage.setText(msgDao.getMessageText());
+                viewHolder.mCell.addView(textMessage);
+
+
+            }else {
+//                initImageMessage(viewHolder, msgDao);
+
+                ImageView img = new ImageView(mContext);
+//                RoundedImageView img = new RoundedImageView(mContext);
+//                img.setRadius(10);
+                Picasso.with(mContext)
+                        .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
+                        .transform(new PictureReSize())
+                        .into(img);
+                viewHolder.mCell.addView(img);
+
             }
 
 
         }else {
             if (AngelCarUtils.isMessageText(msgDao.getMessageText())){ // text
-                viewHolder.mCallText.setText(msgDao.getMessageText());
-                viewHolder.mCallText.setBackgroundResource(R.drawable.message_item_call_them);
-            }
+//                initTextMessage(viewHolder, msgDao,R.drawable.message_item_call_me);
 
+                TextView textMessage = new TextView(mContext);
+                textMessage.setBackgroundResource(R.drawable.message_item_call_them);
+                textMessage.setText(msgDao.getMessageText());
+                viewHolder.mCell.addView(textMessage);
+            }else {
+//                initImageMessage(viewHolder, msgDao);
+
+                ImageView imageView = new ImageView(mContext);
+                Picasso.with(mContext)
+                        .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
+                        .transform(new PictureReSize())
+                        .placeholder(com.hndev.library.R.drawable.loading)
+                        .into(imageView);
+                viewHolder.mCell.addView(imageView);
+            }
             // Sender name, only for first message in cluster // User > 2
             if (!oneOnOne && (cluster.mClusterWithPrevious == null || cluster.mClusterWithPrevious == ClusterType.NEW_SENDER)) {
                 MessageDao msg = mMessageDao.getListMessage().get(position);
@@ -159,21 +205,24 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             }
 
         }
-
     }
 
-//    private GradientDrawable createBackgroundMessage(CellViewHolder viewHolder,int color) {
-//        GradientDrawable gradientDrawable = new GradientDrawable();
-//        gradientDrawable.setColor(color);
-//        gradientDrawable.setCornerRadius(35);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-//            viewHolder.mCell.setBackground(gradientDrawable);
-//        }else {
-//            viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
-//        }
-//        return gradientDrawable;
-//    }
 
+//    private void initImageMessage(CellMeViewHolder viewHolder, MessageDao msgDao) {
+//        viewHolder.mCallImage.setVisibility(View.VISIBLE);
+//        Picasso.with(mContext)
+//                .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
+//                .transform(new PictureReSize())
+//                .placeholder(com.hndev.library.R.drawable.loading)
+//                .into(viewHolder.mCallImage);
+//        Log.d(AngelCarUtils.subUrlMessage(msgDao.getMessageText()));
+//    }
+//
+//    private void initTextMessage(CellThemViewHolder viewHolder, MessageDao msgDao,int drawable) {
+//        viewHolder.mCallText.setVisibility(View.VISIBLE);
+//        viewHolder.mCallText.setText(msgDao.getMessageText());
+//        viewHolder.mCallText.setBackgroundResource(drawable);
+//    }
 
 
     @Override
@@ -219,7 +268,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                 // does the previous need to change its clustering?
                 if ((previousCluster.mClusterWithNext != result.mClusterWithPrevious) ||
                         (previousCluster.mDateBoundaryWithNext != result.mDateBoundaryWithPrevious)) {
-                    requestUpdate(previousMessage, previousPosition);
+//                    requestUpdate(previousMessage, previousPosition);
 //                    notifyItemChanged(previousPosition,previousMessage);
                 }
             }
@@ -241,7 +290,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                 // does the next need to change its clustering?
                 if ((nextCluster.mClusterWithPrevious != result.mClusterWithNext) ||
                         (nextCluster.mDateBoundaryWithPrevious != result.mDateBoundaryWithNext)) {
-                    requestUpdate(nextMessage, nextPosition);
+//                    requestUpdate(nextMessage, nextPosition);
 //                    notifyItemChanged(nextPosition,nextMessage);
                 }
             }
@@ -278,6 +327,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         public final static int RESOURCE_ID_ME = R.layout.angelcar_message_item_me;
         public final static int RESOURCE_ID_THEM = R.layout.angelcer_message_item_them;
 
+
         // View cache
         protected TextView mUserName;
         protected View mTimeGroup;
@@ -290,6 +340,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         protected FrameLayout mCell;
 
         protected TextView mCallText;
+        protected RoundedImageView mCallImage;
 
         public CellViewHolder(View itemView) {
             super(itemView);
@@ -303,10 +354,11 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
 
             mCallText = (TextView) itemView.findViewById(R.id.call_text);
-
+            mCallImage = (RoundedImageView) itemView.findViewById(R.id.call_image);
         }
 
     }
+
 
     private enum ClusterType {
         NEW_SENDER,
@@ -337,5 +389,26 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 //            if (d.getMessageBy().equals("officer"))
                 return false;
 //        return true;
+    }
+
+    private class PictureReSize implements Transformation {
+        @Override
+        public Bitmap transform(Bitmap source) {
+            int width = 450;
+            int height = 750;
+            Bitmap scaledBitmap;
+            if (source.getWidth() < source.getHeight()){ // w น้อยกว่า h แนวตั้ง
+                scaledBitmap = ScalingUtilities.createScaledBitmap(source, width, height, ScalingUtilities.ScalingLogic.CROP);
+            }else { // แนวนอน
+                scaledBitmap = ScalingUtilities.createScaledBitmap(source, height, width, ScalingUtilities.ScalingLogic.CROP);
+            }
+            source.recycle();
+            return scaledBitmap;
+        }
+
+        @Override
+        public String key() {
+            return PictureReSize.class.getSimpleName()+".scaledBitmap";
+        }
     }
 }

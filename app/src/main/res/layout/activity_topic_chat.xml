@@ -29,14 +29,13 @@
             android:layout_height="1dp"/>
 
         <LinearLayout
+            android:id="@+id/linear_layout_group_button_chat"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:visibility="visible"
-            android:id="@+id/linear_layout_group_button_chat"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
 
             <Button
                 android:id="@+id/button_image"

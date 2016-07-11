@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:id="@+id/swipeable"
@@ -84,12 +84,22 @@
                 android:padding="5dp">
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/call_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoLink="all"
                     android:linksClickable="true"
                     android:textSize="14sp" />
+
+                <com.github.siyamed.shapeimageview.RoundedImageView
+                    android:visibility="gone"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/call_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:siRadius="4dp"/>
+
             </FrameLayout>
 
         </LinearLayout>

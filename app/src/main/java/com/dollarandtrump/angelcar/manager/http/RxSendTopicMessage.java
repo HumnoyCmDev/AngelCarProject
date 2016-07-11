@@ -36,7 +36,6 @@ public class RxSendTopicMessage implements Observable.OnSubscribe<String> {
     private Context mContext = Contextor.getInstance().getContext();
 
     /**Constructor Send Message File image**/
-    @Deprecated
     public RxSendTopicMessage(Uri uri,
                               String id, String messageFromUser) {
         this.mUri = uri;
@@ -68,28 +67,17 @@ public class RxSendTopicMessage implements Observable.OnSubscribe<String> {
 
     /** Method Send Massage**/
     private void sendMessage(final Subscriber<? super String> subscriber){
-        Request.Builder builder = new Request.Builder();
-        Request request = builder.url(mBastUrl).build();
-        mClient.newCall(request).enqueue(new okhttp3.Callback() {
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                subscriber.onError(e);
-            }
-            @Override
-            public void onResponse(okhttp3.Call call, okhttp3.Response response) {
-                try {
-                    subscriber.onNext(response.body().string());
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        });
+        httpRequest(subscriber);
     }
+
+
 /** Send message หลัง upload file image **/
-    void sendMessage(String mMessage,final Subscriber<? super String> subscriber){
+    private void sendMessage(String mMessage,final Subscriber<? super String> subscriber){
         mBastUrl = String.format(mBastUrl,mMessage);
+        httpRequest(subscriber);
+    }
+
+    private void httpRequest(final Subscriber<? super String> subscriber) {
         Request.Builder builder = new Request.Builder();
         Request request = builder.url(mBastUrl).build();
         mClient.newCall(request).enqueue(new okhttp3.Callback() {
@@ -132,7 +120,6 @@ public class RxSendTopicMessage implements Observable.OnSubscribe<String> {
         } catch (IOException e) {
             e.printStackTrace();
             subscriber.onError(e);
-            subscriber.onCompleted();
         }
     }
 

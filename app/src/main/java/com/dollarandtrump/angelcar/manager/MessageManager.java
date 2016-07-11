@@ -58,11 +58,11 @@ public class MessageManager {
 //        saveCache();
     }
 
-    public MessageCollectionDao getMessageBuyDao() {
+    public MessageCollectionDao getConversationBuyDao() {
         return messageBuyDao;
     }
 
-    public MessageCollectionDao getMessageSellDao() {
+    public MessageCollectionDao getConversationSellDao() {
         return messageSellDao;
     }
 

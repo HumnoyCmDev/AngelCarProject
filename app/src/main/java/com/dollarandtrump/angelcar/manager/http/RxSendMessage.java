@@ -147,7 +147,6 @@ public class RxSendMessage implements Observable.OnSubscribe<String> {
         } catch (IOException e) {
             e.printStackTrace();
             subscriber.onError(e);
-            subscriber.onCompleted();
         }
     }
 

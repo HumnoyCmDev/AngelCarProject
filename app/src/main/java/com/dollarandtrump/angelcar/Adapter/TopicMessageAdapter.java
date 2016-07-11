@@ -2,6 +2,8 @@ package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
@@ -102,7 +104,7 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
             // Crossed into a new day, or > 1hr lull in conversation
             Date receivedAt = topic.getStamp();
             if (receivedAt == null) receivedAt = new Date();
-            String timeBarDayText = AngelCarUtils.formatTimeDay(viewHolder.mCell.getContext(), receivedAt);
+            String timeBarDayText = AngelCarUtils.formatTimeDay(mContext, receivedAt);
             viewHolder.mTimeGroupDay.setText(timeBarDayText);
             String timeBarTimeText = mTimeFormat.format(receivedAt.getTime());
             viewHolder.mTimeGroupTime.setText(" " + timeBarTimeText);
@@ -175,7 +177,7 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
 
     }
 
-//    private GradientDrawable createBackgroundMessage(CellViewHolder viewHolder,int color) {
+//    private GradientDrawable createBackgroundMessage(CellMeViewHolder viewHolder, int color) {
 //        GradientDrawable gradientDrawable = new GradientDrawable();
 //        gradientDrawable.setColor(color);
 //        gradientDrawable.setCornerRadius(35);
@@ -309,7 +311,7 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
         protected Space mClusterSpaceGap;
         protected ImageView mAvatar;
 //        protected TextView mCell;
-        protected FrameLayout mCell;
+//        protected FrameLayout mCell;
 
         protected TextView mCallText;
 
@@ -320,7 +322,7 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
             mTimeGroupDay = (TextView) itemView.findViewById(R.id.time_group_day);
             mTimeGroupTime = (TextView) itemView.findViewById(R.id.time_group_time);
             mClusterSpaceGap = (Space) itemView.findViewById(R.id.cluster_space);
-            mCell = (FrameLayout) itemView.findViewById(R.id.cell);
+//            mCell = (FrameLayout) itemView.findViewById(R.id.cell);
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
 
             mCallText = (TextView) itemView.findViewById(R.id.call_text);

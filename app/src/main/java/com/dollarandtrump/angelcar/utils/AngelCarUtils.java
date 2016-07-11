@@ -22,6 +22,7 @@ import com.dollarandtrump.angelcar.manager.Contextor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -52,13 +53,13 @@ public class AngelCarUtils {
 
     public static String subUrlMessage(String msg){
         if (!isMessageText(msg)){
-            return msg.replace("/","").replace("<image>","").trim();
+            return msg.replace("<img>","").replace("</img>","").trim();
         }
         return msg;
     }
 
     public static boolean isMessageText(String msg){
-        return !msg.contains("<image>") && !msg.contains("</image>");
+        return (!msg.contains("<img>") && !msg.contains("</img>"));
     }
 
     @NonNull
@@ -140,6 +141,29 @@ public class AngelCarUtils {
         }
         @SuppressLint("SimpleDateFormat") String time = new SimpleDateFormat("HH:mm:ss").format(date)+" น.";
         return timeBarDayText+" "+time;
+    }
+
+    public static String formatTime(Context context, Date date, DateFormat timeFormat, DateFormat dateFormat) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        long todayMidnight = cal.getTimeInMillis();
+        long yesterMidnight = todayMidnight - TIME_HOURS_24;
+        long weekAgoMidnight = todayMidnight - TIME_HOURS_24 * 7;
+
+        String timeText;
+        if (date.getTime() > todayMidnight) {
+            timeText = timeFormat.format(date.getTime());
+        } else if (date.getTime() > yesterMidnight) {
+            timeText = context.getString(R.string.time_yesterday);
+        } else if (date.getTime() > weekAgoMidnight) {
+            cal.setTime(date);
+            timeText = context.getResources().getStringArray(R.array.time_days_of_week)[cal.get(Calendar.DAY_OF_WEEK) - 1];
+        } else {
+            timeText = dateFormat.format(date);
+        }
+        return timeText;
     }
 
     private Bitmap decodeFile(File f) {

@@ -1,15 +1,20 @@
 package com.dollarandtrump.angelcar.activity;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.dollarandtrump.angelcar.Adapter.TopicViewMessageAdapter;
+import com.dollarandtrump.angelcar.Adapter.TopicViewMessageBaseAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.Results;
@@ -22,6 +27,8 @@ import com.dollarandtrump.angelcar.manager.WaitMessageSynchronous;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.RxSendTopicMessage;
+import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_picker.Sources;
 import com.dollarandtrump.angelcar.utils.Log;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
@@ -55,6 +62,10 @@ public class TopicChatActivity extends AppCompatActivity {
     @Bind(R.id.edit_text_input_chat) EditText messageText;
     @Bind(R.id.recycler_list) RecyclerView list;
     @Bind(R.id.message_button_send) Button mButtonSend;
+    @Bind(R.id.linear_layout_group_button_chat) LinearLayout mGroupButtChat;
+
+//    @Bind(R.id.list_view) ListView listView;
+//    TopicViewMessageBaseAdapter topicViewMessageBaseAdapter;
 
     private MessageManager messageManager;
     private TopicViewMessageAdapter messageAdapter;
@@ -93,6 +104,10 @@ public class TopicChatActivity extends AppCompatActivity {
         list.setLayoutManager(linearManager);
         list.setAdapter(messageAdapter);
 
+//        topicViewMessageBaseAdapter = new TopicViewMessageBaseAdapter(TopicChatActivity.this,"user");
+//        topicViewMessageBaseAdapter.setMessageDao(messageManager.getMessageDao());
+//        listView.setAdapter(topicViewMessageBaseAdapter);
+
         RxTextView.textChangeEvents(messageText).map(new Func1<TextViewTextChangeEvent, Boolean>() {
             @Override
             public Boolean call(TextViewTextChangeEvent textViewTextChangeEvent) {
@@ -106,6 +121,7 @@ public class TopicChatActivity extends AppCompatActivity {
         });
 
         if (mTopicMessage == null) {// view message
+            mGroupButtChat.setVisibility(View.VISIBLE);
             mRoomId = String.valueOf(mTopic.getId());
             String message = mRoomId+"||"+mTopic.getUserId()+"||0";
             loadMessage(message);
@@ -133,8 +149,13 @@ public class TopicChatActivity extends AppCompatActivity {
                     @Override
                     public void onNext(MessageCollectionDao dao) {
                         messageManager.setMessageDao(dao);
-                        messageAdapter.setMessageDao(dao);
+
+                        messageAdapter.setMessageDao(messageManager.getMessageDao());
                         messageAdapter.notifyDataSetChanged();
+
+//                        topicViewMessageBaseAdapter.setMessageDao(messageManager.getMessageDao());
+//                        topicViewMessageBaseAdapter.notifyDataSetChanged();
+
                         waitMessage();
                     }
                 });
@@ -143,49 +164,89 @@ public class TopicChatActivity extends AppCompatActivity {
     @OnClick(R.id.message_button_send)
     public void buttonSendMessage(){
         if (mTopicMessage != null){ // Create Topic
-           String message = Registration.getInstance().getUserId()+"||"+messageText.getText().toString()+"||"+mTopicMessage;
-           HttpManager.getInstance().getService().observableCreateTopic(message)
-                   .subscribeOn(Schedulers.newThread())
-                   .observeOn(AndroidSchedulers.mainThread())
-                   .subscribe(new Observer<Results>() {
-
-                       @Override
-                       public void onCompleted() {
-                            if (Log.isLoggable(Log.DEBUG)) Log.d("Topic -> onCompleted");
-                           mTopicMessage = null;
-                       }
-
-                       @Override
-                       public void onError(Throwable e) {
-                           if (Log.isLoggable(Log.ERROR)) Log.e("Topic -> error",e);
-                       }
-
-                       @Override
-                       public void onNext(Results results) {
-                           mRoomId = results.getResult();
-                           String message = mRoomId+"||"+mUserId+"||0";
-                           loadMessage(message);
-                       }
-
-                   });
+            createTopic(messageText.getText().toString());
         }else { // Send message Room
-            RxSendTopicMessage topicMessage = new RxSendTopicMessage(mRoomId,mUserId,messageText.getText().toString());
-            Observable.create(topicMessage).subscribeOn(Schedulers.newThread())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Action1<String>() {
-                        @Override
-                        public void call(String s) {
-                            if (Log.isLoggable(Log.DEBUG)) Log.d("Topic Chat --> Complete");
-                        }
-                    });
+            sendMessageRoom(messageText.getText().toString());
         }
-
         messageText.setText(null);
     }
 
+    private void sendMessageRoom(String messageText) {
+        RxSendTopicMessage topicMessage = new RxSendTopicMessage(mRoomId,mUserId,messageText);
+        Observable.create(topicMessage).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        if (Log.isLoggable(Log.DEBUG)) Log.d("Topic Chat --> Complete");
+                    }
+                });
+    }
 
-    @OnClick({R.id.button_image})
+    private void createTopic(String messageText) {
+        String message = Registration.getInstance().getUserId()+"||"+messageText+"||"+mTopicMessage;
+        HttpManager.getInstance().getService().observableCreateTopic(message)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Results>() {
 
+                    @Override
+                    public void onCompleted() {
+                         if (Log.isLoggable(Log.DEBUG)) Log.d("Topic -> onCompleted");
+                        mTopicMessage = null;
+                        mGroupButtChat.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (Log.isLoggable(Log.ERROR)) Log.e("Topic -> error",e);
+                    }
+
+                    @Override
+                    public void onNext(Results results) {
+                        mRoomId = results.getResult();
+                        String message = mRoomId+"||"+mUserId+"||0";
+                        loadMessage(message);
+                    }
+
+                });
+    }
+
+
+    @OnClick({R.id.button_image,R.id.button_camera,R.id.button_place})
+    public void onGroupButtonChat(View v){ //Send Image,camera,map
+        switch (v.getId()){
+            case R.id.button_image :
+                onImagePicker(Sources.GALLERY);
+                break;
+            case R.id.button_camera :
+                onImagePicker(Sources.CAMERA);
+                break;
+            default:
+                onImagePicker(Sources.LOCATION);
+                break;
+        }
+    }
+
+    private void onImagePicker(Sources sources){
+        RxImagePicker.with(this).requestImage(sources).subscribe(new Action1<Uri>() {
+            @Override
+            public void call(Uri uri) {
+            //TODO-RED Send Files To Chat Room
+                if (mTopicMessage == null) {
+                    RxSendTopicMessage imageTopicMessage = new RxSendTopicMessage(uri,mRoomId,mUserId);
+                    Observable.create(imageTopicMessage).subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Action1<String>() {
+                                @Override
+                                public void call(String s) {
+                                    if (Log.isLoggable(Log.DEBUG)) Log.d("Topic image Chat --> Complete");
+                                }
+                            });
+                }
+            }
+        });
+    }
 
     public void onResume() {
         super.onResume();
