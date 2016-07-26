@@ -1,42 +1,28 @@
 package com.dollarandtrump.angelcar.fragment;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.view.animation.LinearInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
-import com.dollarandtrump.angelcar.cache.PhotoLoadCache;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.model.CacheShop;
-import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_picker.Sources;
-import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.dollarandtrump.angelcar.view.ImageViewGlide;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 
 /***************************************
@@ -51,10 +37,7 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.text_name) TextView mName;
     @Bind(R.id.text_description) TextView mDescription;
 
-    @Bind(R.id.image_test_cache) ImageView imageTestCache;
-    @Bind(R.id.text_view_animation_values) TextView mValuesAnimation;
-    @Bind(R.id.bg) LinearLayout layout;
-
+    NotificationManagerCompat mNotification;
 
     CacheShop mCacheShop;
     public MenuFragment() {
@@ -92,46 +75,15 @@ public class MenuFragment extends Fragment {
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
-        ButterKnife.bind(this,rootView);
+        ButterKnife.bind(this, rootView);
 
         if (mCacheShop != null) {
-            mImageProfile.setImageUrl(getActivity(),mCacheShop.getProfileDao().getUrlShopLogo());
+            mImageProfile.setImageUrl(getActivity(), mCacheShop.getProfileDao().getUrlShopLogo());
             mName.setText(mCacheShop.getProfileDao().getShopName());
             mDescription.setText(mCacheShop.getProfileDao().getShopDescription());
         }
-
     }
 
-    @OnClick(R.id.text_view_animation_values)
-    public void startAnimationValues(){
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(0, 1000);
-        valueAnimator.setDuration(1000);
-        valueAnimator.setInterpolator(new LinearInterpolator());
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                int value = (Integer) animation.getAnimatedValue();
-                mValuesAnimation.setText("Values " + value);
-            }
-        });
-        valueAnimator.start();
-
-        Integer colorFrom = Color.TRANSPARENT;
-        Drawable background = layout.getBackground();
-        if (background instanceof ColorDrawable){
-            colorFrom = ((ColorDrawable) background).getColor();
-        }
-        Integer colorTo = Color.RED;
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-        colorAnimation.setDuration(3000);
-        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animator) {
-                layout.setBackgroundColor((Integer) animator.getAnimatedValue());
-            }
-        });
-        colorAnimation.start();
-    }
 
     @OnClick(R.id.menu_button_profile)
     public void showProfileActivity(){
@@ -151,42 +103,29 @@ public class MenuFragment extends Fragment {
         super.onStop();
     }
 
-    /*
-     * Save Instance State Here
-     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save Instance State here
     }
 
-    /*
-     * Restore Instance State Here
-     */
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-        // Restore Instance State here
     }
 
-    @OnClick(R.id.image_test_cache)
-    public void imageTest(){
+    @OnClick(R.id.text_view_show_case)
+    public void showNotification(){
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("AngelCar")
+                .setContentText("Tset")
+                .setAutoCancel(true)
+                ;
+//                .setSound(defaultSoundUri)
+//                .setContentIntent(pendingIntent);
 
-        RxImagePicker.with(getContext()).requestImage(Sources.GALLERY).subscribe(new Action1<Uri>() {
-            @Override
-            public void call(Uri uri) {
-                PhotoLoadCache.getInstance()
-                        .loadBitmap(FileUtils.getFile(getContext(),uri),300)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        imageTestCache.setImageBitmap(bitmap);
-                    }
-                });
-            }
-        });
+        NotificationManager notificationManager =
+                (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
+        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
-
 }

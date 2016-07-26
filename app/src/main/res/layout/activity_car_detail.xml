@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="10dp"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:titleTextAppearance="@style/Toolbar.TitleText"
+        app:titleTextColor="@android:color/white" />
+
+    <!--<ListView-->
+        <!--android:visibility="gone"-->
+        <!--android:id="@+id/list_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1"-->
+
+        <!--android:cacheColorHint="@android:color/transparent"-->
+        <!--android:divider="@null"-->
+        <!--android:footerDividersEnabled="true"-->
+        <!--android:headerDividersEnabled="true"-->
+        <!--android:listSelector="@android:color/transparent"-->
+        <!--android:stackFromBottom="false"-->
+        <!--android:transcriptMode="alwaysScroll" />-->
+
+    <android.support.v7.widget.RecyclerView
+        android:background="@android:color/white"
+        android:id="@+id/recycler_chat"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+
+    <LinearLayout
+    android:id="@+id/linear_layout_group_chat"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#b4b4b4" />
+
+    <LinearLayout
+        android:id="@+id/linear_layout_group_button_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:visibility="visible">
+
+        <Button
+            android:id="@+id/button_personnel"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/ic_person_add" />
+
+        <Button
+            android:id="@+id/button_image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/ic_photo_1" />
+
+        <Button
+            android:id="@+id/button_camera"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/ic_camera" />
+
+        <Button
+            android:id="@+id/button_place"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/ic_place" />
+
+        <Button
+            android:id="@+id/button_notify"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="16dp"
+            android:background="@drawable/ic_add" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_marginStart="16dp"
+            android:id="@+id/edit_text_input_chat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:layout_weight="1"
+            android:background="@null"
+            android:hint="@string/message_hint"
+            android:textColorHint="#BDBDBD"
+            android:textSize="15sp" />
+
+        <Button
+            android:visibility="invisible"
+            android:id="@+id/message_button_send"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/ic_send_message"
+            android:padding="5dp" />
+
+    </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
+

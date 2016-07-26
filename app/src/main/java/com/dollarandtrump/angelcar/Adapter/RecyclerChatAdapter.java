@@ -44,10 +44,10 @@ public class RecyclerChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType){
             case 0:
-                View viewLeft = inflater.inflate(R.layout.item_chat_left,parent,false);
+                View viewLeft = inflater.inflate(R.layout.item_chat_them,parent,false);
                 return new ViewHolderLeft(viewLeft);
             default:
-                View viewRight = inflater.inflate(R.layout.item_chat_right,parent,false);
+                View viewRight = inflater.inflate(R.layout.item_chat_me,parent,false);
                 return new ViewHolderRight(viewRight);
         }
     }

@@ -18,7 +18,16 @@ public class MessageDao {
     @SerializedName("displayname")      @Expose String displayName;
     @SerializedName("messageby")        @Expose String messageBy;
     @SerializedName("userprofileimage") @Expose String userProfileImage;
-    @SerializedName("messagestamp")     @Expose Date messagesTamp;
+    @SerializedName("messagestamp")     @Expose Date messageStamp;
+    @SerializedName("messagestatus")     @Expose int messageStatus;
+
+    public int getMessageStatus() {
+        return messageStatus;
+    }
+
+    public void setMessageStatus(int messageStatus) {
+        this.messageStatus = messageStatus;
+    }
 
     // Topic
     @SerializedName("messagetopicid") @Expose String messageTopId;
@@ -87,11 +96,11 @@ public class MessageDao {
         this.userProfileImage = userProfileImage;
     }
 
-    public Date getMessagesTamp() {
-        return messagesTamp;
+    public Date getMessageStamp() {
+        return messageStamp;
     }
 
-    public void setMessagesTamp(Date messagesTamp) {
-        this.messagesTamp = messagesTamp;
+    public void setMessageStamp(Date messageStamp) {
+        this.messageStamp = messageStamp;
     }
 }

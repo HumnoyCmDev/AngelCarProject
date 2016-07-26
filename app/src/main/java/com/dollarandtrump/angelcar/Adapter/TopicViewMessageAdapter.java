@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Space;
@@ -19,9 +18,6 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.dollarandtrump.angelcar.utils.Log;
-import com.github.siyamed.shapeimageview.RoundedImageView;
-import com.hndev.library.view.MessageCallMe;
 import com.hndev.library.view.Transformtion.ScalingUtilities;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -102,7 +98,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             viewHolder.mTimeGroup.setVisibility(View.GONE);
         }else if (cluster.mDateBoundaryWithPrevious || cluster.mClusterWithPrevious == ClusterType.MORE_THAN_HOUR) {
             // Crossed into a new day, or > 1hr lull in conversation
-            Date receivedAt = msgDao.getMessagesTamp();
+            Date receivedAt = msgDao.getMessageStamp();
             if (receivedAt == null) receivedAt = new Date();
             String timeBarDayText = AngelCarUtils.formatTimeDay(mContext, receivedAt);
             viewHolder.mTimeGroupDay.setText(timeBarDayText);
@@ -257,7 +253,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         int previousPosition = position - 1;
         MessageDao previousMessage = (previousPosition >= 0) ? mMessageDao.getListMessage().get(previousPosition) : null;
         if (previousMessage != null) {
-            result.mDateBoundaryWithPrevious = isDateBoundary(previousMessage.getMessagesTamp(), messageDao.getMessagesTamp());
+            result.mDateBoundaryWithPrevious = isDateBoundary(previousMessage.getMessageStamp(), messageDao.getMessageStamp());
             result.mClusterWithPrevious = ClusterType.fromMessages(previousMessage, messageDao);
 
             Cluster previousCluster = mClusterCache.get(previousMessage.getMessageId());
@@ -279,7 +275,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         int nextPosition = position + 1;
         MessageDao nextMessage = (nextPosition < getItemCount()) ? mMessageDao.getListMessage().get(nextPosition) : null;
         if (nextMessage != null) {
-            result.mDateBoundaryWithNext = isDateBoundary(messageDao.getMessagesTamp(),nextMessage.getMessagesTamp());
+            result.mDateBoundaryWithNext = isDateBoundary(messageDao.getMessageStamp(),nextMessage.getMessageStamp());
             result.mClusterWithNext = ClusterType.fromMessages(messageDao, nextMessage);
 
             Cluster nextCluster = mClusterCache.get(nextMessage.getMessageId());
@@ -325,7 +321,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
     static class CellViewHolder extends ViewHolder {
         public final static int RESOURCE_ID_ME = R.layout.angelcar_message_item_me;
-        public final static int RESOURCE_ID_THEM = R.layout.angelcer_message_item_them;
+        public final static int RESOURCE_ID_THEM = R.layout.angelcar_message_item_them;
 
 
         // View cache
@@ -335,12 +331,8 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         protected TextView mTimeGroupTime;
         protected Space mClusterSpaceGap;
         protected ImageView mAvatar;
-//        protected TextView mCell;
         protected TextView mReceipt;
         protected FrameLayout mCell;
-
-        protected TextView mCallText;
-        protected RoundedImageView mCallImage;
 
         public CellViewHolder(View itemView) {
             super(itemView);
@@ -353,8 +345,6 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             mReceipt = (TextView) itemView.findViewById(R.id.receipt);
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
 
-            mCallText = (TextView) itemView.findViewById(R.id.call_text);
-            mCallImage = (RoundedImageView) itemView.findViewById(R.id.call_image);
         }
 
     }
@@ -374,8 +364,8 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             if (!older.getMessageBy().equals(newer.getMessageBy())) return NEW_SENDER;
 
             // Time clustering for same user?
-            Date oldReceivedAt = older.getMessagesTamp();
-            Date newReceivedAt = newer.getMessagesTamp();
+            Date oldReceivedAt = older.getMessageStamp();
+            Date newReceivedAt = newer.getMessageStamp();
             if (oldReceivedAt == null || newReceivedAt == null) return LESS_THAN_MINUTE;
             long delta = Math.abs(newReceivedAt.getTime() - oldReceivedAt.getTime());
             if (delta <= MILLIS_MINUTE) return LESS_THAN_MINUTE;

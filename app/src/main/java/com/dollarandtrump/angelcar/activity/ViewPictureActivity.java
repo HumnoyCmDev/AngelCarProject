@@ -23,8 +23,7 @@ import butterknife.ButterKnife;
  */
 public class ViewPictureActivity extends AppCompatActivity {
 
-    @Bind(R.id.viewPager)
-    ViewPager page;
+    @Bind(R.id.viewPager) ViewPager page;
 
     private PictureCollectionDao dao = null;
     private int position = 0;

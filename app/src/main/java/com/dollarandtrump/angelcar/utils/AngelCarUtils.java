@@ -37,6 +37,7 @@ public class AngelCarUtils {
     private static final SimpleDateFormat DAY_OF_WEEK = new SimpleDateFormat("EEE dd LLL", new Locale("th","TH"));
 
     private AngelCarUtils() {
+        throw new AssertionError();
     }
 
     public static String formatLineUp(String s){

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="2dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:textStyle="bold"
+        android:textSize="11sp"
+        android:layout_marginLeft="50dp"
+        android:id="@+id/custom_view_text_time"
+        android:text="20/08/1990 20:30 น."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/custom_view_icon_profile"
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_hndeveloper"
+            android:layout_width="32dp"
+            android:layout_height="32dp" />
+
+        <android.support.v7.widget.CardView
+            android:layout_marginLeft="5dp"
+            app:cardBackgroundColor="@color/colorDarkItem"
+            app:cardCornerRadius="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.dollarandtrump.angelcar.banner.ImageBanner
+                        android:id="@+id/custom_view_imageBanner"
+                        android:layout_width="match_parent"
+                        android:layout_height="207dp"
+                        app:bb_barColor="#88000000"
+                        app:bb_delay="2"
+                        app:bb_period="10"
+                        app:bb_scale="0.5625"/>
+
+                    <LinearLayout
+                        android:padding="10dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:textColor="@android:color/white"
+                            android:padding="5dp"
+                            android:id="@+id/custom_view_text_title"
+                            android:layout_gravity="center"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:text="Toyota fortuner 1.2v"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            android:background="@color/colorAccent"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"/>
+
+                        <LinearLayout
+                            android:layout_marginTop="5dp"
+                            android:orientation="horizontal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:layout_marginTop="5dp"
+                                android:src="@drawable/ic_custom_header_car"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content" />
+
+                            <TextView
+                                android:layout_marginLeft="10dp"
+                                android:gravity="center_vertical"
+                                android:textColor="@android:color/white"
+                                android:id="@+id/custom_view_text_brand"
+                                android:layout_marginTop="6dp"
+                                android:textSize="13sp"
+                                android:text="ปี xxxx ราคา x,xxx,xxx $"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content" />
+
+                        </LinearLayout>
+
+
+
+                            <!--android:drawableLeft="@drawable/ic_custom_header_gear"-->
+                            <!--android:drawablePadding="10dp"-->
+                        <!--<TextView-->
+                            <!--android:visibility="gone"-->
+                            <!--android:layout_marginLeft="34dp"-->
+                            <!--android:gravity="center_vertical"-->
+                            <!--android:textColor="@android:color/white"-->
+                            <!--android:id="@+id/custom_view_chat_header_tvDetails"-->
+                            <!--android:layout_marginTop="6dp"-->
+                            <!--android:textSize="13sp"-->
+                            <!--android:text="ปี xxxx ราคา x,xxx,xxx $"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content" />-->
+
+                        <TextView
+                            android:gravity="center_vertical"
+                            android:drawablePadding="10dp"
+                            android:drawableLeft="@drawable/ic_custom_header_profile"
+                            android:textColor="@android:color/white"
+                            android:id="@+id/custom_view_text_detail"
+                            android:layout_marginTop="3dp"
+                            android:textSize="13sp"
+                            android:text="ปี xxxx ราคา x,xxx,xxx $"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+                <ToggleButton
+                    android:id="@+id/custom_view_button_follow"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="170dp"
+                    android:background="@drawable/selector_button_follow"
+                    android:elevation="3dp"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn="" />
+
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>

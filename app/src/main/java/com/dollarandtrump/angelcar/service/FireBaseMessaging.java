@@ -24,39 +24,33 @@ public class FireBaseMessaging extends FirebaseMessagingService{
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 //        super.onMessageReceived(remoteMessage);
-            Log.d(TAG, "From: " + remoteMessage.getFrom());
-            Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
             MainThreadBus.getInstance().post(remoteMessage);
-
-        Log.d(TAG, "onMessageReceived: "+remoteMessage.getData());
-//        sendNotification(remoteMessage.getNotification().getBody());
+        sendNotification(remoteMessage);
     }
 
     @Override
     public void onMessageSent(String s) {
         super.onMessageSent(s);
-        Log.i(TAG, "onMessageSent: "+s);
-
     }
 
-    private void sendNotification(String messageBody) {
+    private void sendNotification(RemoteMessage remoteMessage) {
         Intent intent = new Intent(this, ConversationActivity.class);
+        intent.putExtra("carid",remoteMessage.getData().get("carid"));
+        intent.putExtra("roomid",remoteMessage.getData().get("roomid"));
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-//        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Uri defaultSoundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
+//        Uri defaultSoundUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.carhorn);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("AngelCar")
-                .setContentText(messageBody)
+                .setContentTitle("Message")
+                .setContentText(remoteMessage.getNotification().getBody())
                 .setAutoCancel(true)
-                .setSound(defaultSoundUri)
+//                .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
 

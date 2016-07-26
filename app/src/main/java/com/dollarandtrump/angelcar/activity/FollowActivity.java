@@ -113,7 +113,7 @@ public class FollowActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             PostCarDao item = dao.getListCar().get(position);
-            Intent intent = new Intent(FollowActivity.this, DetailCarActivity.class);
+            Intent intent = new Intent(FollowActivity.this, CarDetailActivity.class);
             intent.putExtra("PostCarDao", Parcels.wrap(item));
             intent.putExtra("intentForm", 0);
             intent.putExtra("messageFromUser",Registration.getInstance().getUserId());

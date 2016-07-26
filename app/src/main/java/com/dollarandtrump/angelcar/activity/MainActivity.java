@@ -4,6 +4,7 @@ import android.accounts.AccountManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
@@ -257,6 +258,28 @@ public class MainActivity extends AppCompatActivity{
         return true;
     }
 
+    boolean doubleBackToExitPressedOnce = false;
+    @Override
+    public void onBackPressed() {
+        if(menuFab.isOpened()) {
+            menuFab.close(true);
+        }else {
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+//            Snackbar.make(getWindow().getDecorView(), "Please click BACK again to exit", Snackbar.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
+    }
+
     /**************
     *Listener Zone*
     ***************/
@@ -290,6 +313,7 @@ public class MainActivity extends AppCompatActivity{
                 Toast.makeText(MainActivity.this, "" + response.errorBody(), Toast.LENGTH_SHORT).show();
             }
         }
+
 
         @Override
         public void onFailure(Call<RegisterResultDao> call, Throwable t) {

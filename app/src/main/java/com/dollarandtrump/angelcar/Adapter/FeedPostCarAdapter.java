@@ -131,7 +131,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolderItemLeft(view);
             view.setTag(holder);
         }
-        initPost(holder,postCarDao,"#ff0000","#ff0000",position);
+        bindDataPostCar(holder,postCarDao,"#ff0000","#ff0000",position);
         return view;
     }
 
@@ -144,7 +144,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
             holder = new ViewHolderItemRight(view);
             view.setTag(holder);
         }
-        initPost(holder,postCarDao,"#FFB13D","#FFB13D",position);
+        bindDataPostCar(holder,postCarDao,"#FFB13D","#FFB13D",position);
         return view;
     }
 
@@ -162,9 +162,9 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
 
 
 
-    private void initPost(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2,int position){
+    private void bindDataPostCar(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2,int position){
         String topic = dao.getCarTitle();
-        holderPost.angelCarPost.setPictureProfile("http://angelcar.com/ios/data/clsdata/"+dao.getShopLogo());
+        holderPost.angelCarPost.setPictureProfile(dao.getFullPathShopLogo());
         holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
         holderPost.angelCarPost.setTitle(topic);
         double amount = Double.parseDouble(dao.getCarPrice());

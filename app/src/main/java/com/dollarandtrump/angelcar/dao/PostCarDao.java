@@ -159,6 +159,10 @@ public class PostCarDao extends Model implements Serializable {
         return shopLogo;
     }
 
+    public String getFullPathShopLogo(){
+        return "http://angelcar.com/ios/data/clsdata/"+shopLogo;
+    }
+
     public void setShopLogo(String shopLogo) {
         this.shopLogo = shopLogo;
     }

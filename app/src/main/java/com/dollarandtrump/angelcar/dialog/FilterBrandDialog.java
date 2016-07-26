@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar.dialog;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -71,6 +72,7 @@ public class FilterBrandDialog extends DialogFragment {
                 Intent intent = getActivity().getIntent();
                 CarBrandDao model = dao.getBrandDao().get(position);
                 intent.putExtra(FeedPostFragment.ARG_BRAND, Parcels.wrap(model));
+                intent.putExtra("logo", position);
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK,intent);
                 dismiss();
             }
@@ -152,7 +154,9 @@ public class FilterBrandDialog extends DialogFragment {
                holder = new ViewHolder(convertView);
                convertView.setTag(holder);
             }
-            holder.iconFilter.setImageResource(R.drawable.toyota);//TODO Show ALL LOGO
+            TypedArray reImage = parent.getResources().obtainTypedArray(R.array.logoCar);
+            holder.iconFilter.setImageResource(reImage.getResourceId(position,-1));
+            reImage.recycle();
             holder.tvFilter.setText(getItem(position).getBrandName());
 
             return convertView;
@@ -165,8 +169,6 @@ public class FilterBrandDialog extends DialogFragment {
                 ButterKnife.bind(this,view);
             }
         }
-
-
 
     }
 

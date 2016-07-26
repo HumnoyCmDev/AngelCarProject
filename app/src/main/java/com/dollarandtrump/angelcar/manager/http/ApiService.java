@@ -33,6 +33,7 @@ import rx.Observable;
  ***************************************/
 
 public interface ApiService {
+
     // Chat Api
     @GET("ios/api/ga_chatcar.php?operation=view")
     Call<MessageCollectionDao> viewMessage(@Query("message") String message);
@@ -52,6 +53,10 @@ public interface ApiService {
     Call<MessageAdminCollectionDao> messageAdmin(@Query("message") String message);
     @GET("ios/api/ga_chatcar.php?operation=viewadminarray")
     Observable<MessageAdminCollectionDao> observableMessageAdmin(@Query("message") String message);
+
+    //read chat
+    @GET("/ios/api/ga_chatcar.php?operation=read")
+    Observable<Results> observableReadMessage(@Query("message") String currentMessageId);
 
     //View Chat Topic
     @GET("ios/api/ga_chatadmin.php?operation=view")
@@ -170,6 +175,8 @@ public interface ApiService {
     //GET Check Follow
     @GET("android/api/checkfollow.php")
     Call<FollowCollectionDao> loadFollow(@Query("shopref") String shopRef);
+    @GET("android/api/checkfollow.php")
+    Observable<FollowCollectionDao> observableLoadFollow(@Query("shopref") String shopRef);
 
     //GET Shop Data
     @GET("android/api/getDataShop.php")

@@ -29,6 +29,8 @@ public class FireBaseInstanceID extends FirebaseInstanceIdService{
 //        sendRegistrationToServer(refreshedToken);
     }
 
+
+
 //    private void sendRegistrationToServer(String token) {
 //        String user = Registration.getInstance().getUserId();
 //        HttpManager.getInstance().getService().sendTokenRegistration(user,token)

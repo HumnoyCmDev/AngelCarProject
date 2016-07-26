@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll_view_filter"
+    android:fillViewport="true"
     android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,7 +12,7 @@
         android:background="@android:color/black"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/text_view_brand"
@@ -143,7 +144,7 @@
         </LinearLayout>
 
     <TextView
-        android:id="@+id/buttonSearch"
+        android:id="@+id/button_search"
         android:layout_marginTop="20dp"
         android:paddingTop="5dp"
         android:paddingBottom="5dp"

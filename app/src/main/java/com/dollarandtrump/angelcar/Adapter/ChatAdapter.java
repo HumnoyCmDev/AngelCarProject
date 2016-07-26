@@ -1,7 +1,5 @@
 package com.dollarandtrump.angelcar.Adapter;
 
-import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,16 +9,20 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
+import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.dollarandtrump.angelcar.view.HeaderAdminChatCar;
-import com.dollarandtrump.angelcar.view.HeaderChatCar;
+import com.dollarandtrump.angelcar.utils.Log;
+import com.dollarandtrump.angelcar.view.ItemAnnounceView;
+import com.dollarandtrump.angelcar.view.ItemCarDetailView;
 import com.hndev.library.view.AngelCarMessage;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Observer;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by humnoy on 22/1/59.
@@ -44,14 +46,14 @@ public class ChatAdapter extends BaseAdapter {
             viewTypeShowDate = View.GONE;
     }
 
-    HeaderChatCar.OnClickItemHeaderChatListener onClickItemHeaderChatListener;
+    ItemCarDetailView.OnClickItemHeaderChatListener onClickItemHeaderChatListener;
 
     public ChatAdapter(String messageBy) {
         this.messageBy = messageBy;
     }
 
 
-    public void setOnClickItemBannerListener(HeaderChatCar.OnClickItemHeaderChatListener onClickItemHeaderChatListener) {
+    public void setOnClickItemBannerListener(ItemCarDetailView.OnClickItemHeaderChatListener onClickItemHeaderChatListener) {
         this.onClickItemHeaderChatListener = onClickItemHeaderChatListener;
     }
 
@@ -104,55 +106,55 @@ public class ChatAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (getItemViewType(position) == 2){
-            HeaderChatCar headerChatCar;
+            ItemCarDetailView itemCarDetailView;
             if (convertView != null) {
-                headerChatCar = (HeaderChatCar) convertView;
+                itemCarDetailView = (ItemCarDetailView) convertView;
             }else {
-                headerChatCar = new HeaderChatCar(parent.getContext());
+                itemCarDetailView = new ItemCarDetailView(parent.getContext());
             }
 
             if (postCarDao != null) {
-                headerChatCar.setIconProfile("http://cls.paiyannoi.me/profileimages/default.png");
-                headerChatCar.setImageBanner(pictureDao);
-                headerChatCar.setDataPostCar(postCarDao);
+                itemCarDetailView.setIconProfile("http://cls.paiyannoi.me/profileimages/default.png");
+                itemCarDetailView.setImageBanner(pictureDao);
+                itemCarDetailView.setDataPostCar(postCarDao);
                 if (onClickItemHeaderChatListener != null)
-                    headerChatCar.setOnClickItemBannerListener(onClickItemHeaderChatListener);
-                headerChatCar.setFollow(isFollow);
-                headerChatCar.setTimeString(AngelCarUtils.formatTimeAndDay(parent.getContext(),postCarDao.getCarModifyTime()));
+                    itemCarDetailView.setOnClickItemBannerListener(onClickItemHeaderChatListener);
+                itemCarDetailView.setFollow(isFollow);
+                itemCarDetailView.setTimeString(AngelCarUtils.formatTimeAndDay(parent.getContext(),postCarDao.getCarModifyTime()));
             }
-            return headerChatCar;
+            return itemCarDetailView;
         }
 
         if (getItemViewType(position) == 3){
-            HeaderAdminChatCar headerAdminChatCar;
+            ItemAnnounceView itemAnnounceView;
             if (convertView != null){
-                headerAdminChatCar = (HeaderAdminChatCar) convertView;
+                itemAnnounceView = (ItemAnnounceView) convertView;
             }else {
-                headerAdminChatCar = new HeaderAdminChatCar(parent.getContext());
+                itemAnnounceView = new ItemAnnounceView(parent.getContext());
             }
-            headerAdminChatCar.setIconProfile("http://cls.paiyannoi.me/profileimages/default.png");
-            return headerAdminChatCar;
+            itemAnnounceView.setIconProfile("http://cls.paiyannoi.me/profileimages/default.png");
+            return itemAnnounceView;
         }
 
         MessageDao message = getItem(position);
         int msBy = getItemViewType(position);
         positionShowDate = getCount();
         switch (msBy){
-            case 0 : convertView = inflateLayoutChatLeft(convertView,parent,message,position);
+            case 0 : convertView = inflateLayoutChatCellThem(convertView,parent,message,position);
                 break;
-            case 1 : convertView = inflateLayoutChatRight(convertView,parent,message,position);
+            case 1 : convertView = inflateLayoutChatCellMe(convertView,parent,message,position);
                 break;
         }
         return convertView;
     }
 
     //inflate layout
-    private View inflateLayoutChatRight(View view, ViewGroup parent, MessageDao message, int position) {
+    private View inflateLayoutChatCellMe(View view, ViewGroup parent, MessageDao message, int position) {
         TextRightViewHolder holder;
         if (view != null) {
             holder = (TextRightViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_right, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_me, parent, false);
             holder = new TextRightViewHolder(view);
             view.setTag(holder);
         }
@@ -164,22 +166,30 @@ public class ChatAdapter extends BaseAdapter {
         if (positionShowDate == position) {
             holder.angelCarMessage.inflateDateTime(viewTypeShowDate);
         }
-
         return view;
     }
 
-    private View inflateLayoutChatLeft(View view, ViewGroup parent, MessageDao message, int position) {
+    private View inflateLayoutChatCellThem(View view, ViewGroup parent, MessageDao message, int position) {
         TextLeftViewHolder holder;
         if (view != null) {
             holder = (TextLeftViewHolder) view.getTag();
         } else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_left, parent, false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat_them, parent, false);
             holder = new TextLeftViewHolder(view);
             view.setTag(holder);
         }
         //coding
         holder.angelCarMessage.setMessage(message.getMessageText());
         holder.angelCarMessage.setIconProfile(message.getUserProfileImage());
+
+        if(message.getMessageStatus() == 0){ /* Read Message*/
+            HttpManager.getInstance().getService()
+                    .observableReadMessage(String.valueOf(message.getMessageId()))
+                    .subscribeOn(Schedulers.newThread())
+                    .subscribe();
+        }
+
+
         return view;
     }
 

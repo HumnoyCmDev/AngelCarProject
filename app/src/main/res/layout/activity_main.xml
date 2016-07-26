@@ -48,7 +48,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/activity_main_contener" />
+    <!--<include layout="@layout/activity_main_contener" />-->
+    <android.support.v4.view.ViewPager
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/floating_action_menu_fab"

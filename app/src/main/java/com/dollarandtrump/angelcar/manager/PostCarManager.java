@@ -178,4 +178,8 @@ public class PostCarManager {
 
     }
 
+    public void clearCache(){
+        mCache.deleteCache("postDao");
+    }
+
 }

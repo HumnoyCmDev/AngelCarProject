@@ -1,4 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://maven.fabric.io/public' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.6.3'
+        classpath 'io.fabric.tools:gradle:1.21.7'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
     compileSdkVersion 23
@@ -19,7 +35,7 @@ android {
     }
 }
 
-def versionSupportLibrary = "24.0.0"
+def versionSupportLibrary = "23.3.0"
 def versionServices = "9.0.2"
 def versionParceler = "1.1.5"
 def versionRetrofit = "2.0.2"
@@ -66,5 +82,9 @@ dependencies {
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
     compile "com.google.firebase:firebase-messaging:${versionServices}"
 //    compile 'com.google.firebase:firebase-config:9.2.0'
+
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.0@aar') {
+        transitive = true;
+    }
 }
 apply plugin: 'com.google.gms.google-services'

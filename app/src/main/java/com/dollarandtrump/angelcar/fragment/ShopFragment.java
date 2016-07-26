@@ -305,10 +305,6 @@ public class ShopFragment extends Fragment {
 
     private void showProfile(){
             mImageProfile.setVisibility(View.VISIBLE);
-            Animation animation = AnimationUtils.loadAnimation(
-                    Contextor.getInstance().getContext(),
-                    R.anim.shop_zoom_face_in);
-            mImageProfile.startAnimation(animation);
 
             mListImageHeader.setVisibility(View.VISIBLE);
             Animation animationHeader = AnimationUtils.loadAnimation(

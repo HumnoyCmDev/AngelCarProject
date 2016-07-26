@@ -2,15 +2,12 @@ package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Space;
 import android.widget.TextView;
@@ -301,7 +298,7 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
 
     class CellViewHolder extends ViewHolder {
         public final static int RESOURCE_ID_ME = R.layout.angelcar_topic_item_me;
-        public final static int RESOURCE_ID_THEM = R.layout.angelcer_topic_item_them;
+        public final static int RESOURCE_ID_THEM = R.layout.angelcar_topic_item_them;
 
         // View cache
         protected TextView mUserName;

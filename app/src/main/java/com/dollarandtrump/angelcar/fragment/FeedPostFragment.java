@@ -25,7 +25,7 @@ import android.widget.TextView;
 
 import com.dollarandtrump.angelcar.Adapter.FeedPostCarAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.activity.DetailCarActivity;
+import com.dollarandtrump.angelcar.activity.CarDetailActivity;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
 import com.dollarandtrump.angelcar.activity.ViewDetailActivity;
@@ -76,9 +76,9 @@ public class FeedPostFragment extends Fragment{
 
     @Bind(R.id.swipe_container) SwipeRefreshLayout mSwipeRefresh;
     @Bind(R.id.text_view_count_car_all) TextView mCountCarAll;
-    @Bind(R.id.list_view) ListView mListView;
     @Bind(R.id.scroll_view_filter) ScrollView mScrollFilter;
     @Bind(R.id.text_view_new_post) TextView mTextNewPost;
+    @Bind(R.id.list_view) ListView mListView;
 
     //Filter
     @Bind(R.id.edit_text_price_start) EditText mEditTextPriceStart;
@@ -92,8 +92,8 @@ public class FeedPostFragment extends Fragment{
     private InfoCarModel mCopyInformLoadMore;
     private InfoCarModel mInfoCarModel;
 
-    private boolean isLoadingMore = false;
     private boolean isStopLoadingMore = false; // หยุดการ LoadMore
+    private boolean isLoadingMore = false;
 
     private PostCarManager mPostManager;
     private FeedPostCarAdapter mAdapter;
@@ -160,6 +160,7 @@ public class FeedPostFragment extends Fragment{
         if (savedInstanceState == null) {
             refreshData();
         }
+
         // view shop
         mAdapter.setOnClickImageProfile(new AngelCarPost.OnClickImageProfile() {
             @Override
@@ -173,9 +174,7 @@ public class FeedPostFragment extends Fragment{
             }
         });
 
-
     }
-
 
     private void refreshData(){
         isStopLoadingMore = false;
@@ -190,7 +189,7 @@ public class FeedPostFragment extends Fragment{
         // load post newer
         Call<PostCarCollectionDao> call =
                 HttpManager.getInstance().getService().loadNewerPostCar(mPostManager.firstDateDao());
-        call.enqueue(new PostCarCallback(PostCarCallback.MODE_RELOAD_NEWER));
+        call.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD_NEWER));
     }
 
     private void loadCountCar() {
@@ -204,18 +203,20 @@ public class FeedPostFragment extends Fragment{
         loadCountCar();
         //load Post
         Call<PostCarCollectionDao> call = HttpManager.getInstance().getService().loadPostCar();
-        call.enqueue(new PostCarCallback(PostCarCallback.MODE_RELOAD));
+        call.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD));
     }
 
     private void loadMoreData(){
 //        if (isStopLoadingMore) return;
+//        Log.d(TAG, "loadMoreData 1: "+isStopLoadingMore +" "+isLoadingMore);
         if (isStopLoadingMore || isLoadingMore) return;
 
         isLoadingMore = true;
         mAdapter.setLoading(true);
         Call<PostCarCollectionDao> callLoadingMore = HttpManager.getInstance()
                 .getService().loadMorePostCar(mPostManager.lastDateDao());
-        callLoadingMore.enqueue(new PostCarCallback(PostCarCallback.MODE_LOAD_MORE));
+        callLoadingMore.enqueue(new FeedCallback(FeedCallback.MODE_LOAD_MORE));
+        Log.d(TAG, "loadMoreData 2: "+isStopLoadingMore +" "+isLoadingMore);
 
     }
 
@@ -265,12 +266,12 @@ public class FeedPostFragment extends Fragment{
         }
     }
 
-    @OnClick({R.id.text_view_brand,R.id.text_view_sub,R.id.text_view_sub_detail,R.id.text_view_year,R.id.buttonSearch})
+    @OnClick({R.id.text_view_brand,R.id.text_view_sub,R.id.text_view_sub_detail,R.id.text_view_year,R.id.button_search})
     public void OnclickFilter(View v){
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         switch (v.getId()){
 
-            case R.id.buttonSearch:
+            case R.id.button_search:
                 loadFilter();
                 ShowHideFilter();
                 mTextBrand.setText("All");
@@ -379,8 +380,8 @@ public class FeedPostFragment extends Fragment{
 
     private void clearObject() {
         if (mInfoCarModel != null) {
-            mInfoCarModel.clear();
-            mInfoCarModel = null;
+//            mInfoCarModel.clear();
+//            mInfoCarModel = null;
             mInfoCarModel = new InfoCarModel();
         }
     }
@@ -416,6 +417,7 @@ public class FeedPostFragment extends Fragment{
 
                 case REQUEST_CODE_BRAND: // brand
                     CarBrandDao model = Parcels.unwrap(data.getParcelableExtra(ARG_BRAND));
+                    mInfoCarModel.setResIdLogo(data.getIntExtra("logo",0));
                     mInfoCarModel.setBrandDao(model);
                     mTextBrand.setText(model.getBrandName());
                     mTextSub.setText("All");
@@ -452,21 +454,21 @@ public class FeedPostFragment extends Fragment{
         ButterKnife.unbind(this);
     }
 
-
-
     /**************
     *Listener Zone*
     ***************/
     SwipeRefreshLayout.OnRefreshListener pullRefresh = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
-
+            isStopLoadingMore = false;
             if (isFilter) {
                 isFilter = false;
+                mPostManager.clearCache();
+                isLoadingMore = false;
+                mAdapter.setLoading(true);
                 reloadData();
                 return;
             }
-            isStopLoadingMore = false;
             refreshData();
         }
     };
@@ -517,7 +519,7 @@ public class FeedPostFragment extends Fragment{
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             if (Registration.getInstance().getUserId() != null) {
                 PostCarDao modelCar = mPostManager.getDao().getListCar().get(position);
-                boolean isShop = modelCar.getShopRef().contains(Registration.getInstance().getShopRef()) ? true : false;
+                boolean isShop = modelCar.getShopRef().contains(Registration.getInstance().getShopRef());
                 Intent inViewDetail = new Intent(getActivity(), ViewDetailActivity.class);
                 inViewDetail.putExtra("is_shop",isShop);
                 inViewDetail.putExtra("dao",Parcels.wrap(modelCar));
@@ -543,13 +545,11 @@ public class FeedPostFragment extends Fragment{
             if (Registration.getInstance().getUserId() != null) {
                 if (mPostManager.getDao().getListCar().size() > position) {
                     final PostCarDao item = mPostManager.getDao().getListCar().get(position);
-                    Intent intent = new Intent(getActivity(), DetailCarActivity.class);
+                    Intent intent = new Intent(getActivity(), CarDetailActivity.class);
                     intent.putExtra("PostCarDao", Parcels.wrap(item));
                     intent.putExtra("intentForm", 0);
                     intent.putExtra("messageFromUser", Registration.getInstance().getUserId());
                     startActivity(intent);
-
-
 
                 }
             }else {
@@ -608,13 +608,13 @@ public class FeedPostFragment extends Fragment{
         }
     }
 
-    private class PostCarCallback implements Callback<PostCarCollectionDao> {
+    private class FeedCallback implements Callback<PostCarCollectionDao> {
         public static final int MODE_RELOAD = 1;
         public static final int MODE_RELOAD_NEWER = 2;
         public static final int MODE_LOAD_MORE = 3;
         int mode;
 
-        public PostCarCallback(int mode) {
+        public FeedCallback(int mode) {
             this.mode = mode;
         }
 
@@ -646,6 +646,7 @@ public class FeedPostFragment extends Fragment{
 
                 } else {
                     mPostManager.setDao(dao);
+                    com.dollarandtrump.angelcar.utils.Log.d("Reload count "+ dao.getListCar().size());
                 }
                 clearLoadingMoreFlagIfCapable(mode);
                 mAdapter.setDao(mPostManager.getDao());
@@ -662,7 +663,6 @@ public class FeedPostFragment extends Fragment{
                         showTextNewPost();
                     }
                 }
-
 
             } else {
                 isStopLoadingMore = true;
@@ -689,11 +689,13 @@ public class FeedPostFragment extends Fragment{
     }
 
     // Callback Filter
-    private class FilterCallback implements Callback<PostCarCollectionDao>{
+    private class FilterCallback implements Callback<PostCarCollectionDao> {
         int mode = 0; // 0 = load , 1 = loadMore
+
         public FilterCallback(int mode) {
             this.mode = mode;
         }
+
         @Override
         public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
             mAdapter.setLoading(false);
@@ -709,6 +711,7 @@ public class FeedPostFragment extends Fragment{
                 }
                 mAdapter.setDao(mPostManager.getDao());
                 mAdapter.notifyDataSetChanged();
+                mListView.smoothScrollToPosition(0);
             } else {
                 mAdapter.setLoading(false);
                 isStopLoadingMore = true;

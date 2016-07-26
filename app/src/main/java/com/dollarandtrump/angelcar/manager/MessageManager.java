@@ -22,8 +22,8 @@ public class MessageManager {
 
     private Context mContext;
     private MessageCollectionDao messageDao;
-    private MessageCollectionDao messageSellDao;
-    private MessageCollectionDao messageBuyDao;
+    private MessageCollectionDao mConversationSell;
+    private MessageCollectionDao mConversationBuy;
 
     public MessageManager() {
         mContext = Contextor.getInstance().getContext();
@@ -58,39 +58,45 @@ public class MessageManager {
 //        saveCache();
     }
 
-    public MessageCollectionDao getConversationBuyDao() {
-        return messageBuyDao;
+    public MessageCollectionDao getConversationSell() {
+        return mConversationBuy;
     }
 
-    public MessageCollectionDao getConversationSellDao() {
-        return messageSellDao;
+    public MessageCollectionDao getConversationBuy() {
+        return mConversationSell;
     }
 
-    public void unifyDao(MessageAdminCollectionDao messageSellDao, MessageCollectionDao messageBuyDao){
-        this.messageSellDao = messageSellDao.convertToMessageCollectionDao();
-        this.messageBuyDao = messageBuyDao;
+    public void unifyDao(MessageAdminCollectionDao mConversationSell, MessageCollectionDao mConversationBuy){
+        this.mConversationSell = mConversationSell.convertToMessageCollectionDao();
+        this.mConversationBuy = mConversationBuy;
         if (messageDao == null){
             messageDao = new MessageCollectionDao();
         }
         if (messageDao.getListMessage() == null){
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
-        messageDao.getListMessage().addAll(getCount(),this.messageSellDao.getListMessage());
-        messageDao.getListMessage().addAll(getCount(),messageBuyDao.getListMessage());
+        messageDao.getListMessage().addAll(getCount(),this.mConversationSell.getListMessage());
+        messageDao.getListMessage().addAll(getCount(),mConversationBuy.getListMessage());
 
 //        saveCache();
     }
 
-    public void appendDataToBottomPosition(MessageCollectionDao gao){
+    public void appendDataToBottomPosition(MessageCollectionDao dao){
         if (messageDao == null){
             messageDao = new MessageCollectionDao();
         }
         if (messageDao.getListMessage() == null){
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
-        messageDao.getListMessage().addAll(getCount(),gao.getListMessage());
+        messageDao.getListMessage().addAll(getCount(),dao.getListMessage());
         //Save Cache
 //        saveCache();
+    }
+
+    public MessageCollectionDao updateReadMessageDao(MessageCollectionDao dao){
+        messageDao.getListMessage().remove(getCount()-1);
+        appendDataToBottomPosition(dao);
+        return messageDao;
     }
 
     public int getMaximumId(){
@@ -102,6 +108,18 @@ public class MessageManager {
         for (int i = 0; i < messageDao.getListMessage().size(); i++)
             maxId = Math.max(maxId, messageDao.getListMessage().get(i).getMessageId());
         return maxId;
+    }
+
+    public int getCurrentIdStatus(){
+            int messageId = getMaximumId();
+        if (messageDao != null && messageDao.getListMessage() != null) {
+            for (MessageDao m : messageDao.getListMessage()){
+                if (m.getMessageId() == messageId){
+                    return m.getMessageStatus();
+                }
+            }
+        }
+        return 0;
     }
 
     public int getMinimumId(){

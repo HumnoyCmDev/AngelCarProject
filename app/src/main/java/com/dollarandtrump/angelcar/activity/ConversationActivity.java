@@ -16,16 +16,18 @@ import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.fragment.ChatAllFragment;
-import com.dollarandtrump.angelcar.fragment.ChatBuyFragment;
-import com.dollarandtrump.angelcar.fragment.ChatSellFragment;
+import com.dollarandtrump.angelcar.fragment.conversation.ConversationAllFragment;
+import com.dollarandtrump.angelcar.fragment.conversation.ConversationBuyFragment;
+import com.dollarandtrump.angelcar.fragment.conversation.ConversationSellFragment;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.flyco.tablayout.SlidingTabLayout;
+import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Produce;
+import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
@@ -60,6 +62,14 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
         if (savedInstanceState == null)
             loadAllCarId();
+
+
+        Bundle intentNotification = getIntent().getExtras();
+        if(intentNotification != null) {
+            String carId = intentNotification.getString("carid");
+            String messageFromUser = intentNotification.getString("roomid");
+            findPostCar(carId,messageFromUser);
+        }
 
 //        MainThreadBus.getInstance().register(this);
     }
@@ -119,6 +129,12 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
                 });
     }
 
+
+    @Subscribe
+    public void onMessageReceived(RemoteMessage remoteMessage){
+        remoteMessage.getData();
+    }
+
     @Produce
     public MessageManager produceMsgManager(){
         return mgsManager;
@@ -137,104 +153,34 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
             subscriptionMessage.unsubscribe();
         if (subscriptionCarId != null)
             subscriptionCarId.unsubscribe();
-//        MainThreadBus.getInstance().unregister(this);
     }
 
+
     @Override
-    public void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
         MainThreadBus.getInstance().register(this);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
         MainThreadBus.getInstance().unregister(this);
     }
 
-    /**************
-    *Listener Zone*
-    ***************/
-   /* Callback<CarIdDao> carIdDaoCallback = new Callback<CarIdDao>() {
-        @Override
-        public void onResponse(Call<CarIdDao> call, Response<CarIdDao> response) {
-            if (response.isSuccessful()) {
-                Log.i("ViewChat", ""+response.body().getAllCarId());
-                String allCarId = response.body().getAllCarId();
-                if (allCarId.contains(""))
-                    allCarId = "null";
-//                //Sample Rx android
-                Observable<MessageAdminCollectionDao> rxCallLoadMsg1 =
-                        HttpManager.getInstance().getService()
-                                .observableMessageAdmin(allCarId);
-                Observable<MessageCollectionDao> rxCallLoadMsg2 = HttpManager.getInstance()
-                        .getService().observableMessageClient(Registration.getInstance().getUserId());
-
-                Observable<MessageManager> observableManager =
-                        Observable.zip(rxCallLoadMsg1, rxCallLoadMsg2, new Func2<MessageAdminCollectionDao, MessageCollectionDao, MessageManager>() {
-                            @Override
-                            public MessageManager call(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao messageCollectionDao) {
-                                MessageManager manager = new MessageManager();
-                                manager.unifyDao(messageAdminCollectionDao
-                                        ,messageCollectionDao);
-                                return manager;
-                            }
-                        });
-
-                subscriptionMessage = observableManager
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<MessageManager>() {
-                            @Override
-                            public void onCompleted() {
-                                Log.i("ViewChat", "onCompleted: ");
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-//                                Log.e("ViewChat","error ",e);
-                                e.printStackTrace();
-                            }
-
-                            @Override
-                            public void onNext(MessageManager messageManager) {
-//                                mgsManager = messageManager;
-                                //Event bus
-                            }
-                        });
-
-                //-----------//
-
-            }else {
-                try {
-                    Log.e("ViewChat", "onResponse: "+response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<CarIdDao> call, Throwable t) {
-            Log.e("ViewChat", "onFailure: ", t);
-        }
-    };
-*/
-
-    @Override
-    public void onClickItemMessage(final MessageDao messageDao) {
+    private void findPostCar(String carId, final String messageFromUser){
         Call<PostCarCollectionDao> call =
-            HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
+                HttpManager.getInstance().getService().loadCarModel(carId);
         call.enqueue(new Callback<PostCarCollectionDao>() {
             @Override
             public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
                 if (response.isSuccessful()) {
                     if (response.body().getListCar() != null) {
                         PostCarDao item = response.body().getListCar().get(0);
-                        Intent intent = new Intent(ConversationActivity.this, DetailCarActivity.class);
+                        Intent intent = new Intent(ConversationActivity.this, CarDetailActivity.class);
                         intent.putExtra("PostCarDao", Parcels.wrap(item));
                         intent.putExtra("intentForm", 1);
-                        intent.putExtra("messageFromUser", messageDao.getMessageFromUser());
+                        intent.putExtra("messageFromUser", messageFromUser);
                         startActivity(intent);
                     }else {
                         //TODO Check Null กรณีไม่มี รถอยู่หรือลบออกไปแล้ว
@@ -247,9 +193,46 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
             @Override
             public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
-                   t.printStackTrace();
+                t.printStackTrace();
             }
         });
+    }
+
+
+    /**************
+    *Listener Zone*
+    ***************/
+
+    @Override
+    public void onClickItemMessage(final MessageDao messageDao) {
+        findPostCar(messageDao.getMessageCarId(),messageDao.getMessageFromUser());
+//        Call<PostCarCollectionDao> call =
+//            HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
+//        call.enqueue(new Callback<PostCarCollectionDao>() {
+//            @Override
+//            public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
+//                if (response.isSuccessful()) {
+//                    if (response.body().getListCar() != null) {
+//                        PostCarDao item = response.body().getListCar().get(0);
+//                        Intent intent = new Intent(ConversationActivity.this, CarDetailActivity.class);
+//                        intent.putExtra("PostCarDao", Parcels.wrap(item));
+//                        intent.putExtra("intentForm", 1);
+//                        intent.putExtra("messageFromUser", messageDao.getMessageFromUser());
+//                        startActivity(intent);
+//                    }else {
+//                        //TODO Check Null กรณีไม่มี รถอยู่หรือลบออกไปแล้ว
+//                        Log.i("ViewChat", "ไม่มีข้อมูลรถ หรือรถถูกลบไปแล้ว");
+//                    }
+//                } else {
+//                    Log.e("ViewChatAll", "onResponse: "+response.errorBody().toString());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
+//                   t.printStackTrace();
+//            }
+//        });
 
     }
 
@@ -263,9 +246,9 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         @Override
         public Fragment getItem(int position) {
             switch (position){
-                case 0: return new ChatAllFragment();
-                case 1: return new ChatBuyFragment();
-                case 2: return new ChatSellFragment();
+                case 0: return new ConversationAllFragment();
+                case 1: return new ConversationBuyFragment();
+                case 2: return new ConversationSellFragment();
             }
             return null;
         }

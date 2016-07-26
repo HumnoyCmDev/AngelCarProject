@@ -1,7 +1,7 @@
 package com.dollarandtrump.angelcar.Adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +13,10 @@ import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.manager.Contextor;
+import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.github.siyamed.shapeimageview.CircularImageView;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -49,7 +48,7 @@ public class ConversationAdapter extends BaseAdapter{
         Collections.sort(mListDao, new Comparator<MessageDao>() {
             @Override
             public int compare(MessageDao lhs, MessageDao rhs) {
-                return rhs.getMessagesTamp().compareTo(lhs.getMessagesTamp());
+                return rhs.getMessageStamp().compareTo(lhs.getMessageStamp());
             }
         });
     }
@@ -82,10 +81,17 @@ public class ConversationAdapter extends BaseAdapter{
         }
         MessageDao message = getItem(position);
 
+         /*Read message Bold*/
+        String user = Registration.getInstance().getUserId();
+        if (!user.equals(message.getMessageFromUser())) {
+            holder.title.setTypeface(null, message.getMessageStatus() == 0 ? Typeface.BOLD : Typeface.NORMAL);
+            holder.lastMessage.setTypeface(null, message.getMessageStatus() == 0 ? Typeface.BOLD : Typeface.NORMAL);
+//            holder.time.setTypeface(null, message.getMessageStatus() == 0 ? Typeface.BOLD : Typeface.NORMAL);
+        }
+
         Glide.with(parent.getContext())
                 .load(message.getUserProfileImage())
                 .bitmapTransform(new CropCircleTransformation(parent.getContext()))
-                .error(R.drawable.ic_hndeveloper)
                 .into(holder.avatar);
 
         String msg = message.getMessageText();
@@ -96,10 +102,13 @@ public class ConversationAdapter extends BaseAdapter{
         }else {
             holder.lastMessage.setText(message.getMessageText());
         }
-//        String time = AngelCarUtils.formatTimeDay(parent.getContext(),message.getMessagesTamp())
+//        String time = AngelCarUtils.formatTimeDay(parent.getContext(),message.getMessageStamp())
 //                .replaceAll(",","");
-        String time = AngelCarUtils.formatTime(context, message.getMessagesTamp(), mTimeFormat, mDateFormat);
+        String time = AngelCarUtils.formatTime(context, message.getMessageStamp(), mTimeFormat, mDateFormat);
         holder.time.setText(time);
+
+
+
         return convertView;
     }
 

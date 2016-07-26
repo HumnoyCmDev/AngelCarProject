@@ -130,8 +130,8 @@ public class ChatBuyFragment extends Fragment {
 
     @Subscribe
     public void subScribeMessage(MessageManager msgManager){
-        Log.i(TAG, "subScribeMessage: Buy"+msgManager.getConversationSellDao().getListMessage().size());
-        messageManager.setMessageDao(msgManager.getConversationSellDao());
+        Log.i(TAG, "subScribeMessage: Buy :: "+msgManager.getConversationBuy().getListMessage().size());
+        messageManager.setMessageDao(msgManager.getConversationBuy());
         if (messageManager.getCount() > 0) {
             adapter.setDao(messageManager.getMessageDao().getListMessage());
             adapter.notifyDataSetChanged();

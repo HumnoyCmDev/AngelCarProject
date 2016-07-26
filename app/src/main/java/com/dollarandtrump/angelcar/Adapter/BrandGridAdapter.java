@@ -1,5 +1,6 @@
 package com.dollarandtrump.angelcar.Adapter;
 
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarBrandDao;
+import com.dollarandtrump.angelcar.utils.Log;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,17 +46,17 @@ public class BrandGridAdapter extends BaseAdapter {
         }else {
             holder = (ViewHolder) view.getTag();
         }
-
-        holder.imgBrand.setBackgroundResource(R.drawable.toyota);
-        holder.tvName.setText(getItem(position).getBrandName());
+        holder.tvName.setVisibility(View.GONE);//setText(getItem(position).getBrandName());
+        TypedArray reImage = parent.getResources().obtainTypedArray(R.array.logoCar);
+        holder.imgBrand.setImageResource(reImage.getResourceId(position,-1));
+        reImage.recycle();
 
         return view;
     }
 
     public static class ViewHolder{
-        @Bind(R.id.imageGrid) ImageView imgBrand;
+        @Bind(R.id.image_grid) ImageView imgBrand;
         @Bind(R.id.name_cartype) TextView tvName;
-
         public ViewHolder(View v) {
             ButterKnife.bind(this,v);
         }

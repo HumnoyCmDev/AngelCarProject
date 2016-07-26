@@ -6,8 +6,6 @@
 
 
     <LinearLayout
-        android:id="@+id/bg"
-        android:background="@color/colorAccent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -39,7 +37,7 @@
                     android:id="@+id/text_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="16dp"
                     android:maxLines="1"
                     android:text="[Name]"
                     android:textSize="16sp"
@@ -49,7 +47,7 @@
                     android:id="@+id/text_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="16dp"
                     android:maxLines="1"
                     android:text="[Descroption]"
                     android:textSize="14sp" />
@@ -58,7 +56,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginBottom="5dp"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="16dp"
                     android:layout_marginTop="5dp"
                     android:background="#a4a4a4" />
 
@@ -75,58 +73,44 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:text="[Values]"
-                android:textSize="20sp"
-                android:id="@+id/text_view_animation_values"
-                android:layout_width="wrap_content"
+                android:id="@+id/text_view_show_case"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_setting"
+                android:text="ShowCase"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_marginTop="6sp"
-                android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:drawablePadding="16dp"
+                android:layout_marginTop="6dp"
+                android:clickable="true"
                 android:gravity="center_vertical"
-                android:text="Menu 2"
-                android:textSize="16sp" />
-
-            <TextView
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_setting"
+                android:text="Setting"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_marginTop="6sp"
-                android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"
-                android:text="Menu 3"
-                android:textSize="16sp" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:layout_marginTop="6sp"
-                android:drawableLeft="@drawable/shape_list_button_follow_on"
-                android:drawablePadding="16dp"
-                android:gravity="center_vertical"
-                android:text="Menu 4"
-                android:textSize="16sp" />
-
-
-            <ImageView
-                android:src="@drawable/ic_hndeveloper"
-                android:id="@+id/image_test_cache"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <SeekBar
-                android:id="@+id/volume_bar"
+            <TextView
+                android:layout_marginTop="6dp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_setting"
+                android:text="VersionUpdate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:max="100"
-                android:progress="0"
-                android:progressDrawable="@drawable/progressbar"
-                android:secondaryProgress="0" />
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_marginTop="6dp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:drawablePadding="10dp"
+                android:drawableLeft="@drawable/ic_setting"
+                android:text="info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
 
         </LinearLayout>

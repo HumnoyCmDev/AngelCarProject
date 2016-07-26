@@ -18,4 +18,6 @@
     <color name="colorHintDark">#bebebe</color>
     <color name="colorHint2">#DADADA</color>
     <color name="colorTextCount">#3F51B5</color>
+
+    <color name="colorIconMenu">#ffffff</color>
 </resources>

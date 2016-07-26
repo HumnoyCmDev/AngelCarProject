@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.DetailCarActivity"
+            android:name=".activity.CarDetailActivity"
             android:label="ห้องสนทนา"
             android:windowSoftInputMode="stateHidden|adjustResize" >
             <!--<intent-filter>-->
@@ -108,6 +108,10 @@
             </intent-filter>
         </service>
         <!-- [END firebase_iid_service] -->
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="3b92869d9b7a1090f30ce768ff8cf5516d17eb08" />
 
     </application>
 

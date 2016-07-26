@@ -11,19 +11,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.dollarandtrump.angelcar.Adapter.TopicViewMessageAdapter;
-import com.dollarandtrump.angelcar.Adapter.TopicViewMessageBaseAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.dao.TopicDao;
-import com.dollarandtrump.angelcar.interfaces.WaitMessageOnBackground;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.WaitMessageObservable;
-import com.dollarandtrump.angelcar.manager.WaitMessageSynchronous;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.RxSendTopicMessage;
@@ -36,13 +32,9 @@ import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
 
-import java.io.IOException;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Response;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -64,8 +56,6 @@ public class TopicChatActivity extends AppCompatActivity {
     @Bind(R.id.message_button_send) Button mButtonSend;
     @Bind(R.id.linear_layout_group_button_chat) LinearLayout mGroupButtChat;
 
-//    @Bind(R.id.list_view) ListView listView;
-//    TopicViewMessageBaseAdapter topicViewMessageBaseAdapter;
 
     private MessageManager messageManager;
     private TopicViewMessageAdapter messageAdapter;
@@ -104,10 +94,6 @@ public class TopicChatActivity extends AppCompatActivity {
         list.setLayoutManager(linearManager);
         list.setAdapter(messageAdapter);
 
-//        topicViewMessageBaseAdapter = new TopicViewMessageBaseAdapter(TopicChatActivity.this,"user");
-//        topicViewMessageBaseAdapter.setMessageDao(messageManager.getMessageDao());
-//        listView.setAdapter(topicViewMessageBaseAdapter);
-
         RxTextView.textChangeEvents(messageText).map(new Func1<TextViewTextChangeEvent, Boolean>() {
             @Override
             public Boolean call(TextViewTextChangeEvent textViewTextChangeEvent) {
@@ -117,6 +103,7 @@ public class TopicChatActivity extends AppCompatActivity {
             @Override
             public void call(Boolean aBoolean) {
                 mButtonSend.setEnabled(aBoolean);
+                mButtonSend.setVisibility(aBoolean ? View.VISIBLE : View.INVISIBLE);
             }
         });
 
@@ -279,7 +266,7 @@ public class TopicChatActivity extends AppCompatActivity {
     private void waitMessage(){
         /**observable wait message **/
         mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_TOPIC,messageManager.getMaximumId(),
-                mRoomId, mUserId);
+                mRoomId, mUserId,messageManager.getCurrentIdStatus());
         mSubscription = Observable.create(mWaitMessage)
                 .subscribeOn(Schedulers.newThread()).subscribe();
     }

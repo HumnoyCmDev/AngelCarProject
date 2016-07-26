@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar.dialog;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -167,7 +168,9 @@ public class FilterSubDialog extends DialogFragment {
                holder = new ViewHolder(convertView);
                convertView.setTag(holder);
             }
-//            holder.iconFilter.setImageDrawable(infoCarModel.getLogoBrand());
+            TypedArray reImage = parent.getResources().obtainTypedArray(R.array.logoCar);
+            holder.iconFilter.setImageResource(reImage.getResourceId(infoCarModel.getResIdLogo(),-1));
+            reImage.recycle();
             holder.tvFilter.setText(getItem(position).getSubName());
 
             return convertView;

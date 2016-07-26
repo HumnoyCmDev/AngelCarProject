@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <ViewStub
         android:layout_gravity="center_horizontal"
@@ -18,6 +17,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom|right"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="2dp"
         android:orientation="horizontal" >
         <!--android:padding="5dp"-->
 

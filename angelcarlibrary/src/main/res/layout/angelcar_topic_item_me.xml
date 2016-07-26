@@ -46,10 +46,6 @@
             android:layout_width="match_parent"
             android:layout_height="16dp" />
 
-        <FrameLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></FrameLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,14 +57,14 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <FrameLayout
-                android:id="@+id/cell"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:minHeight="30dp"
-                android:minWidth="30dp"
-                android:padding="5dp">
+            <!--<FrameLayout-->
+                <!--android:id="@+id/cell"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="16dp"-->
+                <!--android:minHeight="30dp"-->
+                <!--android:minWidth="30dp"-->
+                <!--android:padding="5dp">-->
 
                 <TextView
                     android:id="@+id/call_text"
@@ -78,7 +74,7 @@
                     android:linksClickable="true"
                     android:textSize="14sp" />
 
-            </FrameLayout>
+            <!--</FrameLayout>-->
 
         </LinearLayout>
 

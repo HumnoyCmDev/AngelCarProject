@@ -1,14 +1,6 @@
 <resources>
     <string name="app_name">AngelCar</string>
     <string name="hello_world">Hello world!</string>
-    <!--Tab Layout String-->
-    <!--<string name="tab_home"></string>-->
-    <!--<string name="tab_finance"></string>-->
-    <!--<string name="tab_help"></string>-->
-    <!--<string name="tab_notice"></string>-->
-    <!--<string name="tab_filter"></string>-->
-    <string name="sample_test_text_chat">Mr Sukphisit\'s passion is authentic Thai food, the way it has been prepared for generations, preferably without modern . Below is an excerpt from his latest column which appeared in Sunday\'s.......</string>
-    <string name="sample_test_text_chat2">Mr Sukphisit\'s passion is authentic Thai food, the way it has been...</string>
     <string name="message_hint">เขียนข้อความ...</string>
     <string name="post_notice">การลงประกาศรถมือสองสมาชิกทั่วไป สามารถลงประกาศได้ไม่เกิน 3 คัน หากผู้ใช้งานต้องการลงมากกว่าที่กำหนด ท่านสามารถลงทะเบียนเป็นสถานะ “เต้นท์รถ” ได้โดยไม่มีค่าใช้จ่ายครับ</string>
     <string name="all">All</string>
@@ -17,6 +9,11 @@
     <string name="menu_text">เมนู</string>
     <string name="baseUrlImg_thumbnail">http://angelcar.com/ios/data/gadata/thumbnailcarimages/</string>
     <string name="baseUrlImg_full">http://angelcar.com/ios/data/gadata/carimages/</string>
+
+    <string name="un_follow">เลิกติดตาม</string>
+    <string name="follow">ติดตาม</string>
+    <string name="read">อ่านแล้ว</string>
+    <string name="un_read">ยังไม่อ่าน</string>
 
     <string-array name="time_days_of_week">
         <item>อา.</item>

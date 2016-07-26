@@ -77,6 +77,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
                         <EditText
+                            android:inputType="text"
+                            android:maxLines="1"
                             android:maxLength="20"
                             android:textSize="15sp"
                             android:textStyle="bold"
@@ -136,6 +138,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content">
                         <EditText
+                            android:inputType="text"
+                            android:maxLines="1"
                             android:maxLength="20"
                             android:textSize="15sp"
                             android:textStyle="bold"

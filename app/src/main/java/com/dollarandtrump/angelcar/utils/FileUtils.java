@@ -28,7 +28,7 @@ import java.util.Comparator;
  * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
  ********************************************/
 public class FileUtils {
-    private FileUtils() {} //private constructor to enforce Singleton pattern
+    private FileUtils() {throw new AssertionError();} //private constructor to enforce Singleton pattern
 
     /** TAG for log messages. */
     static final String TAG = "FileUtils";
