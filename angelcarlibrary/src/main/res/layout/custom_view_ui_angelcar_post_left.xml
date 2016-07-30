@@ -11,7 +11,7 @@
         android:id="@+id/custom_view_ui_post_icon_profile"
         android:layout_width="@dimen/icon_profile_size"
         android:layout_height="@dimen/icon_profile_size"
-        android:src="@drawable/ic_hndeveloper" />
+        android:src="@drawable/ic_place_holder_2" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -91,7 +91,7 @@
                     android:id="@+id/custom_view_ui_post_image_product"
                     android:layout_width="@dimen/image_product_size"
                     android:layout_height="@dimen/image_product_size"
-                    android:src="@drawable/simple_product"
+                    android:src="@drawable/ic_place_holder_2"
                     app:siBorderColor="@android:color/black"
                     app:siBorderWidth="1dp" />
 

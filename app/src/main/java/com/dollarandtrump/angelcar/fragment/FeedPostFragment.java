@@ -517,7 +517,8 @@ public class FeedPostFragment extends Fragment{
     AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-            if (Registration.getInstance().getUserId() != null) {
+            //TODO-GREEN Handel Show Detail Car
+           /* if (Registration.getInstance().getUserId() != null) {
                 PostCarDao modelCar = mPostManager.getDao().getListCar().get(position);
                 boolean isShop = modelCar.getShopRef().contains(Registration.getInstance().getShopRef());
                 Intent inViewDetail = new Intent(getActivity(), ViewDetailActivity.class);
@@ -525,7 +526,7 @@ public class FeedPostFragment extends Fragment{
                 inViewDetail.putExtra("dao",Parcels.wrap(modelCar));
                 startActivity(inViewDetail);
                 return true;
-            }
+            }*/
             return false;
         }
     };

@@ -88,7 +88,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
     }
 
-    private void loadAllMessage(CarIdDao carIdDao) {
+    private void loadAllMessage(final CarIdDao carIdDao) {
         Log.d("view", "loadAllMessage: "+carIdDao.getAllCarId());
         Observable<MessageAdminCollectionDao> rxCallLoadMsg1 =
                 HttpManager.getInstance().getService()
@@ -104,6 +104,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
                         MessageManager manager = new MessageManager();
                         manager.unifyDao(messageAdminCollectionDao
                                 ,messageCollectionDao);
+                        manager.setProductIds(carIdDao);
                         return manager;
                     }
                 });
@@ -131,8 +132,10 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
 
     @Subscribe
-    public void onMessageReceived(RemoteMessage remoteMessage){
-        remoteMessage.getData();
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        if (remoteMessage.getData().get("type").equals("chat")) {
+            loadAllCarId();
+        }
     }
 
     @Produce
@@ -160,6 +163,9 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     protected void onResume() {
         super.onResume();
         MainThreadBus.getInstance().register(this);
+        if (getWindow().getDecorView() != null){
+            loadAllCarId();
+        }
     }
 
     @Override

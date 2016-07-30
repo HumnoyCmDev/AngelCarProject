@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -67,6 +68,7 @@ public class ImageViewGlide extends ImageView{
         mUrl = url;
         Glide.with(getContext())
                 .load(url)
+                .placeholder(R.drawable.ic_place_holder_1)
                 .crossFade()
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(this);

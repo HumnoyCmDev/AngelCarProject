@@ -18,6 +18,7 @@ import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
+import com.dollarandtrump.angelcar.utils.Log;
 
 import org.parceler.Parcels;
 
@@ -75,8 +76,10 @@ public abstract class ConversationFactory extends Fragment {
 
     public void onSubScribeMessage(MessageManager msgManager){
         mManager.setMessageDao(getMessageManager(msgManager));
+        mManager.setProductIds(msgManager.getProductIds());
         if (mManager.getCount() > 0) {
             mAdapter.setDao(mManager.getMessageDao().getListMessage());
+            mAdapter.setProduct(mManager.getProductIds());
             mAdapter.notifyDataSetChanged();
             mListView.setVisibility(View.VISIBLE);
             mStubTextNoResult.setVisibility(View.GONE);

@@ -65,7 +65,7 @@ public class ItemCarDetailView extends BaseCustomViewGroup {
     }
 
     private void initInflate() {
-        inflate(getContext(), R.layout.custom_view_item_car_detail_new, this);
+        inflate(getContext(), R.layout.custom_view_item_car_detail_old, this);
     }
 
     private void initInstances() {
@@ -108,7 +108,7 @@ public class ItemCarDetailView extends BaseCustomViewGroup {
 
     public void setIconProfile(String url){
         Glide.with(getContext()).load(url)
-                .placeholder(com.hndev.library.R.drawable.loading)
+                .placeholder(com.hndev.library.R.drawable.ic_place_holder_1)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(ic_Profile);
 

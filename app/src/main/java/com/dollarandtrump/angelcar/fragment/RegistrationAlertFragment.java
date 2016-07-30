@@ -37,7 +37,6 @@ public class RegistrationAlertFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // GET Email // registration
-        //TODO Nexus5 Not Email!
         Pattern emailPattern = Patterns.EMAIL_ADDRESS;
         Account[] accounts = AccountManager.get(getActivity()).getAccounts();
         for (Account account : accounts) {

@@ -266,7 +266,6 @@ public class ShopFragment extends Fragment {
         this.mShopCollectionDao.insertAll();
 
         /*Query PostCar*/
-        //Todo HashTag
         mHashTagAdapter.setDao(this.mShopCollectionDao.queryFindBrandDuplicates());
         mHashTagAdapter.setChildBrand(this.mShopCollectionDao.queryPostCar().getListCar());
         mHashTagAdapter.notifyDataSetChanged();

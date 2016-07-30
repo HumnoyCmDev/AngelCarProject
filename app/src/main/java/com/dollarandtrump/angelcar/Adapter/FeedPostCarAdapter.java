@@ -20,6 +20,7 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.datatype.MutableInteger;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.Log;
 import com.hndev.library.view.AngelCarPost;
 
 import java.text.DecimalFormat;
@@ -165,6 +166,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
     private void bindDataPostCar(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2,int position){
         String topic = dao.getCarTitle();
         holderPost.angelCarPost.setPictureProfile(dao.getFullPathShopLogo());
+        Log.d(dao.getFullPathShopLogo());
         holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
         holderPost.angelCarPost.setTitle(topic);
         double amount = Double.parseDouble(dao.getCarPrice());

@@ -1,7 +1,5 @@
 package com.dollarandtrump.angelcar.dao;
 
-import android.util.Log;
-
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
@@ -11,7 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +67,11 @@ public class ShopCollectionDao /*implements Serializable*/ {
         new Delete().from(CacheShop.class).execute();
         new Delete().from(PostCarDao.class).execute();
         new Delete().from(ProfileDao.class).execute();
+    }
+
+    public ProfileDao queryProfile(){
+        ProfileDao model = new Select().from(ProfileDao.class).executeSingle();
+        return model;
     }
 
     public PostCarCollectionDao queryPostCar(){//all

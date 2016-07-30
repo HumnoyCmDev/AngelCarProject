@@ -57,6 +57,9 @@ public interface ApiService {
     //read chat
     @GET("/ios/api/ga_chatcar.php?operation=read")
     Observable<Results> observableReadMessage(@Query("message") String currentMessageId);
+    //read topic chat
+    @GET("/ios/api/ga_chatadmin.php?operation=read")
+    Observable<Results> observableReadTopicMessage(@Query("message") String currentMessageId);
 
     //View Chat Topic
     @GET("ios/api/ga_chatadmin.php?operation=view")

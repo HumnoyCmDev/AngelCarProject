@@ -27,8 +27,9 @@ public class SampleRx {
     }
     public static void main(String[] str) {
 
-       String msg = "hhhhhhhhhhhhhhhhhhhhhhhhhhh";
-        System.out.print(!msg.contains("<image>") && !msg.contains("</image>"));
+        for (int i = 10; i > 0 ; i--) {
+            System.out.println(i);
+        }
     }
 
     static class MyObject {

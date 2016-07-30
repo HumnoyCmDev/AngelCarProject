@@ -162,7 +162,8 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
                 // Last message in cluster
                 viewHolder.mAvatar.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
-                        .load(R.drawable.ic_hndeveloper)
+                        .load(R.drawable.ic_place_holder_2)
+                        .placeholder(R.drawable.ic_place_holder_2)
                         .bitmapTransform(new CropCircleTransformation(mContext))
                         .into(viewHolder.mAvatar);
             } else {

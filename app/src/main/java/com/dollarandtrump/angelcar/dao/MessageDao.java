@@ -1,6 +1,8 @@
 
 package com.dollarandtrump.angelcar.dao;
 
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,18 +10,29 @@ import org.parceler.Parcel;
 
 import java.util.Date;
 
-@Parcel
+@Parcel(value = Parcel.Serialization.FIELD, analyze = MessageDao.class)
+@Table(name = "MessageDao")
 public class MessageDao {
 
-    @SerializedName("messageid")        @Expose int messageId;
-    @SerializedName("messagecarid")     @Expose String messageCarId;
-    @SerializedName("messagefromuser")  @Expose String messageFromUser;
-    @SerializedName("messagetext")      @Expose String messageText;
-    @SerializedName("displayname")      @Expose String displayName;
-    @SerializedName("messageby")        @Expose String messageBy;
-    @SerializedName("userprofileimage") @Expose String userProfileImage;
-    @SerializedName("messagestamp")     @Expose Date messageStamp;
-    @SerializedName("messagestatus")     @Expose int messageStatus;
+    @SerializedName("messageid")        @Expose @Column(name = "MessageId") int messageId;
+    @SerializedName("messagecarid")     @Expose @Column(name = "messageCarId") String messageCarId;
+    @SerializedName("messagefromuser")  @Expose @Column(name = "messageFromUser") String messageFromUser;
+    @SerializedName("messagetext")      @Expose @Column(name = "messageText") String messageText;
+    @SerializedName("displayname")      @Expose @Column(name = "displayName") String displayName;
+    @SerializedName("messageby")        @Expose @Column(name = "messageBy") String messageBy;
+    @SerializedName("userprofileimage") @Expose @Column(name = "userProfileImage") String userProfileImage;
+    @SerializedName("messagestamp")     @Expose @Column(name = "messageStamp") Date messageStamp;
+    @SerializedName("messagestatus")    @Expose @Column(name = "messageStatus") int messageStatus;
+
+    @Column(name = "isSent") boolean isSent = true;
+
+    public boolean isSent() {
+        return isSent;
+    }
+
+    public void setSent(boolean sent) {
+        isSent = sent;
+    }
 
     public int getMessageStatus() {
         return messageStatus;

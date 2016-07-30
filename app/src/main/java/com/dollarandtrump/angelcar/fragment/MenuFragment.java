@@ -39,7 +39,7 @@ public class MenuFragment extends Fragment {
 
     NotificationManagerCompat mNotification;
 
-    CacheShop mCacheShop;
+    CacheShop mShopCache;
     public MenuFragment() {
         super();
     }
@@ -70,17 +70,17 @@ public class MenuFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        mCacheShop = new Select().from(CacheShop.class).executeSingle();
+        mShopCache = new Select().from(CacheShop.class).executeSingle();
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this, rootView);
 
-        if (mCacheShop != null) {
-            mImageProfile.setImageUrl(getActivity(), mCacheShop.getProfileDao().getUrlShopLogo());
-            mName.setText(mCacheShop.getProfileDao().getShopName());
-            mDescription.setText(mCacheShop.getProfileDao().getShopDescription());
+        if (mShopCache != null) {
+            mImageProfile.setImageUrl(getActivity(), mShopCache.getProfileDao().getUrlShopLogo());
+            mName.setText(mShopCache.getProfileDao().getShopName());
+            mDescription.setText(mShopCache.getProfileDao().getShopDescription());
         }
     }
 
