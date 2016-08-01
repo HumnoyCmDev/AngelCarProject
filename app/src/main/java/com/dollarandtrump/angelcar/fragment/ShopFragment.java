@@ -267,7 +267,8 @@ public class ShopFragment extends Fragment {
 
         /*Query PostCar*/
         mHashTagAdapter.setDao(this.mShopCollectionDao.queryFindBrandDuplicates());
-        mHashTagAdapter.setChildBrand(this.mShopCollectionDao.queryPostCar().getListCar());
+//        mHashTagAdapter.setChildBrand(this.mShopCollectionDao.queryPostCar().getListCar());
+        mHashTagAdapter.setChildBrand(this.mShopCollectionDao.queryCarSub());
         mHashTagAdapter.notifyDataSetChanged();
 
         mAdapter.setDao(this.mShopCollectionDao.getPostCarCollection());

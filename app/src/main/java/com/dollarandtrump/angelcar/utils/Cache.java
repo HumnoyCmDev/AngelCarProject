@@ -26,6 +26,11 @@ public class Cache {
         mContext = Contextor.getInstance().getContext();
     }
 
+    public Cache(String key,Object object){
+        mContext = Contextor.getInstance().getContext();
+        save(key,object);
+    }
+
     public String getUUIdCode(){
         return UUID.randomUUID().toString();
     }

@@ -125,18 +125,20 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
 
         if (getItemViewType(position) == TYPE_ME){
 
-            if (AngelCarUtils.isMessageText(topic.getMessage()))
+            if (AngelCarUtils.isMessageText(topic.getMessage())) {
                 viewHolder.mCallText.setText(topic.getMessage());
-            else
+            }else {
                 viewHolder.mCallText.setText("คุณส่งรูปภาพ 1 รูป");
+            }
             viewHolder.mCallText.setBackgroundResource(R.drawable.topic_item_call_me);
 
         }else {
 
-            if (AngelCarUtils.isMessageText(topic.getMessage()))
+            if (AngelCarUtils.isMessageText(topic.getMessage())) {
                 viewHolder.mCallText.setText(topic.getMessage());
-            else
-                viewHolder.mCallText.setText(topic.getUserId()+"ส่งรูปภาพ 1 รูป");
+            }else {
+                viewHolder.mCallText.setText(topic.getUserId() + "ส่งรูปภาพ 1 รูป");
+            }
             viewHolder.mCallText.setTextColor(Color.WHITE);
             viewHolder.mCallText.setBackgroundResource(R.drawable.topic_item_call_them);
 

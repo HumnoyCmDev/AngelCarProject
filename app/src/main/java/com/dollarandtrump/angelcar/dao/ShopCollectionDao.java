@@ -50,7 +50,7 @@ public class ShopCollectionDao /*implements Serializable*/ {
         if (postCarDao != null) {
             ActiveAndroid.beginTransaction();
             try {
-                for (PostCarDao d : getPostCarDao()) {
+                for (PostCarDao d : postCarDao) {
                     d.save();
                     CacheShop cacheShop = new CacheShop();
                     cacheShop.setPostCarDao(d);
@@ -80,6 +80,12 @@ public class ShopCollectionDao /*implements Serializable*/ {
         PostCarCollectionDao newDao = new PostCarCollectionDao();
         newDao.setListCar(model);
         return newDao;
+    }
+
+    public List<PostCarDao> queryCarSub(){
+        return new Select().from(PostCarDao.class)
+                .groupBy("CarSub").having("COUNT(CarSub) > 0")
+                .orderBy("BrandName ASC").execute();
     }
 
     public PostCarCollectionDao queryFindBrandDuplicates(){

@@ -37,6 +37,8 @@ public interface ApiService {
     // Chat Api
     @GET("ios/api/ga_chatcar.php?operation=view")
     Call<MessageCollectionDao> viewMessage(@Query("message") String message);
+    @GET("ios/api/ga_chatcar.php?operation=view")
+    Observable<MessageCollectionDao> observableViewMessage(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=wait")
     Call<MessageCollectionDao> waitMessage(@Query("message") String message);

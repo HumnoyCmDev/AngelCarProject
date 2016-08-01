@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,12 +38,13 @@ import com.dollarandtrump.angelcar.manager.WaitMessageObservable;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.RxSendMessage;
-import com.dollarandtrump.angelcar.model.ConversationCache;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.RxLocationPicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
+import com.dollarandtrump.angelcar.utils.Cache;
 import com.dollarandtrump.angelcar.view.ItemCarDetails;
 import com.google.android.gms.location.places.Place;
+import com.google.gson.Gson;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.squareup.otto.Subscribe;
@@ -91,6 +91,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 
     private WaitMessageObservable mWaitMessage;
     private Subscription mSubscription;
+    private String mKeyMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,8 +100,24 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
         ButterKnife.bind(this);
         initToolbar();
         initInstance();
-        loadDataMessage();
-//        loadFollow();
+
+
+        if (savedInstanceState == null) {
+            // load message
+            Cache cache = new Cache();
+            if (cache.isFile(mKeyMessage)) {
+                String json = cache.load(mKeyMessage, String.class);
+                MessageCollectionDao messageDao = new Gson().fromJson(json, MessageCollectionDao.class);
+                mMessageManager.setMessageDao(messageDao);
+
+                mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
+                mViewMessageAdapter.notifyDataSetChanged();
+                mLinearLayoutManager.scrollToPosition(mViewMessageAdapter.getItemCount());
+                loadMoreMessage(mMessageManager.getMaximumId());
+            } else {
+                loadMessageNewer();
+            }
+        }
     }
 
     private void loadFollow() {
@@ -118,6 +135,9 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
                 getIntent().getParcelableExtra("PostCarDao"));
         mMessageFromUser = getIntent().getStringExtra("messageFromUser");
         int intentForm = getIntent().getIntExtra("intentForm", 1);
+
+        mKeyMessage = String.format(getResources().getString(R.string.key_message),
+                mPostCarDao.getCarId(),mMessageFromUser);
 
 
         /*check user*/
@@ -145,6 +165,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
         mLinearLayoutManager.setStackFromEnd(true);
         mListChat.setLayoutManager(mLinearLayoutManager);
         mViewMessageAdapter = new ViewMessageAdapter(this,mMessageBy);
+        mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
         mListChat.setAdapter(mViewMessageAdapter);
         mViewMessageAdapter.setOnClickItemBannerListener(this);
 
@@ -207,7 +228,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
             case R.id.button_personnel:
                 Dialog dialog = new AlertDialog.Builder(CarDetailActivity.this)
                         .setTitle("Message!")
-                        .setMessage("เชิญบุคคลที่ 3")
+                        .setMessage("เชิญเจ้าหน้าที่")
                         .setNegativeButton("Ok", listenerDialogConfirm)
                         .create();
                 dialog.show();
@@ -320,7 +341,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 //        }
 //    }
 
-    private void loadDataMessage() {
+    private void loadMessageNewer() {
 
 //        RxMessageObservable.with().publishSubject()
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -338,7 +359,9 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 //                    }
 //                });
 
-        Log.i(TAG, "loadDataMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
+        /*save message json [message_json_[carId]_[messageFromUser]]*/
+        Log.i(TAG, "loadMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
+
         Call<MessageCollectionDao> call =
                 HttpManager.getInstance().getService()
                         .viewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
@@ -347,23 +370,10 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
             public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
                 if (response.isSuccessful()){
 
-                    mMessageManager.appendDataToBottomPosition(response.body());
-                   /* mAdapter.setMessages(mMessageManager.getMessageDao().getListMessage());
-                    mAdapter.notifyDataSetChanged();*/
+                    initMessageAdapter(response.body());
 
-                    // TODO-GREEN Test new adapter set message
-                    mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
-                    mViewMessageAdapter.notifyDataSetChanged();
-
-//                    mListChat.smoothScrollToPosition(mViewMessageAdapter.getItemCount());
-                    mLinearLayoutManager.scrollToPosition(mViewMessageAdapter.getItemCount());
-
-                    //Test Load Message
-                    ConversationCache conversationCache = new ConversationCache();
-                    conversationCache.setCarId(mPostCarDao.getCarId()+"");
-                    conversationCache.setUser(mMessageFromUser);
-                    conversationCache.setMessage(mMessageManager.getMessageDao().getListMessage());
-                    conversationCache.save();
+                    String gson = new Gson().toJson(response.body());
+                    boolean isSuccess = new Cache().save(mKeyMessage, gson);
 
                     /*start Time Out 1000L wait message */
                     /**observable wait message **/
@@ -388,6 +398,26 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
             }
         });
 
+    }
+
+    public void loadMoreMessage(int currentMessageId){
+        HttpManager.getInstance().getService()
+                .observableViewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||"+currentMessageId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<MessageCollectionDao>() {
+                    @Override
+                    public void call(MessageCollectionDao dao) {
+                        initMessageAdapter(dao);
+                    }
+                });
+    }
+
+    private void initMessageAdapter(MessageCollectionDao dao) {
+        mMessageManager.appendDataToBottomPosition(dao);
+        mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
+        mViewMessageAdapter.notifyDataSetChanged();
+        mLinearLayoutManager.scrollToPosition(mViewMessageAdapter.getItemCount());
     }
 
     @Override
@@ -423,6 +453,22 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
                 }
             }
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("pic",Parcels.wrap(mPictureCollectionDao));
+        outState.putParcelable("postcar",Parcels.wrap(mPostCarDao));
+        outState.putParcelable("message",Parcels.wrap(mMessageManager.getMessageDao()));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        mPictureCollectionDao = Parcels.unwrap(savedInstanceState.getParcelable("pic"));
+        mPostCarDao = Parcels.unwrap(savedInstanceState.getParcelable("postcar"));
+        MessageCollectionDao message = Parcels.unwrap(savedInstanceState.getParcelable("message"));
+        mMessageManager.setMessageDao(message);
     }
 
     @Override

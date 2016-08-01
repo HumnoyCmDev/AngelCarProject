@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AngelCar</string>
+    <string name="app_name">Angel Car</string>
     <string name="hello_world">Hello world!</string>
     <string name="message_hint">เขียนข้อความ...</string>
     <string name="post_notice">การลงประกาศรถมือสองสมาชิกทั่วไป สามารถลงประกาศได้ไม่เกิน 3 คัน หากผู้ใช้งานต้องการลงมากกว่าที่กำหนด ท่านสามารถลงทะเบียนเป็นสถานะ “เต้นท์รถ” ได้โดยไม่มีค่าใช้จ่ายครับ</string>
@@ -14,6 +14,8 @@
     <string name="follow">ติดตาม</string>
     <string name="read">อ่านแล้ว</string>
     <string name="un_read">ยังไม่อ่าน</string>
+
+    <string name="key_message" formatted="false" >message_json_%s_%s</string>
 
     <string-array name="time_days_of_week">
         <item>อา.</item>

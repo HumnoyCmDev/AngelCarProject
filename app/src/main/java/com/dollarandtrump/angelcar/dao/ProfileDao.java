@@ -29,7 +29,7 @@ public class ProfileDao extends Model /*implements Serializable*/ {
     @SerializedName("shopcreate")       @Expose @Column(name = "ShopCreate") String shopCreate;
     @SerializedName("shopview")         @Expose @Column(name = "ShopView") int shopView;
     @SerializedName("shopfollow")       @Expose @Column(name = "ShopFollow") int shopFollow;
-    @SerializedName("profile_path")     @Expose @Column(name = "ProfilePathImage") List<String> profilePath = new ArrayList<String>();
+    @SerializedName("profile_path")     @Expose @Column(name = "ProfilePathImage") List<String> profilePath = new ArrayList<>();
 
 
     public List<String> getProfilePath() {

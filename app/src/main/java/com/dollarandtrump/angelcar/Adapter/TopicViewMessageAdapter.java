@@ -2,6 +2,7 @@ package com.dollarandtrump.angelcar.Adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
@@ -158,6 +159,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                 TextView textMessage = new TextView(mContext);
                 textMessage.setBackgroundResource(R.drawable.message_item_call_them);
                 textMessage.setText(msgDao.getMessageText());
+                textMessage.setTextColor(Color.WHITE);
                 viewHolder.mCell.addView(textMessage);
             }else {
 //                initImageMessage(viewHolder, msgDao);

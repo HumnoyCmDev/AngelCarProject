@@ -18,7 +18,7 @@ public class CacheShop  extends Model{
     @Column(name = "Profile")
     public ProfileDao profileDao;
 
-    @Column(name = "Post")
+    @Column(name = "PostCar")
     public PostCarDao postCarDao;
 
     public ProfileDao getProfileDao() {
