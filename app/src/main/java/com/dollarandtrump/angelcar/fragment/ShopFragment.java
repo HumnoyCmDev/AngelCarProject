@@ -29,6 +29,7 @@ import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
+import com.dollarandtrump.angelcar.activity.ViewCarActivity;
 import com.dollarandtrump.angelcar.activity.ViewDetailActivity;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
@@ -459,7 +460,7 @@ public class ShopFragment extends Fragment {
         @Override
         public void OnClickItemListener(View v, int position) {
             PostCarDao modelCar = mShopCollectionDao.getPostCarDao().get(position);
-            Intent inViewDetail = new Intent(getActivity(), ViewDetailActivity.class);
+            Intent inViewDetail = new Intent(getActivity(), ViewCarActivity.class);
             inViewDetail.putExtra("is_shop",isShop);
             inViewDetail.putExtra("dao",Parcels.wrap(modelCar));
             startActivity(inViewDetail);

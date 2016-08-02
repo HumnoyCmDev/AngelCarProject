@@ -72,6 +72,11 @@ public interface ApiService {
     @GET("ios/api/ga_chatadmin.php?operation=newtopic")
     Observable<Results> observableCreateTopic(@Query("message") String message);
 
+    // conversation Topic
+    @GET("ios/api/ga_chatadmin.php?operation=viewsystems")
+    Observable<Results> observableConversationTopic(@Query("message") String topId);
+
+
 
     //Insert Post Car
     @FormUrlEncoded

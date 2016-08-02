@@ -28,6 +28,7 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.CarDetailActivity;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
+import com.dollarandtrump.angelcar.activity.ViewCarActivity;
 import com.dollarandtrump.angelcar.activity.ViewDetailActivity;
 import com.dollarandtrump.angelcar.anim.ResizeHeight;
 import com.dollarandtrump.angelcar.dao.CarBrandDao;
@@ -518,15 +519,15 @@ public class FeedPostFragment extends Fragment{
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
             //TODO-GREEN Handel Show Detail Car
-           /* if (Registration.getInstance().getUserId() != null) {
+            if (Registration.getInstance().getUserId() != null) {
                 PostCarDao modelCar = mPostManager.getDao().getListCar().get(position);
                 boolean isShop = modelCar.getShopRef().contains(Registration.getInstance().getShopRef());
-                Intent inViewDetail = new Intent(getActivity(), ViewDetailActivity.class);
+                Intent inViewDetail = new Intent(getActivity(), ViewCarActivity.class);
                 inViewDetail.putExtra("is_shop",isShop);
                 inViewDetail.putExtra("dao",Parcels.wrap(modelCar));
                 startActivity(inViewDetail);
                 return true;
-            }*/
+            }
             return false;
         }
     };

@@ -29,6 +29,7 @@ import java.text.DecimalFormat;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
+@Deprecated
 public class ItemCarDetailView extends BaseCustomViewGroup {
     ImageView ic_Profile;
     ImageBanner banner;
