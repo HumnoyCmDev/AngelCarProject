@@ -1,10 +1,18 @@
 [
     {
-        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\color\\vpi__dark_theme.xml",
-        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\color\\vpi__dark_theme.xml"
+        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/color/vpi__dark_theme.xml",
+        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/color/vpi__dark_theme.xml"
     },
     {
-        "merged": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\color\\vpi__light_theme.xml",
-        "source": "D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\color\\vpi__light_theme.xml"
+        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\color\\vpi__light_theme.xml",
+        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\color\\vpi__light_theme.xml"
+    },
+    {
+        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/build/intermediates/res/merged/debug/color/vpi__light_theme.xml",
+        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/Indicator/src/main/res/color/vpi__light_theme.xml"
+    },
+    {
+        "merged": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/D:\\Dev\\Android\\AngelCarProject\\Indicator\\build\\intermediates\\res\\merged\\debug\\color\\vpi__dark_theme.xml",
+        "source": "/Volumes/HumNoyHD/CM Developer /Android Dev/AngelCarProject/D:\\Dev\\Android\\AngelCarProject\\Indicator\\src\\main\\res\\color\\vpi__dark_theme.xml"
     }
 ]
