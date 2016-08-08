@@ -22,7 +22,7 @@ import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
@@ -151,13 +151,13 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 mFollow.setText(!isFollow ? R.string.follow : R.string.un_follow);
                 if (isFollow) {
                     //Add Follow
-                    Call<Results> callAddFollow = HttpManager.getInstance().getService()
+                    Call<SuccessDao> callAddFollow = HttpManager.getInstance().getService()
                             .follow("add",String.valueOf(mPostCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callAddFollow.enqueue(callbackAddOrRemoveFollow);
                 }else {
                     //Delete Follow
-                    Call<Results> callDelete = HttpManager.getInstance().getService()
+                    Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
                             .follow("delete",String.valueOf(mPostCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -308,9 +308,9 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mPostCarDao = Parcels.unwrap(bundle.getParcelable("postDao"));
     }
 
-    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
+    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
         @Override
-        public void onResponse(Call<Results> call, Response<Results> response) {
+        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
             if (response.isSuccessful()) {
 //                Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -322,7 +322,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
             }
         }
         @Override
-        public void onFailure(Call<Results> call, Throwable t) {
+        public void onFailure(Call<SuccessDao> call, Throwable t) {
 //            Log.e(TAG, "onFailure: ", t);
         }
     };

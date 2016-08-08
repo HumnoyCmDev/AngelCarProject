@@ -26,6 +26,16 @@ public class MessageDao {
 
     @Column(name = "isSent") boolean isSent = true;
 
+    private boolean isTopic = false;
+
+    public boolean isTopic() {
+        return isTopic;
+    }
+
+    public void setTopic(boolean topic) {
+        isTopic = topic;
+    }
+
     public boolean isSent() {
         return isSent;
     }
@@ -42,7 +52,7 @@ public class MessageDao {
         this.messageStatus = messageStatus;
     }
 
-    // Topic
+    /*// Topic
     @SerializedName("messagetopicid") @Expose String messageTopId;
 
     public String getMessageTopId() {
@@ -51,7 +61,7 @@ public class MessageDao {
 
     public void setMessageTopId(String messageTopId) {
         this.messageTopId = messageTopId;
-    }
+    }*/
 
     public int getMessageId() {
         return messageId;

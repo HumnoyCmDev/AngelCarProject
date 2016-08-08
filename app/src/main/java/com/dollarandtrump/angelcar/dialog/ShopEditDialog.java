@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
@@ -128,10 +128,10 @@ public class ShopEditDialog extends DialogFragment {
         }
         String shopRef = Registration.getInstance().getShopRef();
         String message = shopRef+"||"+shopName+"||"+shopDescription;
-        Observable<Results> rxCall = HttpManager.getInstance().getService().observableEditShop(message)
+        Observable<SuccessDao> rxCall = HttpManager.getInstance().getService().observableEditShop(message)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
-        rxCall.subscribe(new Observer<Results>() {
+        rxCall.subscribe(new Observer<SuccessDao>() {
             @Override
             public void onCompleted() {
 
@@ -144,9 +144,10 @@ public class ShopEditDialog extends DialogFragment {
             }
 
             @Override
-            public void onNext(Results results) {
+            public void onNext(SuccessDao successDao) {
                 if (editShopCallback != null)
                     editShopCallback.onSuccess();
+                dismiss();
             }
         });
 

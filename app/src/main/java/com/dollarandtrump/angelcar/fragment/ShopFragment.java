@@ -16,11 +16,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -30,7 +29,6 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
 import com.dollarandtrump.angelcar.activity.ViewCarActivity;
-import com.dollarandtrump.angelcar.activity.ViewDetailActivity;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
@@ -80,8 +78,9 @@ public class ShopFragment extends Fragment {
     @Bind(R.id.text_view_shop_name) TextView mTextShopName;
     @Bind(R.id.text_view_view_shop) TextView mTextViewShop;
 
-    @Bind(R.id.frame_layout_progressbar) FrameLayout mGroupProgressbar;
-    @Bind(R.id.progressbar_load) ProgressBar mProgressbarLoad;
+//    @Bind(R.id.frame_layout_progressbar) FrameLayout mGroupProgressbar;
+//    @Bind(R.id.progressbar_load) ProgressBar mProgressbarLoad;
+    @Bind(R.id.sub_progressbar) ViewStub mSubProgressbar;
     @Bind(R.id.image_view_glide_profile) ImageViewGlide mImageProfile;
     @Bind(R.id.app_barLayout) AppBarLayout mAppBarLayout;
     @Bind(R.id.floating_action_menu_fab) FloatingActionMenu mMenuFab;
@@ -248,7 +247,7 @@ public class ShopFragment extends Fragment {
     }
 
     private void loadData() {
-        visibilityGroupProgress(View.VISIBLE);
+        viewSubProgressbar(View.VISIBLE);
         String userRef = getArguments().getString("user");
         String shopRef = getArguments().getString("shop");
 
@@ -345,7 +344,7 @@ public class ShopFragment extends Fragment {
             ft.remove(fragment);
         }
 //        ft.addToBackStack(null);
-        ShopEditDialog dialog = new ShopEditDialog();
+        final ShopEditDialog dialog = new ShopEditDialog();
         Bundle args = new Bundle();
         args.putString("shopName", mTextShopName.getText().toString());
         args.putString("shopDescription",mTextShopDescription.getText().toString());
@@ -407,9 +406,8 @@ public class ShopFragment extends Fragment {
             mSubscription.unsubscribe();
     }
 
-    void visibilityGroupProgress(int view){
-        mGroupProgressbar.setVisibility(view);
-        mProgressbarLoad.setVisibility(view);
+    void viewSubProgressbar(int view){
+        mSubProgressbar.setVisibility(view);
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -440,19 +438,19 @@ public class ShopFragment extends Fragment {
         @Override
         public void onCompleted() {
             Log.i(TAG, "onCompleted: ");
-            visibilityGroupProgress(View.GONE);
+            viewSubProgressbar(View.GONE);
         }
 
         @Override
         public void onError(Throwable e) {
             Log.e(TAG, "onError: ", e);
-            visibilityGroupProgress(View.GONE);
+            viewSubProgressbar(View.GONE);
         }
 
         @Override
         public void onNext(ShopCollectionDao shopCollectionDao) {
             initData(shopCollectionDao);
-            visibilityGroupProgress(View.GONE);
+            viewSubProgressbar(View.GONE);
         }
     };
 

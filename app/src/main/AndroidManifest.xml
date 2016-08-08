@@ -30,7 +30,7 @@
             android:value="GlideModule" />
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".activity.SplashScreenActivity"
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.CarDetailActivity"
+            android:name=".activity.ChatCarActivity"
             android:label="ห้องสนทนา"
             android:windowSoftInputMode="stateHidden|adjustResize" >
             <!--<intent-filter>-->
@@ -75,6 +75,7 @@
         <activity android:name=".activity.EditPostActivity"/>
         <activity android:name=".activity.ViewDetailActivity"/>
         <activity android:name=".activity.ViewCarActivity"/>
+        <activity android:name=".activity.MainActivity"/>
 
         <activity
             android:name=".rx_picker.HiddenActivity"
@@ -83,7 +84,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <meta-data android:name="AA_DB_NAME" android:value="AngelCar.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="5" />
+        <meta-data android:name="AA_DB_VERSION" android:value="0" />
         <meta-data android:name="AA_SERIALIZERS"
             android:value="com.dollarandtrump.angelcar.utils.ListStringSerializer" />
 

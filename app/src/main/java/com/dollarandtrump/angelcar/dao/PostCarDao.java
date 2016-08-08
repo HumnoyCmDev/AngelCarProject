@@ -123,10 +123,62 @@ public class PostCarDao extends Model implements Serializable {
     @Column(name = "ShopLogo")
     String shopLogo;
 
+    @SerializedName("carview")
+    @Expose
+    @Column(name = "View")
+    String  carView;
+
+    @SerializedName("deal")
+    @Expose
+    @Column(name = "Deal")
+    int deal;
+
+    @SerializedName("status")
+    @Expose
+    @Column(name = "Status")
+    String status;
+
+    @SerializedName("comment")
+    @Expose
+    @Column(name = "Comment")
+    String comment;
+
     /**  **/
     @SerializedName("carname") @Expose int carNameId;
     @SerializedName("cartyperef") @Expose int carSubId;
     @SerializedName("carmodelref") @Expose int carSubDetailId;
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getDeal() {
+        return deal;
+    }
+
+    public void setDeal(int deal) {
+        this.deal = deal;
+    }
+
+    public String getCarView() {
+        return carView;
+    }
+
+    public void setCarView(String carView) {
+        this.carView = carView;
+    }
 
     public String getShopName() {
         return shopName;

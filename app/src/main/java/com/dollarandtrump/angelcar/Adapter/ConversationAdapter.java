@@ -39,7 +39,9 @@ public class ConversationAdapter extends BaseAdapter{
 
     String[] mProduceIds = null;
     Context context;
-    public ConversationAdapter() {
+    boolean isTopic;
+    public ConversationAdapter(boolean isTopic) {
+        this.isTopic = isTopic;
     }
 
     public void setDao(List<MessageDao> mListDao) {
@@ -93,7 +95,7 @@ public class ConversationAdapter extends BaseAdapter{
 
 
         /*Read message Bold*/
-        if (mProduceIds != null) {
+        if (!isTopic && mProduceIds != null) {
                 for (String id : mProduceIds){
                     /*message to  me(Shop)*/
                    if (id.equals(message.getMessageCarId()) && "user".equals(message.getMessageBy())){
@@ -109,6 +111,13 @@ public class ConversationAdapter extends BaseAdapter{
                        }
                     }
                 }
+        }else {
+            //Topic
+            if (!message.getMessageBy().equals("user") && message.getMessageStatus() == 0){
+                holder.title.setTypeface(null, Typeface.BOLD);
+                holder.lastMessage.setTypeface(null,Typeface.BOLD);
+            }
+
         }
 
 

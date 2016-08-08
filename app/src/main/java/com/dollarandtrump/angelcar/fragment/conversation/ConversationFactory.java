@@ -40,7 +40,7 @@ public abstract class ConversationFactory extends Fragment {
     private static final String TAG = "ChatAllFragment";
     private MessageManager mManager;
     private ConversationAdapter mAdapter;
-
+    private boolean isTopic = false;
     public ConversationFactory(){}
 
     @Override
@@ -66,7 +66,7 @@ public abstract class ConversationFactory extends Fragment {
     }
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-        mAdapter = new ConversationAdapter();
+        mAdapter = new ConversationAdapter(isTopic);
         if (mManager.getMessageDao() != null)
             mAdapter.setDao(mManager.getMessageDao().getListMessage());
         mListView.setAdapter(mAdapter);
@@ -122,6 +122,9 @@ public abstract class ConversationFactory extends Fragment {
         ButterKnife.unbind(this);
     }
 
+    public void setTopic(boolean topic) {
+        isTopic = topic;
+    }
 
     /**************
      *Listener Zone*
@@ -130,6 +133,7 @@ public abstract class ConversationFactory extends Fragment {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             MessageDao dao = mManager.getMessageDao().getListMessage().get(position);
+            if (isTopic) dao.setTopic(true);
             OnClickItemMessageListener onClickItemMessageListener =
                     (OnClickItemMessageListener) getActivity();
             onClickItemMessageListener.onClickItemMessage(dao);

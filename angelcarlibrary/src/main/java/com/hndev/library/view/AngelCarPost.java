@@ -14,6 +14,7 @@ import android.text.Html;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,7 +39,7 @@ public class AngelCarPost extends BaseCustomViewGroup {
 
     private CircularImageView ic_Profile;
     private CircularImageView ic_Product;
-
+    private ImageView mImgaeDeal;
     private TextView time;
     private TextView title;
     private TextView details;
@@ -98,6 +99,7 @@ public class AngelCarPost extends BaseCustomViewGroup {
         details2 = (TextView) findViewById(R.id.custom_view_ui_post_details2);
         background = (RelativeLayout) findViewById(R.id.custom_view_ui_post_background);
         time = (TextView) findViewById(R.id.custom_view_ui_post_time);
+        mImgaeDeal = (ImageView) findViewById(R.id.custom_view_ui_post_image_deal);
         //inti
 
 //        title.setMaxLines(1);
@@ -136,6 +138,18 @@ public class AngelCarPost extends BaseCustomViewGroup {
         } finally {
             a.recycle();
         }
+    }
+
+    public void setImageDeal(int deal){
+        int dealImage ;
+        if (deal == 0 ){
+            dealImage = R.drawable.shape_deal_low;
+        }else if (deal == 2){
+            dealImage = R.drawable.shape_deal_mid;
+        }else {
+            dealImage = R.drawable.shape_deal_high;
+        }
+        mImgaeDeal.setImageResource(dealImage);
     }
 
     public void setPictureProfile(int resourceId) {

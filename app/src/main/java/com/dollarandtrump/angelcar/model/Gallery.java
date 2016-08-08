@@ -14,6 +14,13 @@ import java.util.List;
 public class Gallery {
     List<ImageModel> listGallery = new ArrayList<>();
 
+    public Gallery() {
+    }
+
+    public Gallery(ImageModel imageModel) {
+        this.listGallery.add(imageModel);
+    }
+
     public List<ImageModel> getListGallery() {
         return listGallery;
     }

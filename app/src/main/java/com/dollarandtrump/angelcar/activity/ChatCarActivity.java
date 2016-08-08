@@ -30,7 +30,7 @@ import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Permission;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -67,8 +67,8 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
-public class CarDetailActivity extends AppCompatActivity implements ItemCarDetails.OnClickItemHeaderChatListener {
-    private static final String TAG = "CarDetailActivity";
+public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails.OnClickItemHeaderChatListener {
+    private static final String TAG = "Chat";
 
     @Bind(R.id.linear_layout_group_chat) LinearLayout groupChat;
     @Bind(R.id.edit_text_input_chat) EditText mInputChat;
@@ -104,6 +104,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 
         if (savedInstanceState == null) {
             // load message
+             /*save message json [message_json_[carId]_[messageFromUser]]*/
             Cache cache = new Cache();
             if (cache.isFile(mKeyMessage)) {
                 String json = cache.load(mKeyMessage, String.class);
@@ -117,6 +118,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
             } else {
                 loadMessageNewer();
             }
+            Log.i(TAG, "loadMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         }
     }
 
@@ -142,7 +144,6 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 
         /*check user*/
             mMessageBy = mPostCarDao.getShopRef().contains(Registration.getInstance().getShopRef()) ? "shop" : "user";
-//            Toast.makeText(CarDetailActivity.this, mPostCarDao.getCarId()+","+ mMessageBy, Toast.LENGTH_LONG).show();
 
         if (intentForm == 0 && mMessageBy.contains("shop"))
             groupChat.setVisibility(View.GONE);
@@ -180,7 +181,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
                             String url = message.getMessageText()
                                     .substring("<img>".length(),
                                             message.getMessageText().lastIndexOf("</img>"));
-                            Intent intent = new Intent(CarDetailActivity.this,
+                            Intent intent = new Intent(ChatCarActivity.this,
                                     SingleViewImageActivity.class);
                             intent.putExtra("url", url);
                             startActivity(intent);
@@ -226,7 +227,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
             break;
 
             case R.id.button_personnel:
-                Dialog dialog = new AlertDialog.Builder(CarDetailActivity.this)
+                Dialog dialog = new AlertDialog.Builder(ChatCarActivity.this)
                         .setTitle("Message!")
                         .setMessage("เชิญเจ้าหน้าที่")
                         .setNegativeButton("Ok", listenerDialogConfirm)
@@ -303,7 +304,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 
     @Override
     public void onItemClickBanner(int position) {
-        Intent intent = new Intent(CarDetailActivity.this, ViewPictureActivity.class);
+        Intent intent = new Intent(ChatCarActivity.this, ViewPictureActivity.class);
         intent.putExtra("PICTURE_DAO", Parcels.wrap(mPictureCollectionDao));
         intent.putExtra("POSITION",position);
         startActivity(intent);
@@ -322,24 +323,6 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
     }
 
 
-    //    @Override
-//    public void onItemClickFollow(boolean isFollow) {
-//        Snackbar.make(mSend,"Follow :"+isFollow,Snackbar.LENGTH_LONG).show();
-//        if (isFollow) {
-//            //Add Follow
-//            Call<Results> callAddFollow = HttpManager.getInstance().getService()
-//                    .follow("add",String.valueOf(mPostCarDao.getCarId()),
-//                    Registration.getInstance().getShopRef());
-//            callAddFollow.enqueue(callbackAddOrRemoveFollow);
-//        }else {
-//            //Delete Follow
-//            Call<Results> callDelete = HttpManager.getInstance().getService()
-//                    .follow("delete",String.valueOf(mPostCarDao.getCarId()),
-//                    Registration.getInstance().getShopRef());
-//            callDelete.enqueue(callbackAddOrRemoveFollow);
-//
-//        }
-//    }
 
     private void loadMessageNewer() {
 
@@ -358,9 +341,6 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 //                        }
 //                    }
 //                });
-
-        /*save message json [message_json_[carId]_[messageFromUser]]*/
-        Log.i(TAG, "loadMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
 
         Call<MessageCollectionDao> call =
                 HttpManager.getInstance().getService()
@@ -384,7 +364,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
                     
                 }else {
                     try {
-                        Toast.makeText(CarDetailActivity.this,response.errorBody().string(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ChatCarActivity.this,response.errorBody().string(),Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -393,7 +373,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
 
             @Override
             public void onFailure(Call<MessageCollectionDao> call, Throwable t) {
-                Toast.makeText(CarDetailActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(ChatCarActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "onFailure: ", t);
             }
         });
@@ -500,16 +480,16 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
     DialogInterface.OnClickListener listenerDialogConfirm = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-                Call<Results> call =
+                Call<SuccessDao> call =
                         HttpManager.getInstance().getService().regOfficer(mPostCarDao.getCarId()+"||"+mMessageFromUser);
-                call.enqueue(new Callback<Results>() {
+                call.enqueue(new Callback<SuccessDao>() {
                     @Override
-                    public void onResponse(Call<Results> call, Response<Results> response) {
+                    public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
                         if (response.isSuccessful()){
-                            Toast.makeText(CarDetailActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ChatCarActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
                         }else {
                             try {
-                                Toast.makeText(CarDetailActivity.this,"success"+response.errorBody().string(),Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ChatCarActivity.this,"success"+response.errorBody().string(),Toast.LENGTH_SHORT).show();
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -517,7 +497,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
                     }
 
                     @Override
-                    public void onFailure(Call<Results> call, Throwable t) {
+                    public void onFailure(Call<SuccessDao> call, Throwable t) {
                         Log.e(TAG, "onFailure: ", t);
                     }
                 });
@@ -583,9 +563,9 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
         }
     };
 
-    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
+    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
         @Override
-        public void onResponse(Call<Results> call, Response<Results> response) {
+        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
             if (response.isSuccessful()) {
                 Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -597,7 +577,7 @@ public class CarDetailActivity extends AppCompatActivity implements ItemCarDetai
             }
         }
         @Override
-        public void onFailure(Call<Results> call, Throwable t) {
+        public void onFailure(Call<SuccessDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };

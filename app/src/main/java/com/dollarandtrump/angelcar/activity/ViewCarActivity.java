@@ -6,11 +6,14 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,7 +25,7 @@ import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.Permission;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
@@ -61,7 +64,12 @@ public class ViewCarActivity extends AppCompatActivity{
     @Bind(R.id.text_time) TextView mTime;
     @Bind(R.id.text_shop_name) TextView mShopName;
     @Bind(R.id.text_follow)  TextView mFollow;
+    @Bind(R.id.text_deal)  TextView mDeal;
+    @Bind(R.id.text_show_count_view)  TextView mShowCountView;
     @Bind(R.id.image_icon_profile) ImageView mImageProfile;
+    @Bind(R.id.image_deal) ImageView mImageDeal;
+    @Bind(R.id.button_chat) Button mChat;
+
 
     @Bind(R.id.group_button_update_car) LinearLayout mGroupButton;
 
@@ -89,7 +97,7 @@ public class ViewCarActivity extends AppCompatActivity{
         isShop = args.getBoolean("is_shop");
         mCarDao = Parcels.unwrap(args.getParcelable("dao"));
         mGroupButton.setVisibility(isShop ? View.VISIBLE : View.GONE);
-
+        mChat.setVisibility(isShop ? View.GONE : View.VISIBLE);
         mFollow.setVisibility(isShop ? View.GONE : View.VISIBLE);/*-กด follow จาก หน้า feed-*/
 
         if (savedInstanceState == null){
@@ -132,13 +140,13 @@ public class ViewCarActivity extends AppCompatActivity{
                 mFollow.setText(!isFollow ? R.string.follow : R.string.un_follow);
                 if (isFollow) {
                     //Add Follow
-                    Call<Results> callAddFollow = HttpManager.getInstance().getService()
+                    Call<SuccessDao> callAddFollow = HttpManager.getInstance().getService()
                             .follow("add",String.valueOf(mCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callAddFollow.enqueue(callbackAddOrRemoveFollow);
                 }else {
                     //Delete Follow
-                    Call<Results> callDelete = HttpManager.getInstance().getService()
+                    Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
                             .follow("delete",String.valueOf(mCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -196,6 +204,22 @@ public class ViewCarActivity extends AppCompatActivity{
         mBrand.setText(Html.fromHtml(carBrand));
         mYear.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",String.valueOf(postCarDao.getCarYear()))));
         mPrice.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",price)));
+        mShowCountView.setText(postCarDao.getCarView());
+
+        int dealImage ;
+        int detailDeal;
+        if (postCarDao.getDeal() == 0 ){
+            dealImage = R.drawable.shape_deal_low;
+            detailDeal = R.string.deal_low;
+        }else if (postCarDao.getDeal() == 2){
+            dealImage = R.drawable.shape_deal_mid;
+            detailDeal = R.string.deal_mid;
+        }else {
+            dealImage = R.drawable.shape_deal_high;
+            detailDeal = R.string.deal_high;
+        }
+        mImageDeal.setImageResource(dealImage);
+        mDeal.setText(detailDeal);
 
         Glide.with(this)
                 .load(postCarDao.getFullPathShopLogo())
@@ -235,6 +259,29 @@ public class ViewCarActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
+    @OnClick(R.id.button_chat)
+    public void onClickChat(){
+        Intent intent = new Intent(ViewCarActivity.this, ChatCarActivity.class);
+        intent.putExtra("PostCarDao", Parcels.wrap(mCarDao));
+        intent.putExtra("intentForm", 0);
+        intent.putExtra("messageFromUser", Registration.getInstance().getUserId());
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.button_announce)
+    public void onUpdateCar(){
+        HttpManager.getInstance().getService().observableAnnounce(String.valueOf(mCarDao.getCarId()))
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<SuccessDao>() {
+                    @Override
+                    public void call(SuccessDao successDao) {
+                        Snackbar.make(getWindow().getDecorView(),"เลื่อนประกาศได้อีกครั้ง "+successDao.getResult()+" ชั่วโมง",Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+                });
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -249,12 +296,21 @@ public class ViewCarActivity extends AppCompatActivity{
         mImageDao = Parcels.unwrap(savedInstanceState.getParcelable("imagedao"));
     }
 
-    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
         @Override
-        public void onResponse(Call<Results> call, Response<Results> response) {
+        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
         }
         @Override
-        public void onFailure(Call<Results> call, Throwable t) {
+        public void onFailure(Call<SuccessDao> call, Throwable t) {
         }
     };
 }

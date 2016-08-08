@@ -25,11 +25,10 @@ import android.widget.TextView;
 
 import com.dollarandtrump.angelcar.Adapter.FeedPostCarAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.activity.CarDetailActivity;
+import com.dollarandtrump.angelcar.activity.ChatCarActivity;
 import com.dollarandtrump.angelcar.activity.EditPostActivity;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
 import com.dollarandtrump.angelcar.activity.ViewCarActivity;
-import com.dollarandtrump.angelcar.activity.ViewDetailActivity;
 import com.dollarandtrump.angelcar.anim.ResizeHeight;
 import com.dollarandtrump.angelcar.dao.CarBrandDao;
 import com.dollarandtrump.angelcar.dao.CarSubDao;
@@ -547,10 +546,18 @@ public class FeedPostFragment extends Fragment{
             if (Registration.getInstance().getUserId() != null) {
                 if (mPostManager.getDao().getListCar().size() > position) {
                     final PostCarDao item = mPostManager.getDao().getListCar().get(position);
-                    Intent intent = new Intent(getActivity(), CarDetailActivity.class);
-                    intent.putExtra("PostCarDao", Parcels.wrap(item));
-                    intent.putExtra("intentForm", 0);
-                    intent.putExtra("messageFromUser", Registration.getInstance().getUserId());
+                    boolean isShop = item.getShopRef().contains(Registration.getInstance().getShopRef());
+                    Intent intent ;
+                    if (isShop){
+                        intent = new Intent(getActivity(), ViewCarActivity.class);
+                        intent.putExtra("is_shop",isShop);
+                        intent.putExtra("dao",Parcels.wrap(item));
+                    }else {
+                        intent = new Intent(getActivity(), ChatCarActivity.class);
+                        intent.putExtra("PostCarDao", Parcels.wrap(item));
+                        intent.putExtra("intentForm", 0);
+                        intent.putExtra("messageFromUser", Registration.getInstance().getUserId());
+                    }
                     startActivity(intent);
 
                 }
@@ -648,7 +655,6 @@ public class FeedPostFragment extends Fragment{
 
                 } else {
                     mPostManager.setDao(dao);
-                    com.dollarandtrump.angelcar.utils.Log.d("Reload count "+ dao.getListCar().size());
                 }
                 clearLoadingMoreFlagIfCapable(mode);
                 mAdapter.setDao(mPostManager.getDao());

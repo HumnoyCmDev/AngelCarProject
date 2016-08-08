@@ -18,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.hndev.library.view.Transformtion.ScalingUtilities;
 import com.squareup.picasso.Picasso;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import rx.schedulers.Schedulers;
 
 /**
  * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
@@ -91,7 +93,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
     public void bindCellViewHolder(CellViewHolder viewHolder, int position) {
          MessageDao msgDao  = mMessageDao.getListMessage().get(position);
-        boolean oneOnOne = getParticipants(mMessageDao); // User == 2 = true ; > 2 = false;
+        boolean oneOnOne = true;//getParticipants(mMessageDao); // User == 2 = true ; > 2 = false;
         //Clustering and dates
         Cluster cluster = getClustering(mMessageDao,position);
         if (cluster.mClusterWithPrevious == null){
@@ -118,18 +120,19 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         }
 
 
-//        for (int i = 0; i < viewHolder.mCell.getChildCount(); i++) {
-//            viewHolder.mCell.removeViewAt(i);
-//            Log.d("delete view "+ i);
-//        }
-
         viewHolder.mCell.removeAllViews();
 
-        if (getItemViewType(position) == TYPE_ME){
-            viewHolder.mReceipt.setVisibility(View.GONE);
+        if (viewHolder.getItemViewType() == TYPE_ME){
+
+            if (msgDao.getMessageId() == findLastItemCellMe()) {
+                int read = msgDao.getMessageStatus(); // 1 -> read message
+                viewHolder.mReceipt.setVisibility(read == 1 ? View.VISIBLE : View.GONE);
+                viewHolder.mReceipt.setText(R.string.read);
+            } else {
+                viewHolder.mReceipt.setVisibility(View.GONE);
+            }
 
             if (AngelCarUtils.isMessageText(msgDao.getMessageText())){ // text
-//                initTextMessage(viewHolder, msgDao,R.drawable.message_item_call_me);
 
                 TextView textMessage = new TextView(mContext);
                 textMessage.setBackgroundResource(R.drawable.message_item_call_me);
@@ -138,11 +141,8 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
 
             }else {
-//                initImageMessage(viewHolder, msgDao);
 
                 ImageView img = new ImageView(mContext);
-//                RoundedImageView img = new RoundedImageView(mContext);
-//                img.setRadius(10);
                 Picasso.with(mContext)
                         .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
                         .transform(new PictureReSize())
@@ -153,17 +153,20 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
 
         }else {
-            if (AngelCarUtils.isMessageText(msgDao.getMessageText())){ // text
-//                initTextMessage(viewHolder, msgDao,R.drawable.message_item_call_me);
+            if(msgDao.getMessageStatus() == 0){ /* Update Read Message*/
+                HttpManager.getInstance().getService()
+                        .observableReadTopicMessage(String.valueOf(msgDao.getMessageId()))
+                        .subscribeOn(Schedulers.newThread())
+                        .subscribe();
+            }
 
+            if (AngelCarUtils.isMessageText(msgDao.getMessageText())){ // text
                 TextView textMessage = new TextView(mContext);
                 textMessage.setBackgroundResource(R.drawable.message_item_call_them);
                 textMessage.setText(msgDao.getMessageText());
                 textMessage.setTextColor(Color.WHITE);
                 viewHolder.mCell.addView(textMessage);
             }else {
-//                initImageMessage(viewHolder, msgDao);
-
                 ImageView imageView = new ImageView(mContext);
                 Picasso.with(mContext)
                         .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
@@ -206,23 +209,15 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         }
     }
 
-
-//    private void initImageMessage(CellMeViewHolder viewHolder, MessageDao msgDao) {
-//        viewHolder.mCallImage.setVisibility(View.VISIBLE);
-//        Picasso.with(mContext)
-//                .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
-//                .transform(new PictureReSize())
-//                .placeholder(com.hndev.library.R.drawable.loading)
-//                .into(viewHolder.mCallImage);
-//        Log.d(AngelCarUtils.subUrlMessage(msgDao.getMessageText()));
-//    }
-//
-//    private void initTextMessage(CellThemViewHolder viewHolder, MessageDao msgDao,int drawable) {
-//        viewHolder.mCallText.setVisibility(View.VISIBLE);
-//        viewHolder.mCallText.setText(msgDao.getMessageText());
-//        viewHolder.mCallText.setBackgroundResource(drawable);
-//    }
-
+    private int findLastItemCellMe(){
+        int messageId = 0;
+        for(MessageDao message : mMessageDao.getListMessage()){
+            if (mMessageBy.equals(message.getMessageBy())){
+                messageId = message.getMessageId();
+            }
+        }
+        return messageId;
+    }
 
     @Override
     public int getItemCount() {

@@ -8,7 +8,6 @@ import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
-import com.dollarandtrump.angelcar.utils.Log;
 import com.google.gson.Gson;
 
 import org.parceler.Parcels;
@@ -25,8 +24,10 @@ public class MessageManager {
 
     private Context mContext;
     private MessageCollectionDao messageDao;
-    private MessageCollectionDao mConversationSell;
     private MessageCollectionDao mConversationBuy;
+    private MessageCollectionDao mConversationSell;
+
+    private MessageCollectionDao mConversationTopic;
 
     private CarIdDao mProductIds;
 
@@ -73,11 +74,27 @@ public class MessageManager {
     }
 
     public MessageCollectionDao getConversationSell() {
-        return mConversationBuy;
+        return mConversationSell;
     }
 
     public MessageCollectionDao getConversationBuy() {
-        return mConversationSell;
+        return mConversationBuy;
+    }
+
+    public MessageCollectionDao getConversationTopic() {
+        return mConversationTopic;
+    }
+
+    public void setConversationTopic(MessageCollectionDao conversationTopic) {
+        this.mConversationTopic = conversationTopic;
+    }
+
+    public void setConversationBuy(MessageCollectionDao conversationBuy) {
+        this.mConversationSell = conversationBuy;
+    }
+
+    public void setConversationSell(MessageCollectionDao conversationSell) {
+        this.mConversationBuy = conversationSell;
     }
 
     public void unifyDao(MessageAdminCollectionDao mConversationSell, MessageCollectionDao mConversationBuy){
@@ -89,7 +106,7 @@ public class MessageManager {
         if (messageDao.getListMessage() == null){
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
-        messageDao.getListMessage().addAll(getCount(),this.mConversationSell.getListMessage());
+        messageDao.getListMessage().addAll(getCount(),this.mConversationBuy.getListMessage());
         messageDao.getListMessage().addAll(getCount(),mConversationBuy.getListMessage());
 
 //        saveCache();

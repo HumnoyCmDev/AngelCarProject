@@ -84,6 +84,8 @@ public class TabTopicFragment extends Fragment{
 
      @OnClick({R.id.fab_finance,R.id.fab_refinance,R.id.fab_pawn})
      public void onClickFabButton(View v){
+         if (mMenuFab.isOpened())
+             mMenuFab.close(true);
          switch (v.getId()){
              case R.id.fab_finance:
                  if (Log.isLoggable(Log.DEBUG)) Log.d("Finance");

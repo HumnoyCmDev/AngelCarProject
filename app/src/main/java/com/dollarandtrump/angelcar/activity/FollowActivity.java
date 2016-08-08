@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 import com.dollarandtrump.angelcar.Adapter.FollowAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -113,7 +113,7 @@ public class FollowActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             PostCarDao item = dao.getListCar().get(position);
-            Intent intent = new Intent(FollowActivity.this, CarDetailActivity.class);
+            Intent intent = new Intent(FollowActivity.this, ChatCarActivity.class);
             intent.putExtra("PostCarDao", Parcels.wrap(item));
             intent.putExtra("intentForm", 0);
             intent.putExtra("messageFromUser",Registration.getInstance().getUserId());
@@ -130,7 +130,7 @@ public class FollowActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             //Delete Follow -server
-                            Call<Results> callDelete = HttpManager.getInstance().getService()
+                            Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
                                     .follow("delete",String.valueOf(dao.getListCar().get(position).getCarId()),
                                             Registration.getInstance().getShopRef());
                             callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -147,9 +147,9 @@ public class FollowActivity extends AppCompatActivity {
         }
     };
 
-    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
+    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
         @Override
-        public void onResponse(Call<Results> call, Response<Results> response) {
+        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
             if (response.isSuccessful()) {
                 if (Log.isLoggable(Log.DEBUG)) Log.d(""+response.body().success);
             } else {
@@ -162,7 +162,7 @@ public class FollowActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<Results> call, Throwable t) {
+        public void onFailure(Call<SuccessDao> call, Throwable t) {
             if (Log.isLoggable(Log.ERROR)) Log.e("Error",t);
         }
     };

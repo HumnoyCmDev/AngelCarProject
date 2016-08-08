@@ -15,11 +15,15 @@ import com.squareup.otto.Subscribe;
  * ลงวันที่ 11/16/2014. เวลา 11:42
  ***************************************/
 @SuppressWarnings("unused")
-public class ConversationAllFragment extends ConversationFactory implements OnClickItemMessageListener{
+public class ConversationTopicFragment extends ConversationFactory implements OnClickItemMessageListener{
+
+    public ConversationTopicFragment() {
+        setTopic(true);
+    }
 
     @Override
     public MessageCollectionDao getMessageManager(MessageManager manager) {
-        return manager.getMessageDao();
+        return manager.getConversationTopic();
     }
 
     @Subscribe

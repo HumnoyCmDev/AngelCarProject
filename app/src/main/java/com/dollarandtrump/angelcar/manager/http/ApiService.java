@@ -6,7 +6,7 @@ import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CountCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
@@ -44,7 +44,7 @@ public interface ApiService {
     Call<MessageCollectionDao> waitMessage(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=reqofficer")
-    Call<Results> regOfficer(@Query("message") String message);
+    Call<SuccessDao> regOfficer(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=viewclient")
     Call<MessageCollectionDao> messageClient(@Query("message") String message);
@@ -58,10 +58,10 @@ public interface ApiService {
 
     //read chat
     @GET("/ios/api/ga_chatcar.php?operation=read")
-    Observable<Results> observableReadMessage(@Query("message") String currentMessageId);
+    Observable<SuccessDao> observableReadMessage(@Query("message") String currentMessageId);
     //read topic chat
     @GET("/ios/api/ga_chatadmin.php?operation=read")
-    Observable<Results> observableReadTopicMessage(@Query("message") String currentMessageId);
+    Observable<SuccessDao> observableReadTopicMessage(@Query("message") String currentMessageId);
 
     //View Chat Topic
     @GET("ios/api/ga_chatadmin.php?operation=view")
@@ -70,18 +70,21 @@ public interface ApiService {
     Call<MessageCollectionDao> waitMessageTopic(@Query("message") String message);
     // Create Topic
     @GET("ios/api/ga_chatadmin.php?operation=newtopic")
-    Observable<Results> observableCreateTopic(@Query("message") String message);
+    Observable<SuccessDao> observableCreateTopic(@Query("message") String message);
 
     // conversation Topic
     @GET("ios/api/ga_chatadmin.php?operation=viewsystems")
-    Observable<Results> observableConversationTopic(@Query("message") String topId);
+    Observable<MessageAdminCollectionDao> observableConversationTopic(@Query("message") String topId);
 
+    //update post
+    @GET("android/api/updatepost.php")
+    Observable<SuccessDao> observableAnnounce(@Query("carid") String carId);
 
 
     //Insert Post Car
     @FormUrlEncoded
     @POST("android/api/insertpost.php")
-    Call<Results> postCar
+    Call<SuccessDao> postCar
     (
             @Field("shopref") String shopPref, // 1
             @Field("brandref") int brand, // toyota **ตัด
@@ -101,7 +104,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("android/api/insertpost.php")
-    Observable<Results> observablePostCar
+    Observable<SuccessDao> observablePostCar
             (
                     @Field("shopref") String shopPref, // 1
                     @Field("brandref") int brand, // toyota **ตัด
@@ -120,7 +123,7 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("android/api/updateshop.php")
-    Observable<Results> observableUpdatePostCar
+    Observable<SuccessDao> observableUpdatePostCar
             (
                     @Field("carid") int carId,
                     @Field("brandref") int brand, // toyota **ตัด
@@ -172,11 +175,11 @@ public interface ApiService {
 
     //GET Delete Chat
     @GET("android/api/deletechat.php")
-    Call<Results> deleteChatList(@Query("userref") String userRef);
+    Call<SuccessDao> deleteChatList(@Query("userref") String userRef);
 
     //GET Add or Delete Follow
     @GET("android/api/controlfollow.php")
-    Call<Results> follow(@Query("status") String status, @Query("carref") String carRef, @Query("shopref") String shopRef);
+    Call<SuccessDao> follow(@Query("status") String status, @Query("carref") String carRef, @Query("shopref") String shopRef);
 
     //GET Follow Car Model
     @GET("android/api/getfollowmodel.php")
@@ -225,14 +228,18 @@ public interface ApiService {
 
     //Edit Shop
     @GET("ios/api/cls_shop.php?operation=edit")
-    Observable<Results> observableEditShop(@Query("message") String message);
+    Observable<SuccessDao> observableEditShop(@Query("message") String message);
 
     //Register
     @FormUrlEncoded
     @POST("android/api/registerfirebase.php")
-    Observable<Results> sendTokenRegistration(@Field("userref") String userRef,@Field("shopref") String shopRef,@Field("firebaseid") String token);
+    Observable<SuccessDao> sendTokenRegistration(@Field("userref") String userRef, @Field("shopref") String shopRef, @Field("firebaseid") String token);
 
     /**Feed Topic**/
     @GET("ios/api/ga_chatadmin.php?operation=viewtopic")
     Observable<TopicCollectionDao> observableFeedTopic(@Query("message") String message);
+
+    /**หลักฐานรูป**/
+    @GET("ios/api/ga_car.php?operation=evidence")
+    Observable<SuccessDao> observableEvidence(@Query("message") String message);/**carid||shopid||{owner,delegate,dealers}**/
 }

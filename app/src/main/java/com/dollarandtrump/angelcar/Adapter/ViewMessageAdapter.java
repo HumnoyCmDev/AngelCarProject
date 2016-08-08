@@ -203,8 +203,8 @@ public class ViewMessageAdapter extends RecyclerView.Adapter<ViewMessageAdapter.
 
             if (message.getMessageId() == findLastItemCellMe()) {
                 int read = message.getMessageStatus(); // 1 -> read message
-                viewHolder.mReceipt.setVisibility(View.VISIBLE);
-                viewHolder.mReceipt.setText(read == 1 ? R.string.read : R.string.un_read);
+                viewHolder.mReceipt.setVisibility(read == 1 ? View.VISIBLE : View.GONE);
+                viewHolder.mReceipt.setText(R.string.read);
 //                Drawable img = mContext.getResources().getDrawable(read == 1 ? R.drawable.ic_msg_send_read : R.drawable.ic_msg_send);
 //                viewHolder.mReceipt.setCompoundDrawables(img,null
 //                ,null,null);

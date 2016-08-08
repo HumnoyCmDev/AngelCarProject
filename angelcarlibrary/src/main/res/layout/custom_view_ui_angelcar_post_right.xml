@@ -18,7 +18,7 @@
             android:layout_gravity="end"
             android:layout_marginRight="40dp"
             android:textSize="10sp"
-            android:text="20/08/2016 20:30 น."
+            android:text="[time]"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -85,18 +85,35 @@
                             android:ellipsize="end"
                             android:text="HN Developer"
                             android:textSize="13sp" />
-                        <TextView
-                            android:textColor="@android:color/white"
-                            android:id="@+id/custom_view_ui_post_details2"
+
+                        <LinearLayout
+                            android:gravity="center_vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:text="HN Developer"
-                            android:textSize="13sp" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:textColor="@android:color/white"
+                                android:id="@+id/custom_view_ui_post_details2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="HN Developer"
+                                android:textSize="13sp" />
+
+                            <ImageView
+                                android:layout_marginLeft="4dp"
+                                android:id="@+id/custom_view_ui_post_image_deal"
+                                android:src="@drawable/shape_deal_low"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
                 </LinearLayout>
+
+
 
             </RelativeLayout>
 

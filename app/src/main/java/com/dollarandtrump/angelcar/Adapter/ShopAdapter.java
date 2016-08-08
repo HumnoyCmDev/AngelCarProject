@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
+import com.dollarandtrump.angelcar.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,6 +127,8 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             String carName = item.getCarSub()+" "+item.getCarSubDetail();
                 viewHolder.carName.setText(carName);
             viewHolder.shopSetting.setVisibility(isShop ? View.VISIBLE : View.GONE);
+            if (item.getStatus() != null)
+                viewHolder.subDeal.setVisibility(item.getStatus().equals("wait") ? View.VISIBLE : View.GONE);
         }
 
     }
@@ -145,6 +149,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         @Bind(R.id.itemShopSetting) ImageView shopSetting;
         @Bind(R.id.itemShopImage) ImageView shopImage;
         @Bind(R.id.itemShopCar) TextView carName;
+        @Bind(R.id.sub_status_wait) ViewStub subDeal;
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);
@@ -214,7 +219,6 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             }
             results.values = daoFilterList;
             results.count = daoFilterList.size();
-
             return results;
         }
 

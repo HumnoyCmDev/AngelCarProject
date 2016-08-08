@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import com.dollarandtrump.angelcar.Adapter.TopicViewMessageAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.dao.TopicDao;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -65,6 +65,7 @@ public class TopicChatActivity extends AppCompatActivity {
 
     private WaitMessageObservable mWaitMessage;
     private Subscription mSubscription;
+    private LinearLayoutManager linearManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class TopicChatActivity extends AppCompatActivity {
         messageManager = new MessageManager();
         messageAdapter = new TopicViewMessageAdapter(TopicChatActivity.this, "user");
         messageAdapter.setMessageDao(messageManager.getMessageDao());
-        LinearLayoutManager linearManager = new LinearLayoutManager(this);
+        linearManager = new LinearLayoutManager(this);
         linearManager.setStackFromEnd(true);
         list.setLayoutManager(linearManager);
         list.setAdapter(messageAdapter);
@@ -175,7 +176,7 @@ public class TopicChatActivity extends AppCompatActivity {
         HttpManager.getInstance().getService().observableCreateTopic(message)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Results>() {
+                .subscribe(new Observer<SuccessDao>() {
 
                     @Override
                     public void onCompleted() {
@@ -190,8 +191,8 @@ public class TopicChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(Results results) {
-                        mRoomId = results.getResult();
+                    public void onNext(SuccessDao successDao) {
+                        mRoomId = successDao.getResult();
                         String message = mRoomId+"||"+mUserId+"||0";
                         loadMessage(message);
                     }
@@ -252,6 +253,7 @@ public class TopicChatActivity extends AppCompatActivity {
             messageManager.appendDataToBottomPosition(messageGa);
             messageAdapter.setMessageDao(messageManager.getMessageDao());
             messageAdapter.notifyDataSetChanged();
+            linearManager.scrollToPosition(messageAdapter.getItemCount());
         }
     }
 

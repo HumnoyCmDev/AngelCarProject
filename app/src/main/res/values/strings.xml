@@ -17,6 +17,10 @@
 
     <string name="key_message" formatted="false" >message_json_%s_%s</string>
 
+    <string name="deal_low">ต่ำกว่าราคากลาง</string>
+    <string name="deal_mid">ราคากลาง</string>
+    <string name="deal_high">สูงกว่าราคากลาง</string>
+
     <string-array name="time_days_of_week">
         <item>อา.</item>
         <item>จ.</item>
@@ -32,6 +36,7 @@
     <string name="text_finance">จัดไฟแนนซ์</string>
     <string name="text_refinance">รีไฟแนนซ์</string>
     <string name="text_pawn">จำนำทะเบียน</string>
+    <string name="text_deal">รอตรวจสอบหลักฐาน</string>
 
     <string-array name="province">
         <item>ราชบุรี</item>

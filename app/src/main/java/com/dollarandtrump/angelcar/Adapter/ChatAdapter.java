@@ -9,10 +9,8 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.Results;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
-import com.dollarandtrump.angelcar.utils.Log;
 import com.dollarandtrump.angelcar.view.ItemAnnounceView;
 import com.dollarandtrump.angelcar.view.ItemCarDetailView;
 import com.hndev.library.view.AngelCarMessage;
@@ -21,7 +19,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import rx.Observer;
 import rx.schedulers.Schedulers;
 
 /**

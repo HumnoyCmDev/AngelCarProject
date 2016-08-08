@@ -3,6 +3,7 @@ package com.dollarandtrump.angelcar.fragment;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,12 +18,35 @@ import com.activeandroid.query.Select;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
 import com.dollarandtrump.angelcar.manager.Registration;
+import com.dollarandtrump.angelcar.manager.http.RxUploadFile;
 import com.dollarandtrump.angelcar.model.CacheShop;
+import com.dollarandtrump.angelcar.model.Gallery;
+import com.dollarandtrump.angelcar.model.ImageModel;
+import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
+import com.dollarandtrump.angelcar.rx_picker.Sources;
+import com.dollarandtrump.angelcar.utils.FileUtils;
+import com.dollarandtrump.angelcar.utils.Log;
 import com.dollarandtrump.angelcar.view.ImageViewGlide;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 
 /***************************************
@@ -128,4 +152,28 @@ public class MenuFragment extends Fragment {
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
     }
+
+    @OnClick(R.id.button_upload_image)
+    public void onUploadImageTest(){
+        RxImagePicker.with(getActivity()).requestImage(Sources.GALLERY)
+                .subscribe(new Action1<Uri>() {
+                    @Override
+                    public void call(Uri uri) {
+                        List<File> f = new ArrayList<>();
+                        f.add(FileUtils.getFile(getContext(),uri));
+
+                        Gallery gallery = new Gallery(new ImageModel(uri,"0"));
+
+                        RxUploadFile.with(getContext()).evidence()
+                                .setEvidence("4",gallery)
+                                .subscriber(new Action1<String>() {
+                                    @Override
+                                    public void call(String s) {
+
+                                    }
+                                });
+                    }
+                });
+    }
+
 }

@@ -1,12 +1,18 @@
 package com.dollarandtrump.angelcar.activity;
 
 import android.accounts.AccountManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,20 +20,21 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.fragment.RegistrationAlertFragment;
-import com.dollarandtrump.angelcar.model.ActivityResultEvent;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.model.ActivityResultEvent;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
@@ -42,6 +49,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -77,6 +86,7 @@ public class MainActivity extends AppCompatActivity{
             R.drawable.ic_tab_shop, R.drawable.ic_tab_menu};
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +99,7 @@ public class MainActivity extends AppCompatActivity{
         fabAcDealer.setEnabled(false);
         fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
+
     }
 
 //  googlePicker
@@ -295,7 +306,7 @@ public class MainActivity extends AppCompatActivity{
                 HttpManager.getInstance().getService().sendTokenRegistration(user,shop,FirebaseInstanceId.getInstance().getToken())
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<Results>() {
+                        .subscribe(new Observer<SuccessDao>() {
                             @Override
                             public void onCompleted() {
                             }
@@ -305,8 +316,8 @@ public class MainActivity extends AppCompatActivity{
                             }
 
                             @Override
-                            public void onNext(Results results) {
-                                Log.i(TAG, "onNext: "+results);
+                            public void onNext(SuccessDao successDao) {
+                                Log.i(TAG, "onNext: "+ successDao);
                             }
                         });
             } else {
