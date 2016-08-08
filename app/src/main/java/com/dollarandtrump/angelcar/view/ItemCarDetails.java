@@ -9,13 +9,11 @@ import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
@@ -24,7 +22,7 @@ import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
@@ -36,7 +34,6 @@ import com.hndev.library.view.sate.BundleSavedState;
 
 import org.parceler.Parcels;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -50,8 +47,7 @@ import rx.schedulers.Schedulers;
 public class ItemCarDetails extends BaseCustomViewGroup {
     ImageView mImageProfile;
     ImageBanner mBanner;
-    TextView mTitle,mBrand,mProfile,mTime,mCallMe;
-//    ToggleButton mButtonFollow;
+    TextView mTitle, mBrand, mDetail, mTime, mCallMe, mYear, mPhone, mPrice;
     TextView mFollow;
     boolean isFollow = false;
     PictureCollectionDao mPictureDao ;
@@ -97,13 +93,16 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mBanner = (ImageBanner) findViewById(R.id.custom_view_imageBanner);
         mTitle = (TextView) findViewById(R.id.custom_view_text_title);
         mBrand = (TextView) findViewById(R.id.custom_view_text_brand);
-        mProfile = (TextView) findViewById(R.id.custom_view_text_detail);
+        mDetail = (TextView) findViewById(R.id.custom_view_text_detail);
         mImageProfile = (ImageView) findViewById(R.id.custom_view_icon_profile);
-//        mButtonFollow = (ToggleButton) findViewById(R.id.custom_view_button_follow);
         mTime = (TextView) findViewById(R.id.custom_view_text_time);
         mCallMe = (TextView) findViewById(R.id.custom_view_cell_text);
 
         mFollow = (TextView) findViewById(R.id.text_follow);
+        mYear = (TextView) findViewById(R.id.custom_view_text_year);
+        mPhone = (TextView) findViewById(R.id.custom_view_text_phone);
+        mPrice = (TextView) findViewById(R.id.custom_view_text_price);
+
     }
 
     public void bindCellViewHolder(PictureCollectionDao images, PostCarDao postCar){
@@ -152,13 +151,13 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 mFollow.setText(!isFollow ? R.string.follow : R.string.un_follow);
                 if (isFollow) {
                     //Add Follow
-                    Call<Results> callAddFollow = HttpManager.getInstance().getService()
+                    Call<SuccessDao> callAddFollow = HttpManager.getInstance().getService()
                             .follow("add",String.valueOf(mPostCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callAddFollow.enqueue(callbackAddOrRemoveFollow);
                 }else {
                     //Delete Follow
-                    Call<Results> callDelete = HttpManager.getInstance().getService()
+                    Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
                             .follow("delete",String.valueOf(mPostCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -173,7 +172,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
 
     private void setIconProfile(String url){
         Glide.with(getContext()).load(url)
-                .placeholder(com.hndev.library.R.drawable.loading)
+                .placeholder(com.hndev.library.R.drawable.ic_place_holder_2)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(mImageProfile);
 
@@ -196,19 +195,25 @@ public class ItemCarDetails extends BaseCustomViewGroup {
 
         String topic = postCarDao.getCarTitle();
         mTitle.setText(topic);
-        String strTitle = postCarDao.getCarName() + " " +
+        String carBrand = postCarDao.getCarName() + " " +
                 postCarDao.getCarSub() + " " + postCarDao.getCarSubDetail();
-        String d = "<br> ปี "+ AngelCarUtils.textFormatHtml("#FFB13D",String.valueOf(postCarDao.getCarYear())) +
-                " ราคา " + AngelCarUtils.textFormatHtml("#FFB13D",price) +" บาท";
-        mBrand.setText(Html.fromHtml(strTitle+d+"<br>"+ AngelCarUtils.subDetail(postCarDao.getCarDetail()).replaceAll("\n"," ")));
-//        detail.setText("");
+
+//        String details = "<br> ปี "+ AngelCarUtils.textFormatHtml("#FFB13D",String.valueOf(postCarDao.getCarYear())) +
+//                " ราคา " + AngelCarUtils.textFormatHtml("#FFB13D",price) +" บาท";
+//        mBrand.setText(Html.fromHtml(carBrand+details+"<br>"+ AngelCarUtils.subDetail(postCarDao.getCarDetail()).replaceAll("\n"," ")));
+
+        mBrand.setText(Html.fromHtml(carBrand));
+        mYear.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",String.valueOf(postCarDao.getCarYear()))));
+        mPrice.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",price)));
+
 
         if (postCarDao.getName() != null && postCarDao.getPhone() != null) {
-            String name = postCarDao.getName().contains("NULL") ? "ไม่มีชื่อ" : postCarDao.getName();
-            String phone = postCarDao.getPhone().contains("NULL") ? "ไม่มีเบอร์" : postCarDao.getPhone();
-            mProfile.setText(name + " เบอร์โทร. " + phone);
+            String name = postCarDao.getName().equals("NULL") ? "ไม่มีข้อมูล" : postCarDao.getName();
+            String phone = postCarDao.getPhone().equals("NULL") ? "ไม่มีข้อมูล" : postCarDao.getPhone();
+            mDetail.setText(name);
+            mPhone.setText(phone);
         }else {
-            mProfile.setText("-ไม่มีข้อมูล");
+            mDetail.setText("-ไม่มีข้อมูล");
         }
 
         //
@@ -234,7 +239,6 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mCallMe.setText(spanned);
     }
 
-
     public void setFollow(boolean isFollow){
         this.isFollow = isFollow;
     }
@@ -250,18 +254,18 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 onItemClickL.onItemClickBanner(position);
             }
         });
-//        mFollow.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onItemClickL.onItemClickFollow(!isFollow);
-//                mFollow.setText(!isFollow ? R.string.follow : R.string.un_follow);
-//            }
-//        });
+        mPhone.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickL.onItemClickPhone(mPostCarDao.getPhone());
+            }
+        });
     }
 
     public interface OnClickItemHeaderChatListener {
         void onItemClickBanner(int position);
 //        void onItemClickFollow(boolean isFollow);
+        public void onItemClickPhone(String phone);
 
     }
 
@@ -304,9 +308,9 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mPostCarDao = Parcels.unwrap(bundle.getParcelable("postDao"));
     }
 
-    Callback<Results> callbackAddOrRemoveFollow = new Callback<Results>() {
+    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
         @Override
-        public void onResponse(Call<Results> call, Response<Results> response) {
+        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
             if (response.isSuccessful()) {
 //                Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -318,7 +322,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
             }
         }
         @Override
-        public void onFailure(Call<Results> call, Throwable t) {
+        public void onFailure(Call<SuccessDao> call, Throwable t) {
 //            Log.e(TAG, "onFailure: ", t);
         }
     };

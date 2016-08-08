@@ -6,6 +6,7 @@ import android.util.Log;
 import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
 
+import java.io.File;
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -17,6 +18,7 @@ import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -40,7 +42,9 @@ public class RxUploadFile {
         return new UploadImagePostCar(mContext);
     }
 
-    /** Image Post Car **/
+    public UploadEvidence evidence(){
+        return new UploadEvidence(mContext);
+    }
 
     /** Image Post Car **/
     public static class UploadImagePostCar {
@@ -127,6 +131,54 @@ public class RxUploadFile {
                 }).subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
             }
+        }
+    }
+
+    public static class UploadEvidence {
+        Gallery mGallery;
+        String approveId;
+        Context mContext;
+        OkHttpClient okHttpClient = new OkHttpClient();
+        public UploadEvidence(Context mContext) {
+            this.mContext = mContext;
+        }
+        public UploadEvidence setEvidence(String approveId, Gallery gallery){
+            this.approveId = approveId;
+            this.mGallery = gallery;
+            return this;
+        }
+
+        public void subscriber(Action1<String> action1) {
+            Observable.from(mGallery.getListGallery()).map(new Func1<ImageModel, String>() {
+                @Override
+                public String call(ImageModel file) {
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("approve_id", approveId)
+                            .addFormDataPart(
+                                    "userfile",
+                                    file.convertToFile(mContext).getName(),
+                                    RequestBody.create(MediaType.parse("image/png"), file.convertToFile(mContext))).build();
+                    Request request = new Request.Builder()
+                            .url("http://www.angelcar.com/ios/data/gadata/evidenceupload.php")
+                            .post(requestBody)
+                            .build();
+                    try {
+                        Response responseFile = okHttpClient.newCall(request).execute();
+                        if(responseFile.isSuccessful()){
+                            return "successful";
+                        }else {
+                            return "error";
+                        }
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            }).subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(action1);
         }
     }
 

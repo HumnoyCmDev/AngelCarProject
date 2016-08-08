@@ -10,7 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.Window;
 
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 
 import java.io.IOException;
@@ -48,10 +48,10 @@ public class DeleteChatDialog extends DialogFragment {
                 .setPositiveButton("delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        Call<Results> call = HttpManager.getInstance().getService().deleteChatList(messageFromUser);
-                        call.enqueue(new Callback<Results>() {
+                        Call<SuccessDao> call = HttpManager.getInstance().getService().deleteChatList(messageFromUser);
+                        call.enqueue(new Callback<SuccessDao>() {
                             @Override
-                            public void onResponse(Call<Results> call, Response<Results> response) {
+                            public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
                                 if(response.isSuccessful()){
                                     Log.i("DialogFragment", "onResponse: "+response.body().getSuccess());
                                 }else {
@@ -64,7 +64,7 @@ public class DeleteChatDialog extends DialogFragment {
                             }
 
                             @Override
-                            public void onFailure(Call<Results> call, Throwable t) {
+                            public void onFailure(Call<SuccessDao> call, Throwable t) {
                                 Log.e("DialogFragment", "onFailure: ", t);
                             }
                         });

@@ -33,7 +33,7 @@
                 android:layout_width="32dp"
                 android:layout_height="32dp"
                 android:layout_gravity="bottom"
-                android:src="@drawable/ic_hndeveloper" />
+                android:src="@drawable/ic_place_holder_2" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
-                            android:src="@drawable/ic_custom_header_car" />
+                            android:src="@drawable/ic_car" />
 
                         <TextView
                             android:id="@+id/custom_view_text_brand"

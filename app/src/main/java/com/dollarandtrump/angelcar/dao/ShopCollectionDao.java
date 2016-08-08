@@ -1,7 +1,5 @@
 package com.dollarandtrump.angelcar.dao;
 
-import android.util.Log;
-
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
@@ -11,7 +9,6 @@ import com.google.gson.annotations.SerializedName;
 
 import org.parceler.Parcel;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +50,7 @@ public class ShopCollectionDao /*implements Serializable*/ {
         if (postCarDao != null) {
             ActiveAndroid.beginTransaction();
             try {
-                for (PostCarDao d : getPostCarDao()) {
+                for (PostCarDao d : postCarDao) {
                     d.save();
                     CacheShop cacheShop = new CacheShop();
                     cacheShop.setPostCarDao(d);
@@ -72,12 +69,23 @@ public class ShopCollectionDao /*implements Serializable*/ {
         new Delete().from(ProfileDao.class).execute();
     }
 
+    public ProfileDao queryProfile(){
+        ProfileDao model = new Select().from(ProfileDao.class).executeSingle();
+        return model;
+    }
+
     public PostCarCollectionDao queryPostCar(){//all
         List<PostCarDao> model = new Select().from(PostCarDao.class)
                 .orderBy("BrandName ASC").execute();
         PostCarCollectionDao newDao = new PostCarCollectionDao();
         newDao.setListCar(model);
         return newDao;
+    }
+
+    public List<PostCarDao> queryCarSub(){
+        return new Select().from(PostCarDao.class)
+                .groupBy("CarSub").having("COUNT(CarSub) > 0")
+                .orderBy("BrandName ASC").execute();
     }
 
     public PostCarCollectionDao queryFindBrandDuplicates(){

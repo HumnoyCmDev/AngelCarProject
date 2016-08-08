@@ -11,10 +11,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.Log;
 
 import java.text.DateFormat;
 import java.util.Collections;
@@ -34,8 +36,12 @@ public class ConversationAdapter extends BaseAdapter{
     private List<MessageDao> mListDao;
     private DateFormat mDateFormat;
     private DateFormat mTimeFormat;
+
+    String[] mProduceIds = null;
     Context context;
-    public ConversationAdapter() {
+    boolean isTopic;
+    public ConversationAdapter(boolean isTopic) {
+        this.isTopic = isTopic;
     }
 
     public void setDao(List<MessageDao> mListDao) {
@@ -52,6 +58,11 @@ public class ConversationAdapter extends BaseAdapter{
             }
         });
     }
+
+    public void setProduct(CarIdDao produceIds){
+        mProduceIds = produceIds.getAllCarId().split("\\|\\|");
+    }
+
 
     @Override
     public int getCount() {
@@ -81,13 +92,34 @@ public class ConversationAdapter extends BaseAdapter{
         }
         MessageDao message = getItem(position);
 
-         /*Read message Bold*/
-        String user = Registration.getInstance().getUserId();
-        if (!user.equals(message.getMessageFromUser())) {
-            holder.title.setTypeface(null, message.getMessageStatus() == 0 ? Typeface.BOLD : Typeface.NORMAL);
-            holder.lastMessage.setTypeface(null, message.getMessageStatus() == 0 ? Typeface.BOLD : Typeface.NORMAL);
-//            holder.time.setTypeface(null, message.getMessageStatus() == 0 ? Typeface.BOLD : Typeface.NORMAL);
+
+
+        /*Read message Bold*/
+        if (!isTopic && mProduceIds != null) {
+                for (String id : mProduceIds){
+                    /*message to  me(Shop)*/
+                   if (id.equals(message.getMessageCarId()) && "user".equals(message.getMessageBy())){
+                       if (message.getMessageStatus() == 0){
+                           holder.title.setTypeface(null, Typeface.BOLD);
+                           holder.lastMessage.setTypeface(null,Typeface.BOLD);
+                       }
+                   /*message to me(user)*/
+                   }else if (!id.equals(message.getMessageCarId()) && "shop".equals(message.getMessageBy())){
+                       if (message.getMessageStatus() == 0) {
+                           holder.title.setTypeface(null, Typeface.BOLD);
+                           holder.lastMessage.setTypeface(null,Typeface.BOLD);
+                       }
+                    }
+                }
+        }else {
+            //Topic
+            if (!message.getMessageBy().equals("user") && message.getMessageStatus() == 0){
+                holder.title.setTypeface(null, Typeface.BOLD);
+                holder.lastMessage.setTypeface(null,Typeface.BOLD);
+            }
+
         }
+
 
         Glide.with(parent.getContext())
                 .load(message.getUserProfileImage())

@@ -88,6 +88,7 @@ public class ViewDetailActivity extends AppCompatActivity {
     }
 
     private void loadImage() {
+        Log.d(TAG, "loadImage: "+mDao.getCarId());
         HttpManager.getInstance().getService().observableLoadAllImage(String.valueOf(mDao.getCarId()))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -135,7 +136,7 @@ public class ViewDetailActivity extends AppCompatActivity {
     }
 
     private void pictureCarDetail(final PictureCollectionDao dao) {
-        if (dao != null && dao.getListPicture() != null && dao.getListPicture().size() > 0) {
+        if (dao.getListPicture() != null && dao.getListPicture().size() > 0) {
             ImageBanner sib = ViewFindUtils.find(getWindow().getDecorView(), R.id.image_banner);
             sib
                     .setTransformerClass(DepthTransformer.class)

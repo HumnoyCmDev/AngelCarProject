@@ -22,10 +22,6 @@ public class MessageAdminCollectionDao {
         this.messageAdmin = messageAdmin;
     }
 
-    public MessageAdminDao getMessageAdminDao(){
-        return messageAdmin.get(0);
-    }
-
     // Convert MessageAdmin To MessageCollectionDao
     public MessageCollectionDao convertToMessageCollectionDao() {
         List<MessageDao> listMessage = new ArrayList<>();

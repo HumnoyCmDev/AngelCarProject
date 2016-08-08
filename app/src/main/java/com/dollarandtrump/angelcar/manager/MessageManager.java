@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
@@ -12,6 +13,7 @@ import com.google.gson.Gson;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -22,8 +24,12 @@ public class MessageManager {
 
     private Context mContext;
     private MessageCollectionDao messageDao;
-    private MessageCollectionDao mConversationSell;
     private MessageCollectionDao mConversationBuy;
+    private MessageCollectionDao mConversationSell;
+
+    private MessageCollectionDao mConversationTopic;
+
+    private CarIdDao mProductIds;
 
     public MessageManager() {
         mContext = Contextor.getInstance().getContext();
@@ -39,6 +45,15 @@ public class MessageManager {
         this.messageDao = messageDao;
         //Save Cache
 //        saveCache();
+    }
+
+    public void setProductIds(CarIdDao productIds) {
+        this.mProductIds = productIds;
+
+    }
+
+    public CarIdDao getProductIds() {
+        return mProductIds;
     }
 
     public int getCount(){
@@ -59,11 +74,27 @@ public class MessageManager {
     }
 
     public MessageCollectionDao getConversationSell() {
-        return mConversationBuy;
+        return mConversationSell;
     }
 
     public MessageCollectionDao getConversationBuy() {
-        return mConversationSell;
+        return mConversationBuy;
+    }
+
+    public MessageCollectionDao getConversationTopic() {
+        return mConversationTopic;
+    }
+
+    public void setConversationTopic(MessageCollectionDao conversationTopic) {
+        this.mConversationTopic = conversationTopic;
+    }
+
+    public void setConversationBuy(MessageCollectionDao conversationBuy) {
+        this.mConversationSell = conversationBuy;
+    }
+
+    public void setConversationSell(MessageCollectionDao conversationSell) {
+        this.mConversationBuy = conversationSell;
     }
 
     public void unifyDao(MessageAdminCollectionDao mConversationSell, MessageCollectionDao mConversationBuy){
@@ -75,7 +106,7 @@ public class MessageManager {
         if (messageDao.getListMessage() == null){
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
-        messageDao.getListMessage().addAll(getCount(),this.mConversationSell.getListMessage());
+        messageDao.getListMessage().addAll(getCount(),this.mConversationBuy.getListMessage());
         messageDao.getListMessage().addAll(getCount(),mConversationBuy.getListMessage());
 
 //        saveCache();
@@ -93,10 +124,35 @@ public class MessageManager {
 //        saveCache();
     }
 
-    public MessageCollectionDao updateReadMessageDao(MessageCollectionDao dao){
-        messageDao.getListMessage().remove(getCount()-1);
-        appendDataToBottomPosition(dao);
-        return messageDao;
+    public void updateMessageThem(MessageDao dao){
+        if (messageDao == null){
+            messageDao = new MessageCollectionDao();
+        }
+        if (messageDao.getListMessage() == null){
+            messageDao.setListMessage(new ArrayList<MessageDao>());
+        }
+        messageDao.getListMessage().add(getCount(),dao);
+    }
+
+    public void updateMessageMe(int countMessage,MessageDao message){
+        if (messageDao == null){
+            messageDao = new MessageCollectionDao();
+        }
+        if (messageDao.getListMessage() == null){
+            messageDao.setListMessage(new ArrayList<MessageDao>());
+        }
+        int removeId = (getCount()-1)-countMessage;
+        messageDao.getListMessage().set(removeId,message);
+    }
+
+    public void addMessageMe(String messageBy,String messageText){
+        if (messageDao == null){
+            messageDao = new MessageCollectionDao();
+        }
+        if (messageDao.getListMessage() == null){
+            messageDao.setListMessage(new ArrayList<MessageDao>());
+        }
+        messageDao.getListMessage().add(setMessageMe(messageBy,messageText));
     }
 
     public int getMaximumId(){
@@ -173,4 +229,25 @@ public class MessageManager {
         messageDao = new Gson().fromJson(json,MessageCollectionDao.class);
     }
 
+    private MessageDao setMessageMe(String messageBy, String messageText) {
+// find model message me
+        MessageDao mMessageMe = new MessageDao();
+//            for (MessageDao messageMe : this.messageDao.getListMessage()) {
+//                if (messageMe.getMessageBy().equals(messageBy)) {
+//                    mMessageMe = messageMe;
+//                    break;
+//                }
+//            }
+//
+//        if (mMessageMe == null) {
+//           mMessageMe = new MessageDao();
+//        }
+        mMessageMe.setMessageId(-1);
+        mMessageMe.setMessageBy(messageBy);
+        mMessageMe.setMessageStatus(3);
+        mMessageMe.setMessageText(messageText);
+        mMessageMe.setMessageStamp(new Date());
+        mMessageMe.setSent(false);
+        return mMessageMe;
+    }
 }

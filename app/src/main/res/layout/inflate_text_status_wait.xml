@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:textStyle="bold"
+    android:textColor="#ffb444"
+    android:background="@drawable/shape_text_status_wait"
+    android:layout_margin="3dp"
+    android:text="@string/text_deal"
+    android:layout_width="108dp"
+    android:layout_height="161dp"/>

@@ -16,7 +16,8 @@ import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.fragment.conversation.ConversationAllFragment;
+import com.dollarandtrump.angelcar.dao.TopicDao;
+import com.dollarandtrump.angelcar.fragment.conversation.ConversationTopicFragment;
 import com.dollarandtrump.angelcar.fragment.conversation.ConversationBuyFragment;
 import com.dollarandtrump.angelcar.fragment.conversation.ConversationSellFragment;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
@@ -41,7 +42,7 @@ import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func2;
+import rx.functions.Func3;
 import rx.schedulers.Schedulers;
 
 public class ConversationActivity extends AppCompatActivity implements OnClickItemMessageListener {
@@ -51,7 +52,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     private Subscription subscriptionCarId;
     private MessageManager mgsManager;
 
-    private final String[] mTitles = {"ทั้งหมด", "คุยกับคนซื้อ", "คุยกับคนขาย"};
+    private final String[] mTitles = {"คุยกับเจ้าหน้าที่", "คุยกับคนซื้อ", "คุยกับคนขาย"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         setContentView(R.layout.activity_view_chat_all);
         ButterKnife.bind(this);
         initViewPager();
+
 
         if (savedInstanceState == null)
             loadAllCarId();
@@ -71,7 +73,8 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
             findPostCar(carId,messageFromUser);
         }
 
-//        MainThreadBus.getInstance().register(this);
+
+
     }
 
     private void loadAllCarId() {
@@ -88,22 +91,30 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
     }
 
-    private void loadAllMessage(CarIdDao carIdDao) {
+    private void loadAllMessage(final CarIdDao carIdDao) {
         Log.d("view", "loadAllMessage: "+carIdDao.getAllCarId());
-        Observable<MessageAdminCollectionDao> rxCallLoadMsg1 =
+
+        //topic
+        Observable<MessageAdminCollectionDao> rxCallLoadTopic =
+                HttpManager.getInstance().getService().observableConversationTopic(carIdDao.getTopicId());
+
+        Observable<MessageAdminCollectionDao> rxCallLoadMessageSell =
                 HttpManager.getInstance().getService()
                         .observableMessageAdmin(carIdDao.getAllCarId());
 
-        Observable<MessageCollectionDao> rxCallLoadMsg2 = HttpManager.getInstance()
+        Observable<MessageCollectionDao> rxCallLoadMessageBuy = HttpManager.getInstance()
                 .getService().observableMessageClient(Registration.getInstance().getUserId());
 
         Observable<MessageManager> observableManager =
-                Observable.zip(rxCallLoadMsg1, rxCallLoadMsg2, new Func2<MessageAdminCollectionDao, MessageCollectionDao, MessageManager>() {
+                Observable.zip(rxCallLoadMessageSell, rxCallLoadMessageBuy, rxCallLoadTopic, new Func3<MessageAdminCollectionDao,
+                        MessageCollectionDao, MessageAdminCollectionDao, MessageManager>() {
                     @Override
-                    public MessageManager call(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao messageCollectionDao) {
+                    public MessageManager call(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao dao, MessageAdminCollectionDao messageAdminCollectionDao2) {
                         MessageManager manager = new MessageManager();
-                        manager.unifyDao(messageAdminCollectionDao
-                                ,messageCollectionDao);
+                        manager.setConversationSell(messageAdminCollectionDao.convertToMessageCollectionDao());
+                        manager.setConversationBuy(dao);
+                        manager.setConversationTopic(messageAdminCollectionDao2.convertToMessageCollectionDao());
+                        manager.setProductIds(carIdDao);
                         return manager;
                     }
                 });
@@ -131,8 +142,10 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
 
     @Subscribe
-    public void onMessageReceived(RemoteMessage remoteMessage){
-        remoteMessage.getData();
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        if (remoteMessage.getData().get("type").equals("chat")) {
+            loadAllCarId();
+        }
     }
 
     @Produce
@@ -160,6 +173,10 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     protected void onResume() {
         super.onResume();
         MainThreadBus.getInstance().register(this);
+//        if (getWindow().getDecorView() != null){
+            loadAllCarId();
+//        }
+
     }
 
     @Override
@@ -177,7 +194,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
                 if (response.isSuccessful()) {
                     if (response.body().getListCar() != null) {
                         PostCarDao item = response.body().getListCar().get(0);
-                        Intent intent = new Intent(ConversationActivity.this, CarDetailActivity.class);
+                        Intent intent = new Intent(ConversationActivity.this, ChatCarActivity.class);
                         intent.putExtra("PostCarDao", Parcels.wrap(item));
                         intent.putExtra("intentForm", 1);
                         intent.putExtra("messageFromUser", messageFromUser);
@@ -205,7 +222,19 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
     @Override
     public void onClickItemMessage(final MessageDao messageDao) {
-        findPostCar(messageDao.getMessageCarId(),messageDao.getMessageFromUser());
+        if (!messageDao.isTopic()) {
+            findPostCar(messageDao.getMessageCarId(), messageDao.getMessageFromUser());
+        }else {
+            TopicDao topic = new TopicDao();
+            topic.setId(Integer.valueOf(messageDao.getMessageCarId()));
+            topic.setUserId(messageDao.getMessageFromUser());
+            Intent intent = new Intent(ConversationActivity.this, TopicChatActivity.class);
+            intent.putExtra("topic",Parcels.wrap(topic));
+            intent.putExtra("room","");
+            startActivity(intent);
+        }
+
+
 //        Call<PostCarCollectionDao> call =
 //            HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
 //        call.enqueue(new Callback<PostCarCollectionDao>() {
@@ -214,7 +243,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 //                if (response.isSuccessful()) {
 //                    if (response.body().getListCar() != null) {
 //                        PostCarDao item = response.body().getListCar().get(0);
-//                        Intent intent = new Intent(ConversationActivity.this, CarDetailActivity.class);
+//                        Intent intent = new Intent(ConversationActivity.this, ChatCarActivity.class);
 //                        intent.putExtra("PostCarDao", Parcels.wrap(item));
 //                        intent.putExtra("intentForm", 1);
 //                        intent.putExtra("messageFromUser", messageDao.getMessageFromUser());
@@ -246,7 +275,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         @Override
         public Fragment getItem(int position) {
             switch (position){
-                case 0: return new ConversationAllFragment();
+                case 0: return new ConversationTopicFragment();
                 case 1: return new ConversationBuyFragment();
                 case 2: return new ConversationSellFragment();
             }

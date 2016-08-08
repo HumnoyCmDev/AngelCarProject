@@ -88,28 +88,19 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         mFragment.add(BrandFragment.newInstance());
         mFragment.add(CarSubFragment.newInstance());
         mFragment.add(CarSubDetailFragment.newInstance());
-//        mFragment.add(ListImageFragment.newInstance());
-//        mFragment.add(PostFragment.newInstance());
 
         Bundle arg = getIntent().getExtras();
         if (arg != null && arg.getBoolean("isEdit",false)){
             isEdit = arg.getBoolean("isEdit",false);
             PostCarDao modelCar = Parcels.unwrap(arg.getParcelable("carModel"));
-//            mFragment.remove(3);
             infoCarModel = new InfoCarModel();
             infoCarModel.setEditInfo(true);
-//            infoCarModel.setBrandDao(new CarBrandDao(modelCar.getCarNameId(),modelCar.getCarName()));
-//            infoCarModel.setSubDao(new CarSubDao(modelCar.getCarSubId(),modelCar.getCarSub()));
-//            infoCarModel.setSubDetailDao(new CarSubDao(modelCar.getCarSubDetailId(),modelCar.getCarSubDetail()));
-//            infoCarModel.setYear(modelCar.getCarYear());
             infoCarModel.setPostCarDao(modelCar);
-//            mFragment.add(PostFragment.newInstance(modelCar));
 
             MainThreadBus.getInstance().post(onProduceInfo());
         }
 
-        adapter =
-                new PostAdapterViewpager(getSupportFragmentManager());
+        adapter = new PostAdapterViewpager(getSupportFragmentManager());
         adapter.setFragmentList(mFragment);
         pager.setOffscreenPageLimit(0);
         pager.setAdapter(adapter);

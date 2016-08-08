@@ -109,7 +109,7 @@
 
             <RelativeLayout
                 android:padding="5dp"
-                android:background="@color/colorDarkItem"
+                android:background="@color/colorPrimary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -174,13 +174,13 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
+                android:layout_height="1dp"
                 android:background="#9B9B9B" />
 
             <TextView
                 android:layout_gravity="center"
                 android:textSize="14sp"
-                android:textColor="#4A4A4A"
+                android:textColor="@color/colorHintDark"
                 android:text="เลือกดูรถตามแบรนได้จากเมนูด้านบน"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -269,19 +269,26 @@
 
     </com.github.clans.fab.FloatingActionMenu>
 
-    <FrameLayout
-        android:visibility="gone"
-        android:id="@+id/frame_layout_progressbar"
-        android:background="#c3000000"
+    <!--<FrameLayout-->
+        <!--android:visibility="gone"-->
+        <!--android:id="@+id/frame_layout_progressbar"-->
+        <!--android:background="#c3000000"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
+        <!--<ProgressBar-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:id="@+id/progressbar_load"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+    <!--</FrameLayout>-->
+
+    <ViewStub
+        android:id="@+id/sub_progressbar"
+        android:inflatedId="@+id/sub_layout_progressbar"
+        android:layout="@layout/inflate_progressbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <ProgressBar
-            android:visibility="gone"
-            android:layout_gravity="center"
-            android:id="@+id/progressbar_load"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </FrameLayout>
+        android:layout_height="match_parent" />
 
 
 

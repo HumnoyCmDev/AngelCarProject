@@ -20,6 +20,7 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.datatype.MutableInteger;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.Log;
 import com.hndev.library.view.AngelCarPost;
 
 import java.text.DecimalFormat;
@@ -178,6 +179,7 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         holderPost.angelCarPost.setDetails2Html(strDetail);
         String datetime = AngelCarUtils.formatTimeAndDay(mContext,dao.getCarModifyTime());
         holderPost.angelCarPost.setTime(datetime);
+        holderPost.angelCarPost.setImageDeal(dao.getDeal());
 
         if (onClickImageProfile != null) {
             holderPost.angelCarPost.setOnClickImageProfile(onClickImageProfile,position);

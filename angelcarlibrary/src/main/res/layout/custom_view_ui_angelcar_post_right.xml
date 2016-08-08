@@ -18,7 +18,7 @@
             android:layout_gravity="end"
             android:layout_marginRight="40dp"
             android:textSize="10sp"
-            android:text="20/08/2016 20:30 น."
+            android:text="[time]"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -55,7 +55,7 @@
                         android:id="@+id/custom_view_ui_post_image_product"
                         android:layout_width="@dimen/image_product_size"
                         android:layout_height="@dimen/image_product_size"
-                        android:src="@drawable/simple_product"
+                        android:src="@drawable/ic_place_holder_2"
                         app:siBorderColor="@android:color/black"
                         app:siBorderWidth="1dp" />
 
@@ -85,18 +85,35 @@
                             android:ellipsize="end"
                             android:text="HN Developer"
                             android:textSize="13sp" />
-                        <TextView
-                            android:textColor="@android:color/white"
-                            android:id="@+id/custom_view_ui_post_details2"
+
+                        <LinearLayout
+                            android:gravity="center_vertical"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:text="HN Developer"
-                            android:textSize="13sp" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:textColor="@android:color/white"
+                                android:id="@+id/custom_view_ui_post_details2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="HN Developer"
+                                android:textSize="13sp" />
+
+                            <ImageView
+                                android:layout_marginLeft="4dp"
+                                android:id="@+id/custom_view_ui_post_image_deal"
+                                android:src="@drawable/shape_deal_low"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp" />
+                        </LinearLayout>
+
                     </LinearLayout>
 
                 </LinearLayout>
+
+
 
             </RelativeLayout>
 
@@ -107,14 +124,13 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingLeft="10dp">
+        android:layout_height="wrap_content">
 
         <com.github.siyamed.shapeimageview.CircularImageView
             android:id="@+id/custom_view_ui_post_icon_profile"
             android:layout_width="@dimen/icon_profile_size"
             android:layout_height="@dimen/icon_profile_size"
-            android:src="@drawable/ic_hndeveloper" />
+            android:src="@drawable/ic_place_holder_2" />
     </FrameLayout>
 
 

@@ -38,8 +38,8 @@ public class ImageModel {
     public ImageModel() {
     }
 
-    public ImageModel(File fileImage, String index) {
-        this.mFileImage = fileImage;
+    public ImageModel(Uri uri, String index) {
+        this.uri = uri;
         this.mIndex = index;
     }
 

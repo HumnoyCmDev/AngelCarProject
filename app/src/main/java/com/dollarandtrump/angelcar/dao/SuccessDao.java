@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * โดย humnoy Android Developer
  * ลงวันที่ 2/3/59. เวลา 09:26
  ***************************************/
-public class Results {
+public class SuccessDao {
     /*
     *Message ตอบกลับจาก Server ผลลัพที่ได้เป็น Json
     *@เพื่อเช็ค Status การทำงาน
@@ -17,6 +17,16 @@ public class Results {
     @SerializedName("return") @Expose String result;
 
     @SerializedName("success") @Expose public String success;
+
+    @SerializedName("approve_id") @Expose public String approveId;
+
+    public String getApproveId() {
+        return approveId;
+    }
+
+    public void setApproveId(String approveId) {
+        this.approveId = approveId;
+    }
 
     public String getResult() {
         return result;

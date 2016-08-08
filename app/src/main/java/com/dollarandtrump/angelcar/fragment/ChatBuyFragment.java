@@ -66,7 +66,7 @@ public class ChatBuyFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this, rootView);
-        adapter = new ConversationAdapter();
+        adapter = new ConversationAdapter(false);
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
         mListView.setAdapter(adapter);

@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -23,7 +21,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.Results;
+import com.dollarandtrump.angelcar.dao.SuccessDao;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
@@ -39,7 +37,6 @@ import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,6 +58,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
+import rx.functions.Func5;
 import rx.functions.Func6;
 import rx.schedulers.Schedulers;
 
@@ -74,7 +72,6 @@ public class PostFragment extends Fragment {
 
     @Bind(R.id.edit_text_description) EditText mDescription;
     @Bind(R.id.edit_text_telephone) EditText mTelephone;
-    @Bind(R.id.edit_text_register) EditText mRegister;
     @Bind(R.id.edit_text_price) EditText mPrice;
     @Bind(R.id.edit_text_topic) EditText mTopic;
     @Bind(R.id.edit_text_Name) EditText mName;
@@ -129,19 +126,18 @@ public class PostFragment extends Fragment {
 
     void observableEditTextView(){
 
-        Observable<Boolean> registerValid = createObservableLength(mRegister,2);
         Observable<Boolean> telephoneValid = createObservableLength(mTelephone,11);
         Observable<Boolean> nameValid = createObservableLength(mName,3);
         Observable<Boolean> priceValid = createObservableLength(mPrice,5);
         Observable<Boolean> topicValid = createObservableLength(mTopic,20);
         Observable<Boolean> descriptionValid = createObservableLength(mDescription,20);
 
-        Observable.combineLatest(registerValid, telephoneValid, nameValid, priceValid, topicValid, descriptionValid,
-                new Func6<Boolean, Boolean, Boolean, Boolean, Boolean, Boolean, Boolean>() {
+        Observable.combineLatest(telephoneValid, nameValid, priceValid, topicValid, descriptionValid,
+                new Func5< Boolean, Boolean, Boolean, Boolean, Boolean, Boolean>() {
                     @Override
-                    public Boolean call(Boolean b1, Boolean b2, Boolean b3,
+                    public Boolean call(Boolean b2, Boolean b3,
                                         Boolean b4, Boolean b5, Boolean b6) {
-                        return b1 && b2 & b3 && b4 && b5 && b6;
+                        return b2 & b3 && b4 && b5 && b6;
                     }
                 }).subscribe(new Action1<Boolean>() {
             @Override
@@ -208,21 +204,18 @@ public class PostFragment extends Fragment {
         String carPrice = mPrice.getText().toString().trim();// ราคารถ
         String province = String.valueOf(mIdProvince).trim(); // 1 - 77
         String gear = mGear.isChecked() ? "1" : "2"; // 0 or 1
-        String plate = mRegister.getText().toString().trim(); // text ทะเบียนน
         String name = mName.getText().toString().trim(); // ชื่อ นามสกุล
         String phone = mTelephone.getText().toString().trim();
 
         if (!mCarModel.isEditInfo()) {
             String shopPref = Registration.getInstance().getShopRef(); // 1
-            Call<Results> call = HttpManager.getInstance().getService().postCar(shopPref,
+            Call<SuccessDao> call = HttpManager.getInstance().getService().postCar(shopPref,
                     mCarModel.getBrandDao().getBrandId(),
                     mCarModel.getSubDao().getSubId(),
                     mCarModel.getSubDetailDao().getSubId(),
                     topic, detail, mCarModel.getYear(),
-                    carPrice, "online", province, gear, plate, name, phone);
+                    carPrice, "online", province, gear, "ตัดออกไม่เอา", name, phone);
             call.enqueue(postCallback);
-
-
         }else {
             Log.d(TAG, "onClickPost: ");
              HttpManager.getInstance().getService()
@@ -231,10 +224,11 @@ public class PostFragment extends Fragment {
                              topic,detail, mCarModel.getYear(),carPrice,province,gear,name,phone)
              .subscribeOn(Schedulers.newThread())
              .observeOn(AndroidSchedulers.mainThread())
-             .subscribe(new Subscriber<Results>() {
+             .subscribe(new Subscriber<SuccessDao>() {
                  @Override
                  public void onCompleted() {
                      Log.d(TAG, "onCompleted: ");
+                     getActivity().finish();
                  }
 
                  @Override
@@ -243,8 +237,8 @@ public class PostFragment extends Fragment {
                  }
 
                  @Override
-                 public void onNext(Results results) {
-                     Log.d(TAG, "onNext: "+results);
+                 public void onNext(SuccessDao successDao) {
+                     Log.d(TAG, "onNext: "+ successDao);
                  }
              });
         }
@@ -318,7 +312,6 @@ public class PostFragment extends Fragment {
             //init data (Edit)
                 mGear.setChecked(carModel.getPostCarDao().getGear() == 0);
                 mSpinnerProvince.setSelection(carModel.getPostCarDao().getProvinceId()); // make
-                mRegister.setText(carModel.getPostCarDao().getPlate());
                 mTelephone.setText(carModel.getPostCarDao().getPhone());
                 mName.setText(carModel.getPostCarDao().getName());
                 mPrice.setText(carModel.getPostCarDao().getCarPrice());
@@ -331,16 +324,16 @@ public class PostFragment extends Fragment {
     /*************
     *Listener Zone
     **************/
-    Callback<Results> postCallback = new Callback<Results>() {
+    Callback<SuccessDao> postCallback = new Callback<SuccessDao>() {
         @Override
-        public void onResponse(Call<Results> call, Response<Results> response) {
+        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
             if (response.isSuccessful()) {
                 RxUploadFile.with(getContext())
                         .postCar()
                         .setId(response.body().getSuccess())
                         .setGallery(mCarModel.getGallery())
                         .subscriber();
-
+                getActivity().finish();
                 Toast.makeText(Contextor.getInstance().getContext(),
                         "Completed"+response.body().getSuccess(), Toast.LENGTH_SHORT).show();
             } else {
@@ -355,7 +348,7 @@ public class PostFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<Results> call, Throwable t) {
+        public void onFailure(Call<SuccessDao> call, Throwable t) {
             Toast.makeText(Contextor.getInstance().getContext(),
                     t.toString(), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onFailure: ",t);

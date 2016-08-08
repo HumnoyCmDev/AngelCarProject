@@ -9,6 +9,16 @@ import com.google.gson.annotations.SerializedName;
 public class CarIdDao {
     @SerializedName("allcarid") @Expose String allCarId;
 
+    @SerializedName("alltopicid") @Expose String topicId;
+
+    public String getTopicId() {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId) {
+        this.topicId = topicId;
+    }
+
     public String getAllCarId() {
         return allCarId;
     }

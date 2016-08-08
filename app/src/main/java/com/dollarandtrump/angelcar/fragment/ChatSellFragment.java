@@ -68,7 +68,7 @@ public class ChatSellFragment extends Fragment {
     private void initInstances(View rootView, Bundle savedInstanceState) {
         // Init 'View' instance(s) with rootView.findViewById here
         ButterKnife.bind(this, rootView);
-        adapter = new ConversationAdapter();
+        adapter = new ConversationAdapter(false);
         if (messageManager.getMessageDao() !=null)
             adapter.setDao(messageManager.getMessageDao().getListMessage());
         mListView.setAdapter(adapter);
