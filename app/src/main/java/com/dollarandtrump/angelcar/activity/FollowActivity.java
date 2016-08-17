@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 import com.dollarandtrump.angelcar.Adapter.FollowAdapter;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -32,9 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by humnoyDeveloper on 26/3/59. 09:06
- */
+
 public class FollowActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
@@ -56,7 +54,6 @@ public class FollowActivity extends AppCompatActivity {
     }
 
     private void loadFollowCarModel() {
-        if (Log.isLoggable(Log.DEBUG)) Log.d(Registration.getInstance().getShopRef()+"");
         Call<PostCarCollectionDao> call = HttpManager.getInstance().getService()
                 .loadFollowCarModel(Registration.getInstance().getShopRef());
         call.enqueue(callbackPostCarModel);
@@ -130,7 +127,7 @@ public class FollowActivity extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             //Delete Follow -server
-                            Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
+                            Call<ResponseDao> callDelete = HttpManager.getInstance().getService()
                                     .follow("delete",String.valueOf(dao.getListCar().get(position).getCarId()),
                                             Registration.getInstance().getShopRef());
                             callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -147,9 +144,9 @@ public class FollowActivity extends AppCompatActivity {
         }
     };
 
-    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
+    Callback<ResponseDao> callbackAddOrRemoveFollow = new Callback<ResponseDao>() {
         @Override
-        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
+        public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
             if (response.isSuccessful()) {
                 if (Log.isLoggable(Log.DEBUG)) Log.d(""+response.body().success);
             } else {
@@ -162,7 +159,7 @@ public class FollowActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onFailure(Call<SuccessDao> call, Throwable t) {
+        public void onFailure(Call<ResponseDao> call, Throwable t) {
             if (Log.isLoggable(Log.ERROR)) Log.e("Error",t);
         }
     };

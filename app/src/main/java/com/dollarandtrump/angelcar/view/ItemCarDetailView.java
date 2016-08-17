@@ -109,7 +109,7 @@ public class ItemCarDetailView extends BaseCustomViewGroup {
 
     public void setIconProfile(String url){
         Glide.with(getContext()).load(url)
-                .placeholder(com.hndev.library.R.drawable.ic_place_holder_2)
+                .placeholder(com.hndev.library.R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(ic_Profile);
 

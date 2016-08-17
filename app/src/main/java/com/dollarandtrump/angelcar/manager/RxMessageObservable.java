@@ -3,7 +3,7 @@ package com.dollarandtrump.angelcar.manager;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 
 import rx.subjects.PublishSubject;
-
+@Deprecated
 public class RxMessageObservable {
 
     private static RxMessageObservable instance;

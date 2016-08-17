@@ -1,1 +1,1 @@
-include ':app', ':angelcarlibrary', ':Indicator'
+include ':app', ':angelcarlibrary'

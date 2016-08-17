@@ -68,7 +68,7 @@ public class ImageViewGlide extends ImageView{
         mUrl = url;
         Glide.with(getContext())
                 .load(url)
-                .placeholder(R.drawable.ic_place_holder_2)
+                .placeholder(R.drawable.icon_logo)
                 .crossFade()
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(this);

@@ -32,11 +32,7 @@ import java.util.Map;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.schedulers.Schedulers;
 
-/**
- * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
- *
- * @AngelCarProject
- */
+
 public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessageAdapter.ViewHolder> {
     private final static int TYPE_THEM = 0;
     private final static int TYPE_ME = 1;
@@ -151,6 +147,13 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
             }
 
+            /*Sent view alpha*/
+            if (msgDao.isSent()){ // Success
+                viewHolder.mCell.setAlpha(1.0f);
+            }else {
+                viewHolder.mCell.setAlpha(0.5f);
+            }
+
 
         }else {
             if(msgDao.getMessageStatus() == 0){ /* Update Read Message*/
@@ -171,7 +174,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                 Picasso.with(mContext)
                         .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
                         .transform(new PictureReSize())
-                        .placeholder(com.hndev.library.R.drawable.loading)
+                        .placeholder(com.hndev.library.R.drawable.icon_logo)
                         .into(imageView);
                 viewHolder.mCell.addView(imageView);
             }
@@ -198,7 +201,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                 viewHolder.mAvatar.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
                         .load(msgDao.getUserProfileImage())
-                        .placeholder(R.drawable.ic_place_holder_2)
+                        .placeholder(R.drawable.icon_logo)
                         .bitmapTransform(new CropCircleTransformation(mContext))
                         .into(viewHolder.mAvatar);
             } else {

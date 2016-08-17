@@ -54,7 +54,9 @@
         android:layout_height="1dp"
         android:background="#b4b4b4" />
 
+
     <LinearLayout
+        android:gravity="center_vertical"
         android:id="@+id/linear_layout_group_button_chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -67,7 +69,7 @@
             android:id="@+id/button_personnel"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="8dp"
             android:background="@drawable/ic_person_add" />
 
         <Button
@@ -85,6 +87,7 @@
             android:background="@drawable/ic_camera" />
 
         <Button
+            android:enabled="true"
             android:id="@+id/button_place"
             android:layout_width="24dp"
             android:layout_height="24dp"

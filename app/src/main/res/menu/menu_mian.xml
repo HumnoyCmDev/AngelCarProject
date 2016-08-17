@@ -5,12 +5,12 @@
 
     <item android:id="@+id/action_chat"
         android:title="chat"
-        android:icon="@drawable/ic_chat"
+        android:icon="@drawable/ic_message"
         app:showAsAction="always"
         />
     <item android:id="@+id/action_follow"
         android:title="chat"
-        android:icon="@drawable/ic_action_follow"
+        android:icon="@drawable/ic_follow"
         app:showAsAction="always"
         />
 </menu>

@@ -1,18 +1,13 @@
-package com.dollarandtrump.angelcar.utils;
-
-import com.activeandroid.serializer.TypeSerializer;
-import com.dollarandtrump.angelcar.dao.MessageDao;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-/********************************************
- * Created by HumNoy Developer on 29/7/2559.
- * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
- * AngelCarProject
- ********************************************/
+//package com.dollarandtrump.angelcar.utils;
+//
+//import com.activeandroid.serializer.TypeSerializer;
+//import com.dollarandtrump.angelcar.dao.MessageDao;
+//import com.google.gson.Gson;
+//
+//import java.util.ArrayList;
+//import java.util.Collections;
+//import java.util.List;
+//
 //
 //public class MessageJsonSerializer extends TypeSerializer {
 //    private static final Gson gson = new Gson();

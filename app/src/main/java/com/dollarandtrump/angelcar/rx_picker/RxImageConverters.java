@@ -16,11 +16,7 @@ import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
-/********************************************
- * Created by HumNoy Developer on 16/6/2559.
- * AngelCarProject
- * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
- ********************************************/
+
 public class RxImageConverters {
     public static Observable<File> uriToFile(final Context context, final Uri uri, final File file) {
         return Observable.create(new Observable.OnSubscribe<File>() {

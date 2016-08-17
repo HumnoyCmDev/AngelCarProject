@@ -21,7 +21,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
@@ -59,14 +59,8 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.functions.Func5;
-import rx.functions.Func6;
 import rx.schedulers.Schedulers;
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย humnoy Android Developer
- * ลงวันที่ 5/2/59. เวลา 10:41
- ***************************************/
 public class PostFragment extends Fragment {
     private static final String TAG = "PostFragment";
 
@@ -137,7 +131,7 @@ public class PostFragment extends Fragment {
                     @Override
                     public Boolean call(Boolean b2, Boolean b3,
                                         Boolean b4, Boolean b5, Boolean b6) {
-                        return b2 & b3 && b4 && b5 && b6;
+                        return b2 && b3 && b4 && b5 && b6;
                     }
                 }).subscribe(new Action1<Boolean>() {
             @Override
@@ -209,7 +203,7 @@ public class PostFragment extends Fragment {
 
         if (!mCarModel.isEditInfo()) {
             String shopPref = Registration.getInstance().getShopRef(); // 1
-            Call<SuccessDao> call = HttpManager.getInstance().getService().postCar(shopPref,
+            Call<ResponseDao> call = HttpManager.getInstance().getService().postCar(shopPref,
                     mCarModel.getBrandDao().getBrandId(),
                     mCarModel.getSubDao().getSubId(),
                     mCarModel.getSubDetailDao().getSubId(),
@@ -224,7 +218,7 @@ public class PostFragment extends Fragment {
                              topic,detail, mCarModel.getYear(),carPrice,province,gear,name,phone)
              .subscribeOn(Schedulers.newThread())
              .observeOn(AndroidSchedulers.mainThread())
-             .subscribe(new Subscriber<SuccessDao>() {
+             .subscribe(new Subscriber<ResponseDao>() {
                  @Override
                  public void onCompleted() {
                      Log.d(TAG, "onCompleted: ");
@@ -237,8 +231,8 @@ public class PostFragment extends Fragment {
                  }
 
                  @Override
-                 public void onNext(SuccessDao successDao) {
-                     Log.d(TAG, "onNext: "+ successDao);
+                 public void onNext(ResponseDao responseDao) {
+                     Log.d(TAG, "onNext: "+ responseDao);
                  }
              });
         }
@@ -324,9 +318,9 @@ public class PostFragment extends Fragment {
     /*************
     *Listener Zone
     **************/
-    Callback<SuccessDao> postCallback = new Callback<SuccessDao>() {
+    Callback<ResponseDao> postCallback = new Callback<ResponseDao>() {
         @Override
-        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
+        public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
             if (response.isSuccessful()) {
                 RxUploadFile.with(getContext())
                         .postCar()
@@ -348,7 +342,7 @@ public class PostFragment extends Fragment {
         }
 
         @Override
-        public void onFailure(Call<SuccessDao> call, Throwable t) {
+        public void onFailure(Call<ResponseDao> call, Throwable t) {
             Toast.makeText(Contextor.getInstance().getContext(),
                     t.toString(), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "onFailure: ",t);
@@ -365,31 +359,5 @@ public class PostFragment extends Fragment {
             return false;
         }
     };
-
-    /*TextWatcher AutoCommaListener = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {}
-        @Override
-        public void afterTextChanged(Editable s) {
-            if (s != null) {
-                try {
-                    mPrice.removeTextChangedListener(this);
-                    String givenString = s.toString();
-                    if (givenString.contains(",")) {
-                        givenString = givenString.replaceAll(",", "");
-                    }
-                    double doubleValue = Double.parseDouble(givenString);
-                    DecimalFormat formatter = new DecimalFormat("#,###,###");
-                    String formattedString = formatter.format(doubleValue);
-                    mPrice.setText(formattedString);
-
-                } catch (NumberFormatException e) {
-                }
-                    mPrice.addTextChangedListener(this);
-            }
-        }
-    };*/
 
 }

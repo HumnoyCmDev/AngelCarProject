@@ -5,12 +5,7 @@ import android.content.SharedPreferences;
 
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
 
-/**
- * Created by humnoy on 5/2/59.
- * - ข้อควรระวัง Singleton ผูกติดกับ Application
- * - ข้อมูลไม่ควรจะใหญ่ เกินไป
- * -**** Out Of Memory , Memory Leak ****
- */
+
 public class Registration {
 
     private static Registration instance;
@@ -38,10 +33,12 @@ public class Registration {
         return preferences.getBoolean(REGISTRATION_FIRST_APP,false);
     }
 
-    public void save(RegisterResultDao gao){
-        preferences.edit().putString(REGISTRATION_USER_ID, gao.getUserId()).apply();
-        preferences.edit().putString(REGISTRATION_SHOP_ID, gao.getShopId()).apply();
-        preferences.edit().putBoolean(REGISTRATION_FIRST_APP, true).apply();
+    public void save(RegisterResultDao dao){
+        if (dao != null) {
+            preferences.edit().putString(REGISTRATION_USER_ID, dao.getUserId()).apply();
+            preferences.edit().putString(REGISTRATION_SHOP_ID, dao.getShopId()).apply();
+            preferences.edit().putBoolean(REGISTRATION_FIRST_APP, true).apply();
+        }
     }
 
     public String getUserId(){

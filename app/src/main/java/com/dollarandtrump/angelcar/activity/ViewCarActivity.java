@@ -25,7 +25,7 @@ import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.manager.Permission;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
@@ -41,6 +41,7 @@ import java.text.DecimalFormat;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -140,13 +141,13 @@ public class ViewCarActivity extends AppCompatActivity{
                 mFollow.setText(!isFollow ? R.string.follow : R.string.un_follow);
                 if (isFollow) {
                     //Add Follow
-                    Call<SuccessDao> callAddFollow = HttpManager.getInstance().getService()
+                    Call<ResponseDao> callAddFollow = HttpManager.getInstance().getService()
                             .follow("add",String.valueOf(mCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callAddFollow.enqueue(callbackAddOrRemoveFollow);
                 }else {
                     //Delete Follow
-                    Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
+                    Call<ResponseDao> callDelete = HttpManager.getInstance().getService()
                             .follow("delete",String.valueOf(mCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -223,7 +224,8 @@ public class ViewCarActivity extends AppCompatActivity{
 
         Glide.with(this)
                 .load(postCarDao.getFullPathShopLogo())
-                .placeholder(R.drawable.ic_place_holder_2)
+                .placeholder(R.drawable.icon_logo)
+                .bitmapTransform(new CropCircleTransformation(this))
                 .crossFade()
                 .into(mImageProfile);
 
@@ -273,10 +275,10 @@ public class ViewCarActivity extends AppCompatActivity{
         HttpManager.getInstance().getService().observableAnnounce(String.valueOf(mCarDao.getCarId()))
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<SuccessDao>() {
+                .subscribe(new Action1<ResponseDao>() {
                     @Override
-                    public void call(SuccessDao successDao) {
-                        Snackbar.make(getWindow().getDecorView(),"เลื่อนประกาศได้อีกครั้ง "+successDao.getResult()+" ชั่วโมง",Snackbar.LENGTH_SHORT)
+                    public void call(ResponseDao responseDao) {
+                        Snackbar.make(getWindow().getDecorView(),"เลื่อนประกาศได้อีกครั้ง "+ responseDao.getResult()+" ชั่วโมง",Snackbar.LENGTH_SHORT)
                                 .show();
                     }
                 });
@@ -305,12 +307,12 @@ public class ViewCarActivity extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
-    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
+    Callback<ResponseDao> callbackAddOrRemoveFollow = new Callback<ResponseDao>() {
         @Override
-        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
+        public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
         }
         @Override
-        public void onFailure(Call<SuccessDao> call, Throwable t) {
+        public void onFailure(Call<ResponseDao> call, Throwable t) {
         }
     };
 }

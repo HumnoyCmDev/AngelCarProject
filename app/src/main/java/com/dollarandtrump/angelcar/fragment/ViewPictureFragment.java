@@ -65,15 +65,15 @@ public class ViewPictureFragment extends Fragment {
 
         mImageView.setPanEnabled(true);
         mImageView.setZoomEnabled(true);
-        mImageView.setDoubleTapZoomDpi(160);
-        mImageView.setMinimumDpi(80);
+//        mImageView.setDoubleTapZoomDpi(160);
+//        mImageView.setMinimumDpi(80);
 
         String src  = getArguments().getString(ARGS_PICTURE);
         mProgressBar.setVisibility(View.VISIBLE);
         mTarget = new Target(imageViewState);
         Glide.with(this).load(src)
                 .asBitmap()
-                .placeholder(R.drawable.loading)
+                .placeholder(R.drawable.icon_logo)
                 .into(mTarget);
 
     }

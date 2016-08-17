@@ -86,7 +86,7 @@ public class AngelCarHashTag extends BaseCustomViewGroup {
     }
 
     public void addChildCarSub(String carSub){
-        hashTagGroupBrand.addView(createViewHasTag(carSub,10f,"#9E9E9E"));
+        hashTagGroupBrand.addView(createViewHasTag(carSub,15f,"#9E9E9E"));
     }
 
     public TextView createViewHasTag(String brand,float radius,String color){

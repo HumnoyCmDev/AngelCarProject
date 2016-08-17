@@ -17,15 +17,14 @@ import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.utils.Log;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by humnoyDeveloper on 28/3/59. 16:41
- */
+
 public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements Filterable {
     private static final int ITEM_VIEW_TYPE_HEADER = 0;
     private static final int ITEM_VIEW_TYPE_ITEM = 1;
@@ -39,7 +38,7 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private List<Integer> positionHeader;
 
     private boolean isShop = true;
-
+    private DecimalFormat formatter = new DecimalFormat("#,###");
     public boolean isHeader(int position) {
         for (int i : positionHeader){
             if (i == position) return true;
@@ -122,13 +121,21 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                         .get(position);
                 Glide.with(context)
                         .load(item.getCarImageThumbnailPath())
-                        .placeholder(R.drawable.loading)
+                        .placeholder(R.drawable.icon_logo)
                         .into(viewHolder.shopImage);
             String carName = item.getCarSub()+" "+item.getCarSubDetail();
-                viewHolder.carName.setText(carName);
+            viewHolder.carName.setText(carName);
+
+            viewHolder.mYear.setText(""+item.getCarYear());
+//            double amount = Double.parseDouble(item.getCarPrice());
+//            String price = formatter.format(amount);
+            viewHolder.mPrice.setText(item.getCarPrice());
+
+
             viewHolder.shopSetting.setVisibility(isShop ? View.VISIBLE : View.GONE);
             if (item.getStatus() != null)
                 viewHolder.subDeal.setVisibility(item.getStatus().equals("wait") ? View.VISIBLE : View.GONE);
+
         }
 
     }
@@ -149,6 +156,8 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         @Bind(R.id.itemShopSetting) ImageView shopSetting;
         @Bind(R.id.itemShopImage) ImageView shopImage;
         @Bind(R.id.itemShopCar) TextView carName;
+        @Bind(R.id.text_year) TextView mYear;
+        @Bind(R.id.text_price) TextView mPrice;
         @Bind(R.id.sub_status_wait) ViewStub subDeal;
         public ViewHolder(View itemView) {
             super(itemView);

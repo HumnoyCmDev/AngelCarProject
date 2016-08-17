@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_post_mini_dis"
             fab:fab_size="mini"
-            fab:fab_label="ฝากขาย" />
+            fab:fab_label="ผู้ประกอบการรถมือสอง(เต็นท์รถ)" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_ac_Dealer"
@@ -85,7 +85,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_post_mini_dis"
             fab:fab_size="mini"
-            fab:fab_label="ขายให้เต้นรถ" />
+            fab:fab_label="ตัวแทนเจ้าของรถ" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_ac_PostSell"
@@ -95,7 +95,7 @@
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorDarkItem"
             fab:fab_size="mini"
-            fab:fab_label="ขายเอง" />
+            fab:fab_label="ประกาศขายฟรี" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

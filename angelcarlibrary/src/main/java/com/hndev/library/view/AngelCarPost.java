@@ -163,7 +163,7 @@ public class AngelCarPost extends BaseCustomViewGroup {
 //                .load(urlImage)
 //                .into(ic_Profile);
         Glide.with(getContext()).load(urlImage)
-                .placeholder(R.drawable.ic_place_holder_2)
+                .placeholder(R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(ic_Profile);
     }
@@ -173,7 +173,7 @@ public class AngelCarPost extends BaseCustomViewGroup {
 //                .load(urlImage)
 //                .into(ic_Product);
         Glide.with(getContext()).load(urlImage)
-                .placeholder(R.drawable.ic_place_holder_2)
+                .placeholder(R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(ic_Product);
     }

@@ -22,7 +22,7 @@ import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
@@ -151,13 +151,13 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 mFollow.setText(!isFollow ? R.string.follow : R.string.un_follow);
                 if (isFollow) {
                     //Add Follow
-                    Call<SuccessDao> callAddFollow = HttpManager.getInstance().getService()
+                    Call<ResponseDao> callAddFollow = HttpManager.getInstance().getService()
                             .follow("add",String.valueOf(mPostCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callAddFollow.enqueue(callbackAddOrRemoveFollow);
                 }else {
                     //Delete Follow
-                    Call<SuccessDao> callDelete = HttpManager.getInstance().getService()
+                    Call<ResponseDao> callDelete = HttpManager.getInstance().getService()
                             .follow("delete",String.valueOf(mPostCarDao.getCarId()),
                                     Registration.getInstance().getShopRef());
                     callDelete.enqueue(callbackAddOrRemoveFollow);
@@ -172,7 +172,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
 
     private void setIconProfile(String url){
         Glide.with(getContext()).load(url)
-                .placeholder(com.hndev.library.R.drawable.ic_place_holder_2)
+                .placeholder(com.hndev.library.R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(mImageProfile);
 
@@ -308,9 +308,9 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mPostCarDao = Parcels.unwrap(bundle.getParcelable("postDao"));
     }
 
-    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
+    Callback<ResponseDao> callbackAddOrRemoveFollow = new Callback<ResponseDao>() {
         @Override
-        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
+        public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
             if (response.isSuccessful()) {
 //                Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -322,7 +322,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
             }
         }
         @Override
-        public void onFailure(Call<SuccessDao> call, Throwable t) {
+        public void onFailure(Call<ResponseDao> call, Throwable t) {
 //            Log.e(TAG, "onFailure: ", t);
         }
     };

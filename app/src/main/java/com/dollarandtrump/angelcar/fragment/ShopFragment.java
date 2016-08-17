@@ -40,6 +40,7 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.view.ImageViewGlide;
 import com.dollarandtrump.angelcar.view.ListHashTag;
+import com.dollarandtrump.angelcar.view.RecyclerGridAutoFit;
 import com.github.clans.fab.FloatingActionMenu;
 import com.hndev.library.view.AngelCarHashTag;
 
@@ -58,18 +59,12 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย Humnoy Android Developer
- * ลงวันที่ 11/16/2014. เวลา 11:42
- ***************************************/
-//TODO Error Api 23 (Database ActiveAndroid)
 @SuppressWarnings("unused")
 public class ShopFragment extends Fragment {
     private static final String TAG = "ShopFragment";
 
     @Bind(R.id.recycler_image_header_shop) RecyclerView mListImageHeader;
-    @Bind(R.id.recycler_car) RecyclerView mList;
+    @Bind(R.id.recycler_car) RecyclerGridAutoFit mList;
 
     @Bind(R.id.image_button_up_and_down) ImageView mImageUpDown;
     @Bind(R.id.image_background_shop) ImageView mImageBgShop;
@@ -203,7 +198,6 @@ public class ShopFragment extends Fragment {
         });
 
         initScroll();
-
     }
 
     private void initScroll() {
@@ -289,10 +283,18 @@ public class ShopFragment extends Fragment {
         initProfileShopBg(profileDao, mIdImageBackground);
         mImageHeaderAdapter.setUrlPath(profileDao.getProfilePath());
         mImageHeaderAdapter.notifyDataSetChanged();
+
+        //Check Shop Name
+        if (mProfileDao.getShopName() == null){
+            dialogEditShop(mProfileDao.getShopName(), mProfileDao.getShopDescription(),
+                    mProfileDao.getShopNumber(), mProfileDao.getUrlShopLogo());
+        }
     }
 
     private void initProfileShopBg(ProfileDao dao,int id){
-        Glide.with(this).load(dao.getUrlShopBackground(id))
+        Glide.with(this)
+                .load(dao.getUrlShopBackground(id))
+                .crossFade()
                 .into(mImageBgShop);
     }
 
@@ -338,6 +340,15 @@ public class ShopFragment extends Fragment {
 
     @OnClick({R.id.fab_editShop})
     public void clickProfile(){
+        dialogEditShop(mProfileDao.getShopName(), mProfileDao.getShopDescription(),
+                mProfileDao.getShopNumber(), mProfileDao.getUrlShopLogo());
+
+        if (mMenuFab.isOpened()){
+            mMenuFab.close(true);
+        }
+    }
+
+    public void dialogEditShop(String shopName,String description,String number,String urlLogo) {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         Fragment fragment = getChildFragmentManager().findFragmentByTag("ShopEditDialog");
         if (fragment != null){
@@ -346,10 +357,10 @@ public class ShopFragment extends Fragment {
 //        ft.addToBackStack(null);
         final ShopEditDialog dialog = new ShopEditDialog();
         Bundle args = new Bundle();
-        args.putString("shopName", mTextShopName.getText().toString());
-        args.putString("shopDescription",mTextShopDescription.getText().toString());
-        args.putString("shopNumber",mTextShopNumber.getText().toString());
-        args.putString("logoShop", mProfileDao.getUrlShopLogo());
+        args.putString("shopName", shopName);
+        args.putString("shopDescription",description);
+        args.putString("shopNumber",number);
+        args.putString("logoShop", urlLogo);
         dialog.setArguments(args);
         dialog.show(getChildFragmentManager(),"ShopEditDialog");
         dialog.setEditShopCallback(new ShopEditDialog.EditShopCallback() {
@@ -363,10 +374,6 @@ public class ShopFragment extends Fragment {
 
             }
         });
-
-        if (mMenuFab.isOpened()){
-            mMenuFab.close(true);
-        }
     }
 
     @OnClick(R.id.fab_upLoadCover)

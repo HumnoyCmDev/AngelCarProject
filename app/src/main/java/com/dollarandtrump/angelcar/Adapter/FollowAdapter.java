@@ -4,6 +4,7 @@ package com.dollarandtrump.angelcar.Adapter;
  * Created by Developer on 12/15/2015. 14:35
  */
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,6 +109,7 @@ public class FollowAdapter extends BaseAdapter {
     private void bindDataPostCar(ViewHolderPost holderPost,PostCarDao dao,String color1,String color2,int position){
         String topic = dao.getCarTitle();
         holderPost.angelCarPost.setPictureProfile(dao.getFullPathShopLogo());
+        Log.d("Follow", "bindDataPostCar: "+dao.getFullPathShopLogo());
         holderPost.angelCarPost.setPictureProduct(dao.getCarImageThumbnailPath());
         holderPost.angelCarPost.setTitle(topic);
         double amount = Double.parseDouble(dao.getCarPrice());

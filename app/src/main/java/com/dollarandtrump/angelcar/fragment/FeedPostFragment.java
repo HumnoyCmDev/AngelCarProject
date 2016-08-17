@@ -59,6 +59,10 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 
 public class FeedPostFragment extends Fragment{
@@ -99,6 +103,8 @@ public class FeedPostFragment extends Fragment{
     private FeedPostCarAdapter mAdapter;
 
     private boolean isFilter = false;
+
+    private Subscription subscribeCountCar;
 
     public FeedPostFragment() {
         super();
@@ -194,9 +200,23 @@ public class FeedPostFragment extends Fragment{
 
     private void loadCountCar() {
         // load count car
-        Call<CountCarCollectionDao> callLoadCountCar =
-                HttpManager.getInstance().getService().loadCountCar();
-        callLoadCountCar.enqueue(countCarCallback);
+//        Call<CountCarCollectionDao> callLoadCountCar =
+//                HttpManager.getInstance().getService().loadCountCar();
+//        callLoadCountCar.enqueue(countCarCallback);
+
+        subscribeCountCar = HttpManager.getInstance().getService().observableLoadCountCar()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<CountCarCollectionDao>() {
+                    @Override
+                    public void call(CountCarCollectionDao countCarCollectionDao) {
+                        CountCarCollectionDao.CountCarGao countCar = countCarCollectionDao.getRows().get(0);
+                        String textAll = countCar.getCountAll() + "/" +
+                                countCar.getCountMonth() + "/" + countCar.getCountDay() + " คัน"; // "ทั้งหมด " + countCarGao.getCountAll() + " คัน";
+                        mCountCarAll.setText(textAll);
+                    }
+                });
+
     }
 
     private void reloadData() {
@@ -452,6 +472,10 @@ public class FeedPostFragment extends Fragment{
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+
+        if (subscribeCountCar != null){
+            subscribeCountCar.unsubscribe();
+        }
     }
 
     /**************
@@ -577,28 +601,28 @@ public class FeedPostFragment extends Fragment{
     };
 
 
-    Callback<CountCarCollectionDao> countCarCallback = new Callback<CountCarCollectionDao>() {
-        @Override
-        public void onResponse(Call<CountCarCollectionDao> call, Response<CountCarCollectionDao> response) {
-            if (response.isSuccessful()) {
-                CountCarCollectionDao.CountCarGao countCarGao = response.body().getRows().get(0);
-                String textAll = countCarGao.getCountAll() +"/"+
-                        countCarGao.getCountMonth() +"/"+ countCarGao.getCountDay()+" คัน"; // "ทั้งหมด " + countCarGao.getCountAll() + " คัน";
-                mCountCarAll.setText(textAll);
-            } else {
-                try {
-                    Log.i(TAG, "onResponse: " + response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<CountCarCollectionDao> call, Throwable t) {
-            Log.e(TAG, "onFailure: ", t);
-        }
-    };
+//    Callback<CountCarCollectionDao> countCarCallback = new Callback<CountCarCollectionDao>() {
+//        @Override
+//        public void onResponse(Call<CountCarCollectionDao> call, Response<CountCarCollectionDao> response) {
+//            if (response.isSuccessful()) {
+//                CountCarCollectionDao.CountCarGao countCarGao = response.body().getRows().get(0);
+//                String textAll = countCarGao.getCountAll() +"/"+
+//                        countCarGao.getCountMonth() +"/"+ countCarGao.getCountDay()+" คัน"; // "ทั้งหมด " + countCarGao.getCountAll() + " คัน";
+//                mCountCarAll.setText(textAll);
+//            } else {
+//                try {
+//                    Log.i(TAG, "onResponse: " + response.errorBody().string());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//
+//        @Override
+//        public void onFailure(Call<CountCarCollectionDao> call, Throwable t) {
+//            Log.e(TAG, "onFailure: ", t);
+//        }
+//    };
 
 
     /*****************
@@ -636,10 +660,13 @@ public class FeedPostFragment extends Fragment{
 
             if (response.isSuccessful()) {
                 PostCarCollectionDao dao = response.body();
-
-                int firstVisiblePosition = mListView.getFirstVisiblePosition();
-                View c = mListView.getChildAt(0);
-                int top = c == null ? 0 : c.getTop();
+                int firstVisiblePosition = 0;
+                int top = 0;
+                if (mListView != null) {
+                    firstVisiblePosition = mListView.getFirstVisiblePosition();
+                    View c = mListView.getChildAt(0);
+                    top = c == null ? 0 : c.getTop();
+                }
 
                 if (mode == MODE_RELOAD_NEWER) {
                     mPostManager.insertDaoAtTopPosition(dao);

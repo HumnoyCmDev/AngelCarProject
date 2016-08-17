@@ -8,23 +8,27 @@ import com.dollarandtrump.angelcar.dao.MessageDao;
 import java.util.ArrayList;
 import java.util.List;
 
-/********************************************
- * Created by HumNoy Developer on 30/7/2559.
- * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
- * AngelCarProject
- ********************************************/
 
 @Table(name = "Conversation")
-public class ConversationCache extends Model{
+public class ConversationCache extends Model {
+
+    public ConversationCache() {
+    }
+
+    public ConversationCache(String carId, MessageDao message, String user) {
+        this.carId = carId;
+        this.message = message;
+        User = user;
+    }
 
     @Column(name = "CarId")
-    public String carId ;
+    public String carId;
 
     @Column(name = "User")
     public String User;
 
     @Column(name = "Message")
-    public List<MessageDao> message =  new ArrayList<>();
+    public MessageDao message;
 
 
     public String getCarId() {
@@ -43,11 +47,11 @@ public class ConversationCache extends Model{
         User = user;
     }
 
-    public List<MessageDao> getMessage() {
+    public MessageDao getMessage() {
         return message;
     }
 
-    public void setMessage(List<MessageDao> message) {
+    public void setMessage(MessageDao message) {
         this.message = message;
     }
 }

@@ -15,7 +15,8 @@ import android.widget.LinearLayout;
 import com.dollarandtrump.angelcar.Adapter.TopicViewMessageAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.TopicDao;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -156,6 +157,9 @@ public class TopicChatActivity extends AppCompatActivity {
         }else { // Send message Room
             sendMessageRoom(messageText.getText().toString());
         }
+        messageManager.addMessageMe("user",messageText.getText().toString());
+        messageAdapter.notifyDataSetChanged();
+        linearManager.smoothScrollToPosition(list,null,messageAdapter.getItemCount());
         messageText.setText(null);
     }
 
@@ -176,7 +180,7 @@ public class TopicChatActivity extends AppCompatActivity {
         HttpManager.getInstance().getService().observableCreateTopic(message)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<SuccessDao>() {
+                .subscribe(new Observer<ResponseDao>() {
 
                     @Override
                     public void onCompleted() {
@@ -191,8 +195,8 @@ public class TopicChatActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onNext(SuccessDao successDao) {
-                        mRoomId = successDao.getResult();
+                    public void onNext(ResponseDao responseDao) {
+                        mRoomId = responseDao.getResult();
                         String message = mRoomId+"||"+mUserId+"||0";
                         loadMessage(message);
                     }
@@ -248,12 +252,39 @@ public class TopicChatActivity extends AppCompatActivity {
     }
 
     @Subscribe
-    public void produceMessage(MessageCollectionDao messageGa){ //รับภายใน WaitMessageObservable
-        if (messageGa.getListMessage().size() > 0) {
-            messageManager.appendDataToBottomPosition(messageGa);
-            messageAdapter.setMessageDao(messageManager.getMessageDao());
-            messageAdapter.notifyDataSetChanged();
-            linearManager.scrollToPosition(messageAdapter.getItemCount());
+    public void produceMessage(MessageCollectionDao messageDao){ //รับภายใน WaitMessageObservable
+        if (messageDao.getListMessage().size() > 0) {
+//            for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
+//                MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size() - 1) - countMessage);
+//                if (message.getMessageStatus() == 0) {
+//                    messageManager.appendDataToBottomPosition(messageDao);
+//                    messageAdapter.setMessageDao(messageManager.getMessageDao());
+//                    messageAdapter.notifyDataSetChanged();
+//                    linearManager.scrollToPosition(messageAdapter.getItemCount());
+//                } else {
+//                    messageManager.updateMessageMe(countMessage, message);
+//                    messageAdapter.notifyDataSetChanged();
+//                }
+//            }
+
+            for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
+                MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size()-1) - countMessage);
+                if (message.getMessageStatus() == 0 ){ // ข้อความใหม่
+                    if (message.getMessageBy().equals("user")){ //Chat me แชทเก่าออกก่อน
+                        messageManager.updateMessageMe(countMessage,message);
+                        messageAdapter.notifyDataSetChanged();
+                        linearManager.scrollToPosition(messageAdapter.getItemCount());
+                    } else { //chat them
+                        messageManager.updateMessageThem(message);
+                        messageAdapter.notifyDataSetChanged();
+                    }
+                } else { // อ่านแล้ว
+                    messageManager.updateMessageMe(countMessage,message);
+                    messageAdapter.notifyDataSetChanged();
+                }
+            }
+
+
         }
     }
 

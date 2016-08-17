@@ -48,7 +48,7 @@ public class ImageBanner extends BaseIndicatorBanner<PictureDao, ImageBanner> {
         int itemHeight = (int) (itemWidth * 360 * 1.0f / 640);
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         iv.setLayoutParams(new LinearLayout.LayoutParams(itemWidth, itemHeight));
-        String BASE_URL_THUMBNAIL = item.getCarImageThumbnailPath();
+        String BASE_URL_THUMBNAIL = item.getCarImageFullHDPath();
 //        String urlImage ="http://angelcar.com/"+item.getCarImagePath()
 //                .replace("carimages","thumbnailcarimages");
 

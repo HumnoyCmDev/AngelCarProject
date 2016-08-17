@@ -1,6 +1,7 @@
 package com.dollarandtrump.angelcar.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,6 +10,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.activeandroid.ActiveAndroid;
+import com.activeandroid.query.Delete;
+import com.activeandroid.query.Update;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
@@ -25,12 +30,16 @@ import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.model.ConversationCache;
+import com.dollarandtrump.angelcar.utils.RxNotification;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
+
+import javax.inject.Inject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,7 +60,8 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     private Subscription subscriptionMessage;
     private Subscription subscriptionCarId;
     private MessageManager mgsManager;
-
+    @Inject
+    SharedPreferences sharedPreferences;
     private final String[] mTitles = {"คุยกับเจ้าหน้าที่", "คุยกับคนซื้อ", "คุยกับคนขาย"};
 
     @Override
@@ -60,10 +70,14 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         setContentView(R.layout.activity_view_chat_all);
         ButterKnife.bind(this);
         initViewPager();
+        ((MainApplication) getApplication()).getStoreComponent().inject(this);
 
+//        if (savedInstanceState == null) {
+//            loadAllCarId();
+//        }
 
-        if (savedInstanceState == null)
-            loadAllCarId();
+        /*RxNotification.with(getBaseContext())
+                .isNotification(false);*/
 
 
         Bundle intentNotification = getIntent().getExtras();
@@ -93,7 +107,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
     private void loadAllMessage(final CarIdDao carIdDao) {
         Log.d("view", "loadAllMessage: "+carIdDao.getAllCarId());
-
         //topic
         Observable<MessageAdminCollectionDao> rxCallLoadTopic =
                 HttpManager.getInstance().getService().observableConversationTopic(carIdDao.getTopicId());
@@ -115,6 +128,9 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
                         manager.setConversationBuy(dao);
                         manager.setConversationTopic(messageAdminCollectionDao2.convertToMessageCollectionDao());
                         manager.setProductIds(carIdDao);
+
+                        insertConversation(messageAdminCollectionDao, dao, messageAdminCollectionDao2);
+
                         return manager;
                     }
                 });
@@ -125,6 +141,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
                 .subscribe(new Subscriber<MessageManager>() {
                     @Override
                     public void onCompleted() {
+                        Log.d("load conversation", "onCompleted: ");
                     }
 
                     @Override
@@ -134,16 +151,43 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
                     @Override
                     public void onNext(MessageManager messageManager) {
+                        Log.d("load conversation", "next");
                          mgsManager = messageManager;
                         MainThreadBus.getInstance().post(produceMsgManager());
                     }
                 });
     }
 
+    private void insertConversation(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao dao, MessageAdminCollectionDao messageAdminCollectionDao2) {
+        new Delete().from(ConversationCache.class).execute();
+        new Delete().from(MessageDao.class).execute();
+
+        MessageManager managerSqlite = new MessageManager();
+        managerSqlite.setMessageDao(messageAdminCollectionDao2.convertToMessageCollectionDao());
+        managerSqlite.appendDataToBottomPosition(messageAdminCollectionDao.convertToMessageCollectionDao());
+        managerSqlite.appendDataToBottomPosition(dao);
+
+        //test insert to db
+        ActiveAndroid.beginTransaction();
+        try {
+            for( MessageDao m :managerSqlite.getMessageDao().getListMessage()){
+
+//                new Update(MessageDao.class).set()
+
+
+                m.save();
+                new ConversationCache(m.getMessageCarId(),m,m.getMessageFromUser()).save();
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }
+    }
 
     @Subscribe
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getData().get("type").equals("chat")) {
+        String type = remoteMessage.getData().get("type");
+        if (type.equals("chatfinance") || type.equals("chatrefinance") || type.equals("chatpawn") || type.equals("chatcar")){
             loadAllCarId();
         }
     }
@@ -175,8 +219,8 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         MainThreadBus.getInstance().register(this);
 //        if (getWindow().getDecorView() != null){
             loadAllCarId();
-//        }
 
+//        }
     }
 
     @Override

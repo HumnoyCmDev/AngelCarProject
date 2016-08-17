@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
@@ -92,7 +92,7 @@ public class ShopEditDialog extends DialogFragment {
         tvShopNumber.setText(shopNumber);
 
         Glide.with(this).load(logoShop)
-                .placeholder(com.hndev.library.R.drawable.loading)
+                .placeholder(com.hndev.library.R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .into(profileImage);
 
@@ -107,7 +107,7 @@ public class ShopEditDialog extends DialogFragment {
                     public void call(Uri uri) {
                         mUri = uri;
                         Glide.with(getActivity()).load(uri)
-                                .placeholder(com.hndev.library.R.drawable.loading)
+                                .placeholder(com.hndev.library.R.drawable.icon_logo)
                                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                                 .into(profileImage);
                     }
@@ -128,10 +128,10 @@ public class ShopEditDialog extends DialogFragment {
         }
         String shopRef = Registration.getInstance().getShopRef();
         String message = shopRef+"||"+shopName+"||"+shopDescription;
-        Observable<SuccessDao> rxCall = HttpManager.getInstance().getService().observableEditShop(message)
+        Observable<ResponseDao> rxCall = HttpManager.getInstance().getService().observableEditShop(message)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
-        rxCall.subscribe(new Observer<SuccessDao>() {
+        rxCall.subscribe(new Observer<ResponseDao>() {
             @Override
             public void onCompleted() {
 
@@ -144,7 +144,7 @@ public class ShopEditDialog extends DialogFragment {
             }
 
             @Override
-            public void onNext(SuccessDao successDao) {
+            public void onNext(ResponseDao responseDao) {
                 if (editShopCallback != null)
                     editShopCallback.onSuccess();
                 dismiss();

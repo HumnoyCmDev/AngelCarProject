@@ -26,11 +26,7 @@ import java.util.Map;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-/**
- * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
- *
- * @AngelCarProject
- */
+
 public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapter.ViewHolder> {
     private final static int TYPE_THEM = 0;
     private final static int TYPE_ME = 1;
@@ -164,8 +160,8 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
                 // Last message in cluster
                 viewHolder.mAvatar.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
-                        .load(R.drawable.ic_place_holder_2)
-                        .placeholder(R.drawable.ic_place_holder_2)
+                        .load(R.drawable.icon_logo)
+                        .placeholder(R.drawable.icon_logo)
                         .bitmapTransform(new CropCircleTransformation(mContext))
                         .into(viewHolder.mAvatar);
             } else {

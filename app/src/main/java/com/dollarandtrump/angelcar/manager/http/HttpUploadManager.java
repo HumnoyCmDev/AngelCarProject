@@ -63,7 +63,7 @@ public class HttpUploadManager {
                                 .subscribe(subscriber);
     }
 
-    public static void uploadFileShop(Gallery gallery, final String shopId, final Subscriber<String> subscriber) {
+    public static void uploadFileShop(final Context context, Gallery gallery, final String shopId, final Subscriber<String> subscriber) {
         final OkHttpClient okHttpClient = new OkHttpClient();
         Observable.from(gallery.getListGallery()).subscribe(new Action1<ImageModel>() {
             @Override
@@ -77,8 +77,8 @@ public class HttpUploadManager {
                                 .addFormDataPart("shopid", shopId)
                                 .addFormDataPart(
                                         "userfile",
-                                        imageModel.getFileImage().getName(),
-                                        RequestBody.create(MediaType.parse("image/png"), imageModel.getFileImage())).build();
+                                        imageModel.convertToFile(context).getName(),
+                                        RequestBody.create(MediaType.parse("image/png"), imageModel.convertToFile(context))).build();
 
                         Request request = new Request.Builder()
                                 .url("http://angelcar.com/ios/data/clsdata/shopprofileupload.php")

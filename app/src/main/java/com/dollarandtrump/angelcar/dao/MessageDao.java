@@ -1,6 +1,7 @@
 
 package com.dollarandtrump.angelcar.dao;
 
+import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.google.gson.annotations.Expose;
@@ -12,21 +13,21 @@ import java.util.Date;
 
 @Parcel(value = Parcel.Serialization.FIELD, analyze = MessageDao.class)
 @Table(name = "MessageDao")
-public class MessageDao {
+public class MessageDao extends Model{
 
     @SerializedName("messageid")        @Expose @Column(name = "MessageId") int messageId;
-    @SerializedName("messagecarid")     @Expose @Column(name = "messageCarId") String messageCarId;
-    @SerializedName("messagefromuser")  @Expose @Column(name = "messageFromUser") String messageFromUser;
-    @SerializedName("messagetext")      @Expose @Column(name = "messageText") String messageText;
-    @SerializedName("displayname")      @Expose @Column(name = "displayName") String displayName;
-    @SerializedName("messageby")        @Expose @Column(name = "messageBy") String messageBy;
-    @SerializedName("userprofileimage") @Expose @Column(name = "userProfileImage") String userProfileImage;
-    @SerializedName("messagestamp")     @Expose @Column(name = "messageStamp") Date messageStamp;
-    @SerializedName("messagestatus")    @Expose @Column(name = "messageStatus") int messageStatus;
+    @SerializedName("messagecarid")     @Expose @Column(name = "MessageCarId") String messageCarId;
+    @SerializedName("messagefromuser")  @Expose @Column(name = "MessageFromUser") String messageFromUser;
+    @SerializedName("messagetext")      @Expose @Column(name = "MessageText") String messageText;
+    @SerializedName("displayname")      @Expose @Column(name = "DisplayName") String displayName;
+    @SerializedName("messageby")        @Expose @Column(name = "MessageBy") String messageBy;
+    @SerializedName("userprofileimage") @Expose @Column(name = "UserProfileImage") String userProfileImage;
+    @SerializedName("messagestamp")     @Expose @Column(name = "MessageStamp") Date messageStamp;
+    @SerializedName("messagestatus")    @Expose @Column(name = "MessageStatus") int messageStatus;
 
     @Column(name = "isSent") boolean isSent = true;
 
-    private boolean isTopic = false;
+    public boolean isTopic = false;
 
     public boolean isTopic() {
         return isTopic;

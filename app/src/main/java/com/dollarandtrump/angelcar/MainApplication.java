@@ -3,14 +3,20 @@ package com.dollarandtrump.angelcar;
 import android.app.Application;
 
 import com.activeandroid.ActiveAndroid;
+import com.crashlytics.android.Crashlytics;
+import com.dollarandtrump.angelcar.component.DaggerStoreComponent;
+import com.dollarandtrump.angelcar.component.StoreComponent;
 import com.dollarandtrump.angelcar.manager.Contextor;
+import com.dollarandtrump.angelcar.module.AppModule;
+import com.dollarandtrump.angelcar.module.StoreModule;
 import com.dollarandtrump.angelcar.utils.Log;
 
-/**
- * สร้างสรรค์ผลงานโดย humnoy ลงวันที่ 27/1/59.10:56น.
- * @AngelCarProject
- */
+import io.fabric.sdk.android.Fabric;
+
 public class MainApplication extends Application{
+
+    private StoreComponent storeComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -19,7 +25,12 @@ public class MainApplication extends Application{
         Contextor.getInstance().init(getApplicationContext());
         ActiveAndroid.initialize(this);
 
+        storeComponent = DaggerStoreComponent.builder().appModule(new AppModule(this))
+                .storeModule(new StoreModule()).build();
+    }
 
+    public StoreComponent getStoreComponent() {
+        return storeComponent;
     }
 
     @Override

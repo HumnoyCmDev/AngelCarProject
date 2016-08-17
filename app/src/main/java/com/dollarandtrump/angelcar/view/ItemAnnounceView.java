@@ -84,7 +84,7 @@ public class ItemAnnounceView extends BaseCustomViewGroup {
 
     public void setIconProfile(String url){
         Glide.with(getContext()).load(url)
-                .placeholder(com.hndev.library.R.drawable.loading)
+                .placeholder(com.hndev.library.R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(ic_Profile);
     }

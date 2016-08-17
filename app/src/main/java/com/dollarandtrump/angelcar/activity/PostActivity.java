@@ -7,26 +7,27 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.CarBrandDao;
-import com.dollarandtrump.angelcar.dao.CarSubDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.fragment.ListImageFragment;
 import com.dollarandtrump.angelcar.fragment.BrandFragment;
 import com.dollarandtrump.angelcar.fragment.CarSubDetailFragment;
 import com.dollarandtrump.angelcar.fragment.CarSubFragment;
-import com.dollarandtrump.angelcar.fragment.PostFragment;
+import com.dollarandtrump.angelcar.fragment.ListImageFragment;
+import com.dollarandtrump.angelcar.fragment.PostCarFragment;
+import com.dollarandtrump.angelcar.interfaces.OnScrolling;
 import com.dollarandtrump.angelcar.interfaces.OnSelectData;
+import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.model.InfoCarModel;
-import com.dollarandtrump.angelcar.utils.ViewFindUtils;
 import com.dollarandtrump.angelcar.view.AngelCarViewPager;
-import com.flyco.tablayout.SegmentTabLayout;
 import com.squareup.otto.Produce;
-import com.viewpagerindicator.LinePageIndicator;
 
 import org.parceler.Parcels;
 
@@ -37,12 +38,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย humnoy Android Developer
- * ลงวันที่ 26/2/59. เวลา 10:43
- ***************************************/
-public class PostActivity extends AppCompatActivity implements OnSelectData{
+
+public class PostActivity extends AppCompatActivity implements OnSelectData ,OnScrolling {
     private static final String TAG = "PostActivity";
     public static final int CALL_BRAND = 1;
     public static final int CALL_CAR_TYPE = 2;
@@ -55,9 +52,10 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     private int lastPosition = 0;
 
     @Bind(R.id.post_viewpager) AngelCarViewPager pager;
-    @Bind(R.id.indicator) LinePageIndicator indicator;
     @Bind(R.id.btnNext) Button next;
     @Bind(R.id.btnPrevious) Button previous;
+    @Bind(R.id.group_button) LinearLayout mGroupButton;
+    @Bind(R.id.toolbar) Toolbar toolbar;
 
     InfoCarModel infoCarModel;
     List<Fragment> mFragment;
@@ -74,6 +72,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        initToolbar();
         MainThreadBus.getInstance().register(this);
         ButterKnife.bind(this);
         initInstance();
@@ -81,6 +80,14 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         SegmentTabLayout segment = ViewFindUtils.find(getWindow().getDecorView(),R.id.segment_tab);
         segment.setTabData(mTitles_3);*/
 
+    }
+
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void initInstance(){
@@ -104,7 +111,6 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         adapter.setFragmentList(mFragment);
         pager.setOffscreenPageLimit(0);
         pager.setAdapter(adapter);
-        indicator.setViewPager(pager);
         pager.setPagingEnabled(false);
         previous.setEnabled(false);
         next.setEnabled(false);
@@ -148,7 +154,8 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
                 case CALL_CAR_TYPE_DETAIL:
                     if (!isEdit)
                         mFragment.add(ListImageFragment.newInstance(infoCarModel));
-                    mFragment.add(PostFragment.newInstance());
+                    mFragment.add(PostCarFragment.newInstance());
+//                    mFragment.add(PostFragment.newInstance());
                     adapter.notifyDataSetChanged();
                     break;
                 case CALL_GALLERY_OK:
@@ -167,6 +174,24 @@ public class PostActivity extends AppCompatActivity implements OnSelectData{
         pager.setCurrentItem(pager.getCurrentItem()+1);
         lastPosition = pager.getCurrentItem();
         enabledButton(pager.getCurrentItem(),lastPosition);
+    }
+
+    @Override
+    public void onScrollingUp() {
+        Animation animation = AnimationUtils.loadAnimation(
+                Contextor.getInstance().getContext(),
+                R.anim.group_button_slide_up);
+        mGroupButton.startAnimation(animation);
+        mGroupButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onScrollingDown() {
+        mGroupButton.setVisibility(View.GONE);
+        Animation animation = AnimationUtils.loadAnimation(
+                Contextor.getInstance().getContext(),
+                R.anim.group_button_slide_down);
+        mGroupButton.startAnimation(animation);
     }
 
     private class PostAdapterViewpager extends FragmentStatePagerAdapter {

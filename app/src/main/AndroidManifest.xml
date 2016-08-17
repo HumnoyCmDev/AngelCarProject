@@ -76,6 +76,7 @@
         <activity android:name=".activity.ViewDetailActivity"/>
         <activity android:name=".activity.ViewCarActivity"/>
         <activity android:name=".activity.MainActivity"/>
+        <!--<activity android:name=".activity.InfoActivity"/>-->
 
         <activity
             android:name=".rx_picker.HiddenActivity"
@@ -84,7 +85,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <meta-data android:name="AA_DB_NAME" android:value="AngelCar.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="0" />
+        <meta-data android:name="AA_DB_VERSION" android:value="2" />
         <meta-data android:name="AA_SERIALIZERS"
             android:value="com.dollarandtrump.angelcar.utils.ListStringSerializer" />
 

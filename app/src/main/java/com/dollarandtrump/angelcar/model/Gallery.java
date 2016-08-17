@@ -5,11 +5,7 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.List;
 
-/********************************************
- * Created by HumNoy Developer on 13/6/2559.
- * @AngelCarProject
- * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
- ********************************************/
+
 @Parcel
 public class Gallery {
     List<ImageModel> listGallery = new ArrayList<>();

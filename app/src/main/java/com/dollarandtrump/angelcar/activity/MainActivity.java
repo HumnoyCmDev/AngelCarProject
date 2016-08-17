@@ -1,32 +1,33 @@
 package com.dollarandtrump.angelcar.activity;
 
-import android.accounts.AccountManager;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
+import com.activeandroid.query.Update;
+import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
@@ -35,17 +36,19 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.ActivityResultEvent;
+import com.dollarandtrump.angelcar.model.ConversationCache;
 import com.dollarandtrump.angelcar.utils.RegistrationResult;
+import com.dollarandtrump.angelcar.utils.RxNotification;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -60,11 +63,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity{
 
-    private  final int EMAIL_RESOLUTION_REQUEST = 333;
+//    private  final int EMAIL_RESOLUTION_REQUEST = 333;
     private  final int REQUEST_CODE_ASK_PERMISSIONS = 123;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
@@ -74,17 +78,19 @@ public class MainActivity extends AppCompatActivity{
     @Bind(R.id.fab_ac_Deposit) FloatingActionButton fabAcDeposit;
     @Bind(R.id.fab_ac_Dealer) FloatingActionButton fabAcDealer;
 
+    @Inject SharedPreferences sharedPreferences;
     private static final String TAG = "MainActivity";
 
     @Bind(R.id.tl_1) CommonTabLayout mTabLayout;
-    private String[] mTitles = {"Home", "Finance", "Shop", "Menu"};
+    private String[] mTitles = {"Home", "Finance", "Shop", "Info"};
     private int[] mIconSelectIds = {
             R.drawable.ic_tab_select_home, R.drawable.ic_tab_select_finance,
-            R.drawable.ic_tab_select_shop, R.drawable.ic_tab_select_menu};
+            R.drawable.ic_tab_select_shop, R.drawable.ic_info_select};
     private int[] mIconUnSelectIds = {
             R.drawable.ic_tab_home, R.drawable.ic_tab_finance,
-            R.drawable.ic_tab_shop, R.drawable.ic_tab_menu};
+            R.drawable.ic_tab_shop, R.drawable.ic_info};
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
+    private Menu mMenu;
 
 
     @Override
@@ -93,8 +99,11 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setSupportActionBar(toolbar);
-        initInstance();
+//        initInstance();
         initViewPager();
+
+        ((MainApplication) getApplication()).getStoreComponent().inject(this);
+
 
         fabAcDealer.setEnabled(false);
         fabAcDeposit.setEnabled(false);
@@ -105,12 +114,12 @@ public class MainActivity extends AppCompatActivity{
 //  googlePicker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EMAIL_RESOLUTION_REQUEST && resultCode == RESULT_OK) {
-            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            Toast.makeText(MainActivity.this,accountName,Toast.LENGTH_LONG).show();
-            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(accountName);
-            call.enqueue(callbackRegistrationEmail);
-        }
+//        if (requestCode == EMAIL_RESOLUTION_REQUEST && resultCode == RESULT_OK) {
+//            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+//            Toast.makeText(MainActivity.this,accountName,Toast.LENGTH_LONG).show();
+//            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(accountName);
+//            call.enqueue(callbackRegistrationEmail);
+//        }
 
         if (requestCode == ShopUpLoadDialog.REQUEST_CODE && resultCode == RESULT_OK){
            // requestCode ShopUpLoadDialog
@@ -142,21 +151,21 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void initInstance() {
-        if (!Registration.getInstance().isFirstApp()){
-            Intent googlePicker =
-                    AccountPicker.newChooseAccountIntent(null, null,
-                            new String[]{"com.google"}, true, null, null, null, null);
-            startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
-        }else {
-            // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
-            String cache_User = Registration.getInstance().getUserId();
-            if (cache_User != null){
-                Toast.makeText(MainActivity.this,cache_User,Toast.LENGTH_LONG).show();
-                Toast.makeText(MainActivity.this,Registration.getInstance().getShopRef(),Toast.LENGTH_LONG).show();
-            }
-        }
-    }
+//    private void initInstance() {
+//        if (!Registration.getInstance().isFirstApp()){
+//            Intent googlePicker =
+//                    AccountPicker.newChooseAccountIntent(null, null,
+//                            new String[]{"com.google"}, true, null, null, null, null);
+//            startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
+//        }else {
+//            // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
+//            String cache_User = Registration.getInstance().getUserId();
+//            if (cache_User != null){
+//                Toast.makeText(MainActivity.this,cache_User,Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this,Registration.getInstance().getShopRef(),Toast.LENGTH_LONG).show();
+//            }
+//        }
+//    }
 
     @Subscribe //Produce form RegistrationAlertFragment.java
     public void onRegistrationEmail(RegistrationResult result){
@@ -170,15 +179,41 @@ public class MainActivity extends AppCompatActivity{
     }
 
     @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_mian, menu);
+        mMenu = menu;
+        //init notification
+        setIconMessage(menu);
+        return true;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         MainThreadBus.getInstance().register(this);
+
+        /*RxNotification.with(this)
+                .observableNotification().observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
+            @Override
+            public void call(Boolean aBoolean) {
+                if (aBoolean) { // new
+                    mMenu.getItem(0).setIcon(R.drawable.ic_alert_message);
+                }else {
+                    mMenu.getItem(0).setIcon(R.drawable.ic_message);
+                    sharedPreferences.edit().putBoolean("notification_chat",false).apply();
+                }
+            }
+        });*/
+
+        setIconMessage(mMenu);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         MainThreadBus.getInstance().unregister(this );
+
+        /*RxNotification.with(this).onDestroy();*/
     }
 
     @Subscribe
@@ -208,17 +243,57 @@ public class MainActivity extends AppCompatActivity{
                 Snackbar.make(getWindow().getDecorView(),"กำลังพัฒนาระบบ",Snackbar.LENGTH_SHORT).show();
                 break;
             case R.id.fab_ac_PostSell:
-                startActivity(initIntent(PostActivity.class));
+                //Check Shop Name
+                ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
+                if (mProfile.getShopName() == null){
+                    new AlertDialog.Builder(this)
+                            .setCancelable(false)
+                            .setTitle("แจ้งเตือน")
+                            .setMessage("กรุณาใส่ชื่อที่ Shop ก่อนประกาศขาย")
+                            .setPositiveButton("Shop", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    viewPager.setCurrentItem(2,true);
+                                }
+                            })
+                            .setNegativeButton("Close", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+
+                }else {
+                    startActivity(initIntent(PostActivity.class));
+                }
                 break;
             default:
                 break;
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_mian,menu);
-        return true;
+    public void setIconMessage(Menu menu) {
+//        boolean notification = sharedPreferences.getBoolean("notification_chat", false);
+//        if (notification) {
+//            menu.getItem(0).setIcon(R.drawable.ic_alert_message);
+//        }
+
+        if (menu == null) return;
+        ConversationCache c =
+                SQLiteUtils.rawQuerySingle(ConversationCache.class,"SELECT * FROM Conversation INNER JOIN MessageDao ON Conversation.Message = MessageDao.Id WHERE MessageDao.MessageStatus = 0",null);
+        if (c != null){
+            menu.getItem(0).setIcon(R.drawable.ic_alert_message);
+        }else {
+            menu.getItem(0).setIcon(R.drawable.ic_message);
+        }
+    }
+
+    @Subscribe
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        String type = remoteMessage.getData().get("type");
+        if (type.equals("chatfinance") || type.equals("chatrefinance") || type.equals("chatpawn") || type.equals("chatcar")){
+            setIconMessage(mMenu);
+        }
     }
 
 
@@ -236,8 +311,6 @@ public class MainActivity extends AppCompatActivity{
 //        mTabLayout.setMsgMargin(0,-5,0);
         mTabLayout.setOnTabSelectListener(onTabSelectListener);
     }
-
-
 
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -306,7 +379,7 @@ public class MainActivity extends AppCompatActivity{
                 HttpManager.getInstance().getService().sendTokenRegistration(user,shop,FirebaseInstanceId.getInstance().getToken())
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<SuccessDao>() {
+                        .subscribe(new Observer<ResponseDao>() {
                             @Override
                             public void onCompleted() {
                             }
@@ -316,8 +389,8 @@ public class MainActivity extends AppCompatActivity{
                             }
 
                             @Override
-                            public void onNext(SuccessDao successDao) {
-                                Log.i(TAG, "onNext: "+ successDao);
+                            public void onNext(ResponseDao responseDao) {
+                                Log.i(TAG, "onNext: "+ responseDao);
                             }
                         });
             } else {

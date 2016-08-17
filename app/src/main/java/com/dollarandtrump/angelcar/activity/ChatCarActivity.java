@@ -30,7 +30,7 @@ import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Permission;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -100,7 +100,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         ButterKnife.bind(this);
         initToolbar();
         initInstance();
-
 
         if (savedInstanceState == null) {
             // load message
@@ -231,6 +230,12 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                         .setTitle("Message!")
                         .setMessage("เชิญเจ้าหน้าที่")
                         .setNegativeButton("Ok", listenerDialogConfirm)
+                        .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
                         .create();
                 dialog.show();
             break;
@@ -326,22 +331,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
     private void loadMessageNewer() {
 
-//        RxMessageObservable.with().publishSubject()
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Action1<MessageCollectionDao>() {
-//                    @Override
-//                    public void call(MessageCollectionDao dao) {
-//                        if (dao != null) {
-//                            mMessageManager.appendDataToBottomPosition(dao);
-//                            // คอมเม้นไว้ หาก list เด้งลงมา Last Position
-//                            mAdapter.setMessages(mMessageManager.getMessageDao().getListMessage());
-//                            mAdapter.notifyDataSetChanged();
-//                        }else {
-//                            Log.d(TAG, "call: null");
-//                        }
-//                    }
-//                });
-
         Call<MessageCollectionDao> call =
                 HttpManager.getInstance().getService()
                         .viewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
@@ -373,7 +362,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
             @Override
             public void onFailure(Call<MessageCollectionDao> call, Throwable t) {
-                Toast.makeText(ChatCarActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(ChatCarActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "onFailure: ", t);
             }
         });
@@ -415,12 +404,11 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     @Subscribe
     public void produceMessage(MessageCollectionDao messageDao){ //รับภายใน WaitMessageObservable
         if (messageDao.getListMessage().size() > 0) {
-
             for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
                 MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size()-1) - countMessage);
                 if (message.getMessageStatus() == 0 ){ // ข้อความใหม่
                     if (message.getMessageBy().equals(mMessageBy)){ //Chat me แชทเก่าออกก่อน
-                       mMessageManager.updateMessageMe(countMessage,message);
+                        mMessageManager.updateMessageMe(countMessage,message);
                         mViewMessageAdapter.notifyDataSetChanged();
                         mListChat.smoothScrollToPosition(mViewMessageAdapter.getItemCount());
                     } else { //chat them
@@ -480,11 +468,11 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     DialogInterface.OnClickListener listenerDialogConfirm = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-                Call<SuccessDao> call =
+                Call<ResponseDao> call =
                         HttpManager.getInstance().getService().regOfficer(mPostCarDao.getCarId()+"||"+mMessageFromUser);
-                call.enqueue(new Callback<SuccessDao>() {
+                call.enqueue(new Callback<ResponseDao>() {
                     @Override
-                    public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
+                    public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
                         if (response.isSuccessful()){
                             Toast.makeText(ChatCarActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
                         }else {
@@ -497,7 +485,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     }
 
                     @Override
-                    public void onFailure(Call<SuccessDao> call, Throwable t) {
+                    public void onFailure(Call<ResponseDao> call, Throwable t) {
                         Log.e(TAG, "onFailure: ", t);
                     }
                 });
@@ -563,9 +551,9 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         }
     };
 
-    Callback<SuccessDao> callbackAddOrRemoveFollow = new Callback<SuccessDao>() {
+    Callback<ResponseDao> callbackAddOrRemoveFollow = new Callback<ResponseDao>() {
         @Override
-        public void onResponse(Call<SuccessDao> call, Response<SuccessDao> response) {
+        public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
             if (response.isSuccessful()) {
                 Log.i(TAG, "onResponse:" + response.body().success);
             } else {
@@ -577,7 +565,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
             }
         }
         @Override
-        public void onFailure(Call<SuccessDao> call, Throwable t) {
+        public void onFailure(Call<ResponseDao> call, Throwable t) {
             Log.e(TAG, "onFailure: ", t);
         }
     };

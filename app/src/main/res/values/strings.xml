@@ -37,6 +37,15 @@
     <string name="text_refinance">รีไฟแนนซ์</string>
     <string name="text_pawn">จำนำทะเบียน</string>
     <string name="text_deal">รอตรวจสอบหลักฐาน</string>
+    <string name="gear">เกียร์</string>
+    <string name="price">ราคา</string>
+    <string name="province">จังหวัด</string>
+    <string name="car_details">รายละเอียด</string>
+    <string name="tel">โทร</string>
+    <string name="name">ชื่อ-นามสกุล :</string>
+    <string name="topic_post">คำโฆษณา</string>
+    <string name="evidence">แนบหลักฐาน</string>
+    <string name="close">ปิด</string>
 
     <string-array name="province">
         <item>ราชบุรี</item>

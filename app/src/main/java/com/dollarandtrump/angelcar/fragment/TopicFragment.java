@@ -138,6 +138,7 @@ public class TopicFragment extends Fragment {
     }
 
     void loadFeed(String user){
+        Log.d(user + "||" + mType.toString());
         mSubscription = HttpManager.getInstance().getService()
                 .observableFeedTopic(user + "||" + mType.toString())
                 .subscribeOn(Schedulers.newThread())

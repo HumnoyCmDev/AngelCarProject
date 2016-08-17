@@ -11,8 +11,8 @@
     <android.support.v7.widget.CardView
         app:cardElevation="3dp"
         android:layout_margin="3dp"
-        android:layout_width="108dp"
-        android:layout_height="161dp">
+        android:layout_width="105dp"
+        android:layout_height="160dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,18 +22,52 @@
             <ImageView
                 android:id="@+id/itemShopImage"
                 android:layout_width="match_parent"
-                android:layout_height="107dp"
+                android:layout_height="100dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/simple_product" />
 
             <TextView
+                android:textSize="12sp"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
                 android:id="@+id/itemShopCar"
                 android:textColor="#4A4A4A"
-                android:textSize="13sp"
-                android:gravity="center"
-                android:text="ALPHARD 2.4V\n2009 AUTO"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textStyle="bold"
+                android:text="[Brand]"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textSize="10sp"
+                    android:id="@+id/text_year"
+                    android:layout_marginLeft="2dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:drawableLeft="@drawable/ic_calendar_black"
+                    android:text="[Year]"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:textSize="10sp"
+                    android:id="@+id/text_price"
+                    android:layout_marginLeft="6dp"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:drawableLeft="@drawable/ic_price_black"
+                    android:text="[Price]"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
 
         </LinearLayout>
     </android.support.v7.widget.CardView>
@@ -50,6 +84,7 @@
         android:layout_height="35dp" />
 
     <ViewStub
+        android:layout_gravity="bottom"
         android:layout_margin="3dp"
         android:id="@+id/sub_status_wait"
         android:inflatedId="@+id/sub_layout_status_wait"

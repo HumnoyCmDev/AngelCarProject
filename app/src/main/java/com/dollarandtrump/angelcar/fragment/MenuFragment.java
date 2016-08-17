@@ -14,9 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.activeandroid.Model;
 import com.activeandroid.query.Select;
+import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.activity.InfoActivity;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
+import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.RxUploadFile;
 import com.dollarandtrump.angelcar.model.CacheShop;
@@ -49,11 +53,7 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย Humnoy Android Developer
- * ลงวันที่ 11/16/2014. เวลา 11:42
- ***************************************/
+
 @SuppressWarnings("unused")
 public class MenuFragment extends Fragment {
 
@@ -61,9 +61,8 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.text_name) TextView mName;
     @Bind(R.id.text_description) TextView mDescription;
 
-    NotificationManagerCompat mNotification;
+    private ProfileDao mProfile;
 
-    CacheShop mShopCache;
     public MenuFragment() {
         super();
     }
@@ -94,18 +93,24 @@ public class MenuFragment extends Fragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        mShopCache = new Select().from(CacheShop.class).executeSingle();
+        mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this, rootView);
 
-        if (mShopCache != null) {
-            mImageProfile.setImageUrl(getActivity(), mShopCache.getProfileDao().getUrlShopLogo());
-            mName.setText(mShopCache.getProfileDao().getShopName());
-            mDescription.setText(mShopCache.getProfileDao().getShopDescription());
+        if (mProfile != null) {
+            mImageProfile.setImageUrl(getActivity(), mProfile.getUrlShopLogo());
+            mName.setText(mProfile.getShopName());
+            mDescription.setText(mProfile.getShopDescription());
         }
+
+        if (savedInstanceState == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.content_container, new InfoFragment()).commit();
+        }
+
     }
 
 
@@ -116,6 +121,12 @@ public class MenuFragment extends Fragment {
         i.putExtra("shop",Registration.getInstance().getShopRef());
         startActivity(i);
     }
+
+//    @OnClick(R.id.text_button_info)
+//    public void onClickInfo(){
+//        Intent intent = new Intent(getActivity(), InfoActivity.class);
+//        startActivity(intent);
+//    }
 
     @Override
     public void onStart() {
@@ -134,46 +145,6 @@ public class MenuFragment extends Fragment {
 
     @SuppressWarnings("UnusedParameters")
     private void onRestoreInstanceState(Bundle savedInstanceState) {
-    }
-
-    @OnClick(R.id.text_view_show_case)
-    public void showNotification(){
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getContext())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("AngelCar")
-                .setContentText("Tset")
-                .setAutoCancel(true)
-                ;
-//                .setSound(defaultSoundUri)
-//                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-    }
-
-    @OnClick(R.id.button_upload_image)
-    public void onUploadImageTest(){
-        RxImagePicker.with(getActivity()).requestImage(Sources.GALLERY)
-                .subscribe(new Action1<Uri>() {
-                    @Override
-                    public void call(Uri uri) {
-                        List<File> f = new ArrayList<>();
-                        f.add(FileUtils.getFile(getContext(),uri));
-
-                        Gallery gallery = new Gallery(new ImageModel(uri,"0"));
-
-                        RxUploadFile.with(getContext()).evidence()
-                                .setEvidence("4",gallery)
-                                .subscriber(new Action1<String>() {
-                                    @Override
-                                    public void call(String s) {
-
-                                    }
-                                });
-                    }
-                });
     }
 
 }

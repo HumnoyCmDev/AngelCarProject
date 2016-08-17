@@ -7,33 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".activity.PostActivity">
 
-    <!--<com.flyco.tablayout.SegmentTabLayout
-        app:tl_indicator_width_equal_title="true"
-        android:id="@+id/segment_tab"
+    <android.support.v7.widget.Toolbar
+        app:title="ประกาศขาย"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:layout_gravity="center_horizontal"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        app:tl_textBold="true"
-        app:tl_textSelectColor="@android:color/black"
-        app:tl_indicator_anim_enable="true"
-        app:tl_bar_color="#ffffff"
-        app:tl_indicator_color="@color/colorAccent"
-        app:tl_indicator_margin_bottom="2dp"
-        app:tl_indicator_margin_left="2dp"
-        app:tl_indicator_margin_right="2dp"
-        app:tl_indicator_margin_top="2dp"
-        app:tl_indicator_corner_radius="2dp"
-        app:tl_tab_width="100dp"/>-->
-
-    <com.viewpagerindicator.LinePageIndicator
-        android:id="@+id/indicator"
-        app:selectedColor="#88FF0000"
-        app:unselectedColor="#FF888888"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:titleTextAppearance="@style/Toolbar.TitleText"
+        app:titleTextColor="@android:color/white" />
 
         <com.dollarandtrump.angelcar.view.AngelCarViewPager
             android:id="@+id/post_viewpager"
@@ -43,6 +26,7 @@
 
 
     <LinearLayout
+        android:id="@+id/group_button"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

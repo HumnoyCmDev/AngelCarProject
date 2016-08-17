@@ -165,7 +165,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
                     .load(rulImage)
                     .transform(new PictureReSize())
 //                    .transform(new RoundedTransform(25f))
-                    .placeholder(R.drawable.loading)
+                    .placeholder(R.drawable.icon_logo)
                     .into(image);
 
         }
@@ -180,7 +180,7 @@ public class AngelCarMessage extends BaseCustomViewGroup {
     public void setIconProfile(String url) {
         Picasso.with(getContext())
                 .load(url)
-                .placeholder(R.drawable.loading)
+                .placeholder(R.drawable.icon_logo)
                 .into(iconProfile);
     }
 

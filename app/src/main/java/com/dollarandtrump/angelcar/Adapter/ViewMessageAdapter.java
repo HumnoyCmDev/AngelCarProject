@@ -260,7 +260,7 @@ public class ViewMessageAdapter extends RecyclerView.Adapter<ViewMessageAdapter.
                 Picasso.with(mContext)
                         .load(AngelCarUtils.subUrlMessage(message.getMessageText()))
                         .transform(new PictureReSize())
-                        .placeholder(com.hndev.library.R.drawable.loading)
+                        .placeholder(com.hndev.library.R.drawable.icon_logo)
                         .into(imageView);
                 viewHolder.mCell.addView(imageView);
             }

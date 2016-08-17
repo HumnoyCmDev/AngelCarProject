@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarBrandDao;
@@ -49,6 +50,10 @@ public class BrandGridAdapter extends BaseAdapter {
         holder.tvName.setVisibility(View.GONE);//setText(getItem(position).getBrandName());
         TypedArray reImage = parent.getResources().obtainTypedArray(R.array.logoCar);
         holder.imgBrand.setImageResource(reImage.getResourceId(position,-1));
+//        Glide.with(parent.getContext())
+//                .load(reImage.getResourceId(position,-1))
+//                .crossFade()
+//                .into(holder.imgBrand);
         reImage.recycle();
 
         return view;

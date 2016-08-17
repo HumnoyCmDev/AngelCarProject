@@ -7,11 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
-/**
- * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 31/5/59.14:16น.
- *
- * @AngelCarProject
- */
+
 public class RecyclerGridAutoFit extends RecyclerView{
     private int columnWidth;
     private GridLayoutManager manager;

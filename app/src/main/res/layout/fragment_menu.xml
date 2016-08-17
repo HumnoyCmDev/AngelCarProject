@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+<!--<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:fillViewport="true">-->
 
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+
+
         <LinearLayout
+            android:visibility="gone"
             android:id="@+id/menu_button_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,6 +25,8 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="10dp">
+
+
 
             <com.dollarandtrump.angelcar.view.ImageViewGlide
                 android:id="@+id/image_view_glide_profile"
@@ -64,61 +70,63 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:paddingBottom="10dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:orientation="vertical"
+        <FrameLayout
+            android:id="@+id/content_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"/>
 
-            <TextView
-                android:id="@+id/text_view_show_case"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:drawablePadding="10dp"
-                android:drawableLeft="@drawable/ic_setting"
-                android:text="ShowCase"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <!--<TextView-->
+            <!--android:layout_gravity="center"-->
+            <!--android:padding="8dp"-->
+            <!--android:textColor="@color/colorHintDark"-->
+            <!--android:text="CLS สินเชื่อรถยนต์"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
 
-            <TextView
-                android:layout_marginTop="6dp"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:drawablePadding="10dp"
-                android:drawableLeft="@drawable/ic_setting"
-                android:text="Setting"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:layout_marginTop="6dp"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:drawablePadding="10dp"
-                android:drawableLeft="@drawable/ic_setting"
-                android:text="VersionUpdate"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/button_upload_image"
-                android:layout_marginTop="6dp"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:drawablePadding="10dp"
-                android:drawableLeft="@drawable/ic_setting"
-                android:text="info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+        <!--<LinearLayout-->
+            <!--android:paddingBottom="10dp"-->
+            <!--android:orientation="vertical"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
 
 
-        </LinearLayout>
+            <!--<TextView-->
+                <!--android:textStyle="bold"-->
+                <!--android:paddingTop="8dp"-->
+                <!--android:paddingBottom="8dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:layout_marginTop="6dp"-->
+                <!--android:clickable="true"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:drawablePadding="10dp"-->
+                <!--android:drawableLeft="@drawable/ic_setting_back"-->
+                <!--android:text="Setting"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content" />-->
+
+
+
+            <!--<TextView-->
+                <!--android:textStyle="bold"-->
+                <!--android:paddingTop="8dp"-->
+                <!--android:paddingBottom="8dp"-->
+                <!--android:paddingLeft="16dp"-->
+                <!--android:id="@+id/text_button_info"-->
+                <!--android:layout_marginTop="6dp"-->
+                <!--android:clickable="true"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:drawablePadding="10dp"-->
+                <!--android:drawableLeft="@drawable/ic_info"-->
+                <!--android:text="info"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content" />-->
+
+
+        <!--</LinearLayout>-->
 
 
 
 
     </LinearLayout>
 
-</ScrollView>
+<!--</ScrollView>-->

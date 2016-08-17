@@ -6,7 +6,8 @@ import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CountCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
-import com.dollarandtrump.angelcar.dao.SuccessDao;
+import com.dollarandtrump.angelcar.dao.ProvinceCollectionDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
@@ -26,11 +27,6 @@ import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import rx.Observable;
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย humnoy Android Developer
- * ลงวันที่ 13/2/59. เวลา 13:57
- ***************************************/
 
 public interface ApiService {
 
@@ -44,7 +40,7 @@ public interface ApiService {
     Call<MessageCollectionDao> waitMessage(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=reqofficer")
-    Call<SuccessDao> regOfficer(@Query("message") String message);
+    Call<ResponseDao> regOfficer(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=viewclient")
     Call<MessageCollectionDao> messageClient(@Query("message") String message);
@@ -58,10 +54,10 @@ public interface ApiService {
 
     //read chat
     @GET("/ios/api/ga_chatcar.php?operation=read")
-    Observable<SuccessDao> observableReadMessage(@Query("message") String currentMessageId);
+    Observable<ResponseDao> observableReadMessage(@Query("message") String currentMessageId);
     //read topic chat
     @GET("/ios/api/ga_chatadmin.php?operation=read")
-    Observable<SuccessDao> observableReadTopicMessage(@Query("message") String currentMessageId);
+    Observable<ResponseDao> observableReadTopicMessage(@Query("message") String currentMessageId);
 
     //View Chat Topic
     @GET("ios/api/ga_chatadmin.php?operation=view")
@@ -70,7 +66,7 @@ public interface ApiService {
     Call<MessageCollectionDao> waitMessageTopic(@Query("message") String message);
     // Create Topic
     @GET("ios/api/ga_chatadmin.php?operation=newtopic")
-    Observable<SuccessDao> observableCreateTopic(@Query("message") String message);
+    Observable<ResponseDao> observableCreateTopic(@Query("message") String message);
 
     // conversation Topic
     @GET("ios/api/ga_chatadmin.php?operation=viewsystems")
@@ -78,13 +74,13 @@ public interface ApiService {
 
     //update post
     @GET("android/api/updatepost.php")
-    Observable<SuccessDao> observableAnnounce(@Query("carid") String carId);
+    Observable<ResponseDao> observableAnnounce(@Query("carid") String carId);
 
 
     //Insert Post Car
     @FormUrlEncoded
     @POST("android/api/insertpost.php")
-    Call<SuccessDao> postCar
+    Call<ResponseDao> postCar
     (
             @Field("shopref") String shopPref, // 1
             @Field("brandref") int brand, // toyota **ตัด
@@ -104,12 +100,13 @@ public interface ApiService {
 
     @FormUrlEncoded
     @POST("android/api/insertpost.php")
-    Observable<SuccessDao> observablePostCar
+    Observable<ResponseDao> observablePostCar
             (
                     @Field("shopref") String shopPref, // 1
                     @Field("brandref") int brand, // toyota **ตัด
                     @Field("subref") int subBrand,
                     @Field("typeref") int subDetailBrand,
+                    @Field("cartitle") String carTitle, // ชื่อสั้นๆ
                     @Field("cardetail") String carDetail, // ชื่อสั้นๆ
                     @Field("caryear") int carYear, // ปีรถ
                     @Field("carprice") String carPrice,// ราคารถ
@@ -122,8 +119,12 @@ public interface ApiService {
             );
 
     @FormUrlEncoded
+    @POST("ios/api/ga_car.php?operation=new")
+    Observable<ResponseDao> observablePost(@Query("message") String message);
+
+    @FormUrlEncoded
     @POST("android/api/updateshop.php")
-    Observable<SuccessDao> observableUpdatePostCar
+    Observable<ResponseDao> observableUpdatePostCar
             (
                     @Field("carid") int carId,
                     @Field("brandref") int brand, // toyota **ตัด
@@ -139,7 +140,7 @@ public interface ApiService {
                     @Field("telnumber") String telNumber // ชื่อ นามสกุล
             );
 
-    // Feed Post Car
+     /**Feed Post Car**/
     @GET("android/api/getfeedpost.php")
     Call<PostCarCollectionDao> loadPostCar();
     @GET("android/api/getfeedpost.php")
@@ -147,9 +148,11 @@ public interface ApiService {
     @GET("android/api/getfeedpost.php")
     Call<PostCarCollectionDao> loadNewerPostCar(@Query("datenew") String dateTime);
 
-    // countCar
+    /** countCar*/
     @GET("android/api/countcar.php")
     Call<CountCarCollectionDao> loadCountCar();
+    @GET("android/api/countcar.php")
+    Observable<CountCarCollectionDao> observableLoadCountCar();
 
     //Registration Email Address
     @GET("android/api/createuser.php")
@@ -175,11 +178,11 @@ public interface ApiService {
 
     //GET Delete Chat
     @GET("android/api/deletechat.php")
-    Call<SuccessDao> deleteChatList(@Query("userref") String userRef);
+    Call<ResponseDao> deleteChatList(@Query("userref") String userRef);
 
     //GET Add or Delete Follow
     @GET("android/api/controlfollow.php")
-    Call<SuccessDao> follow(@Query("status") String status, @Query("carref") String carRef, @Query("shopref") String shopRef);
+    Call<ResponseDao> follow(@Query("status") String status, @Query("carref") String carRef, @Query("shopref") String shopRef);
 
     //GET Follow Car Model
     @GET("android/api/getfollowmodel.php")
@@ -207,7 +210,7 @@ public interface ApiService {
     //GET Brand Sub
     @GET("android/api/selectbrand.php")
     Call<CarSubCollectionDao> loadDataBrandSub(@Query("brandid") int brandId);
-    //GET Brand SubDetail
+    /**GET Brand SubDetail**/
     @GET("android/api/selectbrand.php")
     Call<CarSubCollectionDao> loadDataBrandSubDetail(@Query("subid") int subId);
 
@@ -228,12 +231,12 @@ public interface ApiService {
 
     //Edit Shop
     @GET("ios/api/cls_shop.php?operation=edit")
-    Observable<SuccessDao> observableEditShop(@Query("message") String message);
+    Observable<ResponseDao> observableEditShop(@Query("message") String message);
 
     //Register
     @FormUrlEncoded
     @POST("android/api/registerfirebase.php")
-    Observable<SuccessDao> sendTokenRegistration(@Field("userref") String userRef, @Field("shopref") String shopRef, @Field("firebaseid") String token);
+    Observable<ResponseDao> sendTokenRegistration(@Field("userref") String userRef, @Field("shopref") String shopRef, @Field("firebaseid") String token);
 
     /**Feed Topic**/
     @GET("ios/api/ga_chatadmin.php?operation=viewtopic")
@@ -241,5 +244,9 @@ public interface ApiService {
 
     /**หลักฐานรูป**/
     @GET("ios/api/ga_car.php?operation=evidence")
-    Observable<SuccessDao> observableEvidence(@Query("message") String message);/**carid||shopid||{owner,delegate,dealers}**/
+    Observable<ResponseDao> observableEvidence(@Query("message") String message);/**carid||shopid||{owner,delegate,dealers}**/
+
+    /**จังหวัด**/
+    @GET("ios/api/getprovince.php")
+    Observable<ProvinceCollectionDao> observableProvince();
 }
