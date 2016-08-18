@@ -15,7 +15,7 @@
     <string name="read">อ่านแล้ว</string>
     <string name="un_read">ยังไม่อ่าน</string>
 
-    <string name="key_message" formatted="false" >message_json_%s_%s</string>
+    <!--<string name="key_message" formatted="false" >message_json_%s_%s</string>-->
 
     <string name="deal_low">ต่ำกว่าราคากลาง</string>
     <string name="deal_mid">ราคากลาง</string>

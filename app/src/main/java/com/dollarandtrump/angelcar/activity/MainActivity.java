@@ -273,19 +273,18 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public void setIconMessage(Menu menu) {
-//        boolean notification = sharedPreferences.getBoolean("notification_chat", false);
-//        if (notification) {
-//            menu.getItem(0).setIcon(R.drawable.ic_alert_message);
-//        }
-
         if (menu == null) return;
-        ConversationCache c =
-                SQLiteUtils.rawQuerySingle(ConversationCache.class,"SELECT * FROM Conversation INNER JOIN MessageDao ON Conversation.Message = MessageDao.Id WHERE MessageDao.MessageStatus = 0",null);
-        if (c != null){
+        if (findMessageNotRead("Topic","officer") != null || findMessageNotRead("Buy","shop") != null ||
+                findMessageNotRead("Sell","user") != null){
             menu.getItem(0).setIcon(R.drawable.ic_alert_message);
         }else {
             menu.getItem(0).setIcon(R.drawable.ic_message);
         }
+    }
+
+    private ConversationCache findMessageNotRead(String type,String messageBy){
+        ConversationCache cache = SQLiteUtils.rawQuerySingle(ConversationCache.class,"SELECT * FROM Conversation INNER JOIN MessageDao ON Conversation.Message = MessageDao.Id WHERE Conversation.ConversationType = '"+type+"' And MessageDao.MessageBy = '"+messageBy+"'  AND MessageDao.MessageStatus = 0",null);
+    return cache;
     }
 
     @Subscribe

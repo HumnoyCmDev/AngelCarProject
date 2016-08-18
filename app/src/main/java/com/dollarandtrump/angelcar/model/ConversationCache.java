@@ -15,37 +15,20 @@ public class ConversationCache extends Model {
     public ConversationCache() {
     }
 
-    public ConversationCache(String carId, MessageDao message, String user) {
-        this.carId = carId;
+    public ConversationCache(String conversationType,MessageDao message) {
         this.message = message;
-        User = user;
+        this.conversationType = conversationType;
     }
 
-    @Column(name = "CarId")
-    public String carId;
 
-    @Column(name = "User")
-    public String User;
+    @Column(name = "ConversationType")
+    public String conversationType;
 
     @Column(name = "Message")
     public MessageDao message;
 
 
-    public String getCarId() {
-        return carId;
-    }
 
-    public void setCarId(String carId) {
-        this.carId = carId;
-    }
-
-    public String getUser() {
-        return User;
-    }
-
-    public void setUser(String user) {
-        User = user;
-    }
 
     public MessageDao getMessage() {
         return message;

@@ -20,7 +20,7 @@ public class MainApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-//        Fabric.with(this, new Crashlytics());
+        Fabric.with(this, new Crashlytics());
         Log.setLoggingEnabled(true);
         Contextor.getInstance().init(getApplicationContext());
         ActiveAndroid.initialize(this);

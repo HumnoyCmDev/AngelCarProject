@@ -27,8 +27,8 @@ public class HttpManager {
 
     private HttpManager() {
         Gson gson = new GsonBuilder()
-//                .serializeNulls()
 //                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+//                .serializeNulls()
                 .excludeFieldsWithoutExposeAnnotation()
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();

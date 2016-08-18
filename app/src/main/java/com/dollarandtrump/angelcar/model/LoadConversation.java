@@ -62,18 +62,20 @@ public class LoadConversation {
     private void insertConversation(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao dao, MessageAdminCollectionDao messageAdminCollectionDao2) {
         new Delete().from(ConversationCache.class).execute();
         new Delete().from(MessageDao.class).execute();
+        // topic
+        insertMessage("Topic",messageAdminCollectionDao2.convertToMessageCollectionDao());
+        // buy
+        insertMessage("Buy",dao);
+        // sell
+        insertMessage("Sell",messageAdminCollectionDao.convertToMessageCollectionDao());
+    }
 
-        MessageManager managerSqlite = new MessageManager();
-        managerSqlite.setMessageDao(messageAdminCollectionDao2.convertToMessageCollectionDao());
-        managerSqlite.appendDataToBottomPosition(messageAdminCollectionDao.convertToMessageCollectionDao());
-        managerSqlite.appendDataToBottomPosition(dao);
-
-        //test insert to db
+    private void insertMessage(String type, MessageCollectionDao dao){
         ActiveAndroid.beginTransaction();
         try {
-            for( MessageDao m :managerSqlite.getMessageDao().getListMessage()){
+            for( MessageDao m : dao.getListMessage()){
                 m.save();
-                new ConversationCache(m.getMessageCarId(),m,m.getMessageFromUser()).save();
+                new ConversationCache(type,m).save();
             }
             ActiveAndroid.setTransactionSuccessful();
         } finally {

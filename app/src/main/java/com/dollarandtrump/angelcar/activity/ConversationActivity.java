@@ -162,7 +162,14 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         new Delete().from(ConversationCache.class).execute();
         new Delete().from(MessageDao.class).execute();
 
-        MessageManager managerSqlite = new MessageManager();
+        // topic
+        insertMessage("Topic",messageAdminCollectionDao2.convertToMessageCollectionDao());
+        // buy
+        insertMessage("Buy",dao);
+        // sell
+        insertMessage("Sell",messageAdminCollectionDao.convertToMessageCollectionDao());
+
+        /*MessageManager managerSqlite = new MessageManager();
         managerSqlite.setMessageDao(messageAdminCollectionDao2.convertToMessageCollectionDao());
         managerSqlite.appendDataToBottomPosition(messageAdminCollectionDao.convertToMessageCollectionDao());
         managerSqlite.appendDataToBottomPosition(dao);
@@ -171,12 +178,21 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         ActiveAndroid.beginTransaction();
         try {
             for( MessageDao m :managerSqlite.getMessageDao().getListMessage()){
-
-//                new Update(MessageDao.class).set()
-
-
                 m.save();
                 new ConversationCache(m.getMessageCarId(),m,m.getMessageFromUser()).save();
+            }
+            ActiveAndroid.setTransactionSuccessful();
+        } finally {
+            ActiveAndroid.endTransaction();
+        }*/
+    }
+
+    private void insertMessage(String type, MessageCollectionDao dao){
+        ActiveAndroid.beginTransaction();
+        try {
+            for( MessageDao m : dao.getListMessage()){
+                m.save();
+                new ConversationCache(type,m).save();
             }
             ActiveAndroid.setTransactionSuccessful();
         } finally {

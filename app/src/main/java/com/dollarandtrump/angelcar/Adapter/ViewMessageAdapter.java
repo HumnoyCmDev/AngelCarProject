@@ -453,7 +453,7 @@ public class ViewMessageAdapter extends RecyclerView.Adapter<ViewMessageAdapter.
                 @Override
                 public void onClick(View v) {
                     if (onItemChatClickListener != null){
-                        onItemChatClickListener.onClickItemChat(mMessageDao.getListMessage().get(getAdapterPosition()),
+                        onItemChatClickListener.onClickItemChat(mMessageDao.getListMessage().get(getAdapterPosition()-1),
                                 getAdapterPosition());
                     }
                 }

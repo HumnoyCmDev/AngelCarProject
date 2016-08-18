@@ -45,6 +45,7 @@ import com.dollarandtrump.angelcar.utils.Cache;
 import com.dollarandtrump.angelcar.view.ItemCarDetails;
 import com.google.android.gms.location.places.Place;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.squareup.otto.Subscribe;
@@ -60,6 +61,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observable;
+import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -77,7 +79,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     @Bind(R.id.message_button_send)
     Button mSend;
 
-    // TODO-ORANGE Test new adapter chat(1)
     @Bind(R.id.recycler_chat)
     RecyclerView mListChat;
     ViewMessageAdapter mViewMessageAdapter;
@@ -93,6 +94,8 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     private Subscription mSubscription;
     private String mKeyMessage;
 
+    private Gson mGson;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,21 +104,28 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         initToolbar();
         initInstance();
 
+        mGson = new GsonBuilder()
+//                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+//                .serializeNulls()
+                .excludeFieldsWithoutExposeAnnotation()
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .create();
+
         if (savedInstanceState == null) {
             // load message
              /*save message json [message_json_[carId]_[messageFromUser]]*/
             Cache cache = new Cache();
             if (cache.isFile(mKeyMessage)) {
                 String json = cache.load(mKeyMessage, String.class);
-                MessageCollectionDao messageDao = new Gson().fromJson(json, MessageCollectionDao.class);
+                MessageCollectionDao messageDao = mGson.fromJson(json, MessageCollectionDao.class);
                 mMessageManager.setMessageDao(messageDao);
 
                 mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
                 mViewMessageAdapter.notifyDataSetChanged();
-                mLinearLayoutManager.scrollToPosition(mViewMessageAdapter.getItemCount());
+                mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
                 loadMoreMessage(mMessageManager.getMaximumId());
             } else {
-                loadMessageNewer();
+                loadMoreMessage(0);
             }
             Log.i(TAG, "loadMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         }
@@ -137,7 +147,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         mMessageFromUser = getIntent().getStringExtra("messageFromUser");
         int intentForm = getIntent().getIntExtra("intentForm", 1);
 
-        mKeyMessage = String.format(getResources().getString(R.string.key_message),
+        mKeyMessage = String.format("message_json_%s_%s",
                 mPostCarDao.getCarId(),mMessageFromUser);
 
 
@@ -297,12 +307,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         Observable.create(rxSendMessage)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        Log.d(TAG, "send message: " + s);
-                    }
-                });
+                .subscribe();
 
     }
 
@@ -328,10 +333,10 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     }
 
 
-
+    @Deprecated
     private void loadMessageNewer() {
-
-        Call<MessageCollectionDao> call =
+        Log.d(TAG, "loadMessageNewer: "+mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
+        /*Call<MessageCollectionDao> call =
                 HttpManager.getInstance().getService()
                         .viewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         call.enqueue(new Callback<MessageCollectionDao>() {
@@ -344,8 +349,8 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     String gson = new Gson().toJson(response.body());
                     boolean isSuccess = new Cache().save(mKeyMessage, gson);
 
-                    /*start Time Out 1000L wait message */
-                    /**observable wait message **/
+                    *//*start Time Out 1000L wait message *//*
+                    *//**observable wait message **//*
                     mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_CAR,mMessageManager.getMaximumId(),
                             String.valueOf(mPostCarDao.getCarId()), mMessageFromUser,mMessageManager.getCurrentIdStatus());
                     mSubscription = Observable.create(mWaitMessage)
@@ -365,11 +370,43 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 //                Toast.makeText(ChatCarActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "onFailure: ", t);
             }
-        });
+        });*/
+
+        HttpManager.getInstance().getService()
+                .observableViewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<MessageCollectionDao>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "onError: ", e);
+                    }
+
+                    @Override
+                    public void onNext(MessageCollectionDao messageCollectionDao) {
+                        initMessageAdapter(messageCollectionDao);
+
+                        String gson = mGson.toJson(messageCollectionDao);
+                        boolean isSuccess = new Cache().save(mKeyMessage, gson);
+
+                    /*start Time Out 1000L wait message */
+                        /**observable wait message **/
+                        mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_CAR,mMessageManager.getMaximumId(),
+                                String.valueOf(mPostCarDao.getCarId()), mMessageFromUser,mMessageManager.getCurrentIdStatus());
+                        mSubscription = Observable.create(mWaitMessage)
+                                .subscribeOn(Schedulers.newThread()).subscribe();
+                    }
+                });
 
     }
 
     public void loadMoreMessage(int currentMessageId){
+        Log.d(TAG, "loadMoreMessage: ");
         HttpManager.getInstance().getService()
                 .observableViewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||"+currentMessageId)
                 .subscribeOn(Schedulers.newThread())
@@ -378,6 +415,15 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     @Override
                     public void call(MessageCollectionDao dao) {
                         initMessageAdapter(dao);
+                        String gson = mGson.toJson(dao);
+                        boolean isSuccess = new Cache().save(mKeyMessage, gson);
+
+                    /*start Time Out 1000L wait message */
+                        /**observable wait message **/
+                        mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_CAR,mMessageManager.getMaximumId(),
+                                String.valueOf(mPostCarDao.getCarId()), mMessageFromUser,mMessageManager.getCurrentIdStatus());
+                        mSubscription = Observable.create(mWaitMessage)
+                                .subscribeOn(Schedulers.newThread()).subscribe();
                     }
                 });
     }
@@ -386,7 +432,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         mMessageManager.appendDataToBottomPosition(dao);
         mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
         mViewMessageAdapter.notifyDataSetChanged();
-        mLinearLayoutManager.scrollToPosition(mViewMessageAdapter.getItemCount());
+        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
     }
 
     @Override
@@ -410,7 +456,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     if (message.getMessageBy().equals(mMessageBy)){ //Chat me แชทเก่าออกก่อน
                         mMessageManager.updateMessageMe(countMessage,message);
                         mViewMessageAdapter.notifyDataSetChanged();
-                        mListChat.smoothScrollToPosition(mViewMessageAdapter.getItemCount());
+                        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
                     } else { //chat them
                         mMessageManager.updateMessageThem(message);
                         mViewMessageAdapter.notifyDataSetChanged();
@@ -550,63 +596,5 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
             Log.e(TAG, "onFailure: ", t);
         }
     };
-
-    Callback<ResponseDao> callbackAddOrRemoveFollow = new Callback<ResponseDao>() {
-        @Override
-        public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
-            if (response.isSuccessful()) {
-                Log.i(TAG, "onResponse:" + response.body().success);
-            } else {
-                try {
-                    Log.i(TAG, "onResponse: " + response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        @Override
-        public void onFailure(Call<ResponseDao> call, Throwable t) {
-            Log.e(TAG, "onFailure: ", t);
-        }
-    };
-
-    /****************
-    *Inner Class Zone
-    *****************/
-
-//    private class WaitMessage extends WaitMessageOnBackground {
-//        Response<MessageCollectionDao> response;
-//        MessageManager manager;
-//
-//        public WaitMessage(MessageManager manager) {
-//            this.manager = manager;
-//        }
-//
-//        @Override
-//        public void onBackground() {
-////            Log.i(TAG, "doInBackground: loop");
-//            int maxId = manager.getMaximumId();
-//            Call<MessageCollectionDao> call =
-//                    HttpManager.getInstance()
-//                            .getService(60 * 1000) // Milliseconds (1 นาที)
-//                            .waitMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||" + maxId);
-//            try {
-//                response = call.execute(); // ทำงานเสร็จ จะเข้า onMainThread() ต่อ
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        @Override
-//        public void onMainThread() {
-//            if (response.isSuccessful()){
-//                MessageCollectionDao messageDao = response.body();
-////                RxMessageObservable.with().onInitMessage(messageDao);
-//                MainThreadBus.getInstance().post(messageDao);
-//            }else {
-//                Log.i(TAG, "doInBackground: "+response.errorBody());
-//            }
-//        }
-//    }
 
 }
