@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".activity.ConversationActivity">
+
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            app:title="ประวัติการสนทนา"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark"
+            app:titleTextAppearance="@style/Toolbar.TitleText"
+            app:titleTextColor="@android:color/white" />
+
+
+        <com.flyco.tablayout.SlidingTabLayout
+            android:id="@+id/tl_8"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/colorPrimary"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp"
+            app:tl_tab_space_equal="true"
+            app:tl_textsize="13sp"
+            app:tl_textBold="true"
+            app:tl_indicator_corner_radius="1.5dp"
+            app:tl_indicator_height="3dp"
+            app:tl_indicator_width="10dp"
+            app:tl_indicator_style="TRIANGLE"
+
+            app:tl_indicator_color="@color/colorAccent"
+            app:tl_textSelectColor="@color/colorAccent"
+            app:tl_textUnselectColor="@android:color/white"
+            app:tl_underline_color="@color/colorAccent"
+            app:tl_underline_height="1dp"/>
+
+    </android.support.design.widget.AppBarLayout>
+
+    <include layout="@layout/view_pager_layout"/>
+
+
+</LinearLayout>

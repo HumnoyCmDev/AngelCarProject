@@ -64,8 +64,7 @@
             android:name=".activity.PostActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".activity.ShopActivity"
-            android:label="Shop" />
+            android:name=".activity.ShopActivity" />
         <activity
             android:name=".activity.FollowActivity"
             android:label="Follow" />

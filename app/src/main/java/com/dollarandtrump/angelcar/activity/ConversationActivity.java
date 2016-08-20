@@ -12,7 +12,7 @@ import android.util.Log;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
-import com.activeandroid.query.Update;
+import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.CarIdDao;
@@ -31,13 +31,14 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.ConversationCache;
-import com.dollarandtrump.angelcar.utils.RxNotification;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Produce;
 import com.squareup.otto.Subscribe;
 
 import org.parceler.Parcels;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -67,10 +68,10 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_chat_all);
+        setContentView(R.layout.activity_conversation);
         ButterKnife.bind(this);
         initViewPager();
-        ((MainApplication) getApplication()).getStoreComponent().inject(this);
+        ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
 //        if (savedInstanceState == null) {
 //            loadAllCarId();
@@ -86,9 +87,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
             String messageFromUser = intentNotification.getString("roomid");
             findPostCar(carId,messageFromUser);
         }
-
-
-
     }
 
     private void loadAllCarId() {
@@ -235,14 +233,37 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         MainThreadBus.getInstance().register(this);
 //        if (getWindow().getDecorView() != null){
             loadAllCarId();
-
 //        }
+
+        //show dot
+        /**Topic**/
+        List<MessageDao> topic =findMessageNotRead("Topic","officer");
+        if (topic != null && topic.size() > 0){
+            slidingTabLayout.showMsg(0,topic.size());
+            slidingTabLayout.setMsgMargin(0,19,15);
+        }
+        List<MessageDao> buy =findMessageNotRead("Buy","shop");
+        if (buy != null && buy.size() > 0){
+            slidingTabLayout.showMsg(2,buy.size());
+            slidingTabLayout.setMsgMargin(1,25,15);
+        }
+        List<MessageDao> sell =findMessageNotRead("Sell","user");
+        if (sell != null && sell.size() > 0){
+            slidingTabLayout.showMsg(1,sell.size());
+            slidingTabLayout.setMsgMargin(2,22,15);
+        }
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         MainThreadBus.getInstance().unregister(this);
+    }
+
+    private List<MessageDao> findMessageNotRead(String type,String messageBy) {
+        List<MessageDao> cache = SQLiteUtils.rawQuery(MessageDao.class, "SELECT * FROM Conversation INNER JOIN MessageDao ON Conversation.Message = MessageDao.Id WHERE Conversation.ConversationType = '" + type + "' And MessageDao.MessageBy = '" + messageBy + "'  AND MessageDao.MessageStatus = 0", null);
+        return cache;
     }
 
     private void findPostCar(String carId, final String messageFromUser){

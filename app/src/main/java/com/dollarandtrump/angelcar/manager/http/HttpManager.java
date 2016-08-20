@@ -1,10 +1,16 @@
 package com.dollarandtrump.angelcar.manager.http;
 
+import android.content.Context;
+
+import com.dollarandtrump.angelcar.MainApplication;
+import com.dollarandtrump.angelcar.manager.Contextor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.lang.reflect.Modifier;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
@@ -25,13 +31,18 @@ public class HttpManager {
         return instance;
     }
 
+    Context context;
+    @Inject Gson gson;
     private HttpManager() {
-        Gson gson = new GsonBuilder()
-//                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
-//                .serializeNulls()
-                .excludeFieldsWithoutExposeAnnotation()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();
+        context = Contextor.getInstance().getContext();
+        ((MainApplication) context).getApplicationComponent().inject(this);
+
+//        Gson gson = new GsonBuilder()
+////                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
+////                .serializeNulls()
+//                .excludeFieldsWithoutExposeAnnotation()
+//                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+//                .create();
        builder = new Retrofit.Builder()
                 .baseUrl("http://angelcar.com/")
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

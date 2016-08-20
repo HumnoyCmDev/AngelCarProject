@@ -38,7 +38,7 @@ public class FireBaseMessaging extends FirebaseMessagingService{
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 //        super.onMessageReceived(remoteMessage);
-        ((MainApplication) getApplication()).getStoreComponent().inject(this);
+        ((MainApplication) getApplication()).getApplicationComponent().inject(this);
         //inti notification icon
 
         String type = remoteMessage.getData().get("type");

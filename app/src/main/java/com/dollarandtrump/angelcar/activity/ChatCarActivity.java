@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.ViewMessageAdapter;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
 import com.dollarandtrump.angelcar.dao.FollowDao;
@@ -54,6 +55,8 @@ import org.parceler.Parcels;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -79,8 +82,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     @Bind(R.id.message_button_send)
     Button mSend;
 
-    @Bind(R.id.recycler_chat)
-    RecyclerView mListChat;
+    @Bind(R.id.recycler_chat) RecyclerView mListChat;
     ViewMessageAdapter mViewMessageAdapter;
 
     private PictureCollectionDao mPictureCollectionDao;
@@ -94,7 +96,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     private Subscription mSubscription;
     private String mKeyMessage;
 
-    private Gson mGson;
+    @Inject Gson mGson;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,12 +106,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         initToolbar();
         initInstance();
 
-        mGson = new GsonBuilder()
-//                .excludeFieldsWithModifiers(Modifier.FINAL, Modifier.TRANSIENT, Modifier.STATIC)
-//                .serializeNulls()
-                .excludeFieldsWithoutExposeAnnotation()
-                .setDateFormat("yyyy-MM-dd HH:mm:ss")
-                .create();
+        ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
         if (savedInstanceState == null) {
             // load message
@@ -449,6 +446,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
     @Subscribe
     public void produceMessage(MessageCollectionDao messageDao){ //รับภายใน WaitMessageObservable
+
         if (messageDao.getListMessage().size() > 0) {
             for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
                 MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size()-1) - countMessage);
@@ -456,7 +454,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     if (message.getMessageBy().equals(mMessageBy)){ //Chat me แชทเก่าออกก่อน
                         mMessageManager.updateMessageMe(countMessage,message);
                         mViewMessageAdapter.notifyDataSetChanged();
-                        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
+//                        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
                     } else { //chat them
                         mMessageManager.updateMessageThem(message);
                         mViewMessageAdapter.notifyDataSetChanged();
@@ -466,6 +464,12 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     mViewMessageAdapter.notifyDataSetChanged();
                 }
             }
+        }
+
+        // scroll to bottom
+        int lastPosition = mLinearLayoutManager.findLastVisibleItemPosition();
+        if (lastPosition >= mViewMessageAdapter.getItemCount() - 2){
+            mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
         }
     }
 

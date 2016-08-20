@@ -33,6 +33,7 @@ import com.hndev.library.view.BaseCustomViewGroup;
 import com.hndev.library.view.sate.BundleSavedState;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 
@@ -47,7 +48,7 @@ import rx.schedulers.Schedulers;
 public class ItemCarDetails extends BaseCustomViewGroup {
     ImageView mImageProfile;
     ImageBanner mBanner;
-    TextView mTitle, mBrand, mDetail, mTime, mCallMe, mYear, mPhone, mPrice;
+    TextView mTitle, mBrand, mDetail, mTime, mCallMe, mYear, mPhone, mPrice,mBefore,mShopName;
     TextView mFollow;
     boolean isFollow = false;
     PictureCollectionDao mPictureDao ;
@@ -94,10 +95,11 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mTitle = (TextView) findViewById(R.id.custom_view_text_title);
         mBrand = (TextView) findViewById(R.id.custom_view_text_brand);
         mDetail = (TextView) findViewById(R.id.custom_view_text_detail);
-        mImageProfile = (ImageView) findViewById(R.id.custom_view_icon_profile);
-        mTime = (TextView) findViewById(R.id.custom_view_text_time);
+        mImageProfile = (ImageView) findViewById(R.id.image_icon_profile);
+        mTime = (TextView) findViewById(R.id.text_time);
         mCallMe = (TextView) findViewById(R.id.custom_view_cell_text);
-
+        mBefore = (TextView) findViewById(R.id.custom_view_item_message_before);
+        mShopName = (TextView) findViewById(R.id.text_shop_name);
         mFollow = (TextView) findViewById(R.id.text_follow);
         mYear = (TextView) findViewById(R.id.custom_view_text_year);
         mPhone = (TextView) findViewById(R.id.custom_view_text_phone);
@@ -170,6 +172,10 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         }
     }
 
+    public void setBeforeVisibility(int visibility){
+        mBefore.setVisibility(visibility);
+    }
+
     private void setIconProfile(String url){
         Glide.with(getContext()).load(url)
                 .placeholder(com.hndev.library.R.drawable.icon_logo)
@@ -201,7 +207,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
 //        String details = "<br> ปี "+ AngelCarUtils.textFormatHtml("#FFB13D",String.valueOf(postCarDao.getCarYear())) +
 //                " ราคา " + AngelCarUtils.textFormatHtml("#FFB13D",price) +" บาท";
 //        mBrand.setText(Html.fromHtml(carBrand+details+"<br>"+ AngelCarUtils.subDetail(postCarDao.getCarDetail()).replaceAll("\n"," ")));
-
+        mShopName.setText(postCarDao.getShopName());
         mBrand.setText(Html.fromHtml(carBrand));
         mYear.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",String.valueOf(postCarDao.getCarYear()))));
         mPrice.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",price)));

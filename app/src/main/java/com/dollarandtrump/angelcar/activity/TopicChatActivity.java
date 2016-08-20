@@ -254,18 +254,6 @@ public class TopicChatActivity extends AppCompatActivity {
     @Subscribe
     public void produceMessage(MessageCollectionDao messageDao){ //รับภายใน WaitMessageObservable
         if (messageDao.getListMessage().size() > 0) {
-//            for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
-//                MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size() - 1) - countMessage);
-//                if (message.getMessageStatus() == 0) {
-//                    messageManager.appendDataToBottomPosition(messageDao);
-//                    messageAdapter.setMessageDao(messageManager.getMessageDao());
-//                    messageAdapter.notifyDataSetChanged();
-//                    linearManager.scrollToPosition(messageAdapter.getItemCount());
-//                } else {
-//                    messageManager.updateMessageMe(countMessage, message);
-//                    messageAdapter.notifyDataSetChanged();
-//                }
-//            }
 
             for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
                 MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size()-1) - countMessage);
@@ -273,7 +261,7 @@ public class TopicChatActivity extends AppCompatActivity {
                     if (message.getMessageBy().equals("user")){ //Chat me แชทเก่าออกก่อน
                         messageManager.updateMessageMe(countMessage,message);
                         messageAdapter.notifyDataSetChanged();
-                        linearManager.scrollToPosition(messageAdapter.getItemCount());
+                        linearManager.smoothScrollToPosition(list,null,messageAdapter.getItemCount());
                     } else { //chat them
                         messageManager.updateMessageThem(message);
                         messageAdapter.notifyDataSetChanged();
@@ -282,6 +270,14 @@ public class TopicChatActivity extends AppCompatActivity {
                     messageManager.updateMessageMe(countMessage,message);
                     messageAdapter.notifyDataSetChanged();
                 }
+            }
+
+
+
+            // scroll to bottom
+            int lastPosition = linearManager.findLastVisibleItemPosition();
+            if (lastPosition >= messageAdapter.getItemCount() - 2){
+                linearManager.smoothScrollToPosition(list,null,messageAdapter.getItemCount());
             }
 
 

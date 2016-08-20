@@ -38,11 +38,6 @@ import java.util.Map;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.schedulers.Schedulers;
 
-/**
- * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 10/6/59.11:35น.
- *
- * @AngelCarProject
- */
 public class ViewMessageAdapter extends RecyclerView.Adapter<ViewMessageAdapter.ViewHolder> {
 
     public interface OnItemChatClickListener {
@@ -162,8 +157,12 @@ public class ViewMessageAdapter extends RecyclerView.Adapter<ViewMessageAdapter.
                 ItemCarDetailViewHolder viewHolder = (ItemCarDetailViewHolder) holder;
                 viewHolder.itemCarDetails.bindCellViewHolder(pictureDao,postCarDao);
                 viewHolder.itemCarDetails.setFollow(isFollow);
-                if (onClickItemHeaderChatListener != null)
+                if (onClickItemHeaderChatListener != null) {
                     viewHolder.itemCarDetails.setOnClickItemBannerListener(onClickItemHeaderChatListener);
+                }
+                if (getItemCount() > 2){
+                    viewHolder.itemCarDetails.setBeforeVisibility(View.INVISIBLE);
+                }
             }else{
                 bindCellViewHolder((CellViewHolder) holder, position-1);
             }

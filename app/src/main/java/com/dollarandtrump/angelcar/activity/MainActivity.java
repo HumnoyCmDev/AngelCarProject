@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity{
 //        initInstance();
         initViewPager();
 
-        ((MainApplication) getApplication()).getStoreComponent().inject(this);
+        ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
 
         fabAcDealer.setEnabled(false);
@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity{
         if (menu == null) return;
         if (findMessageNotRead("Topic","officer") != null || findMessageNotRead("Buy","shop") != null ||
                 findMessageNotRead("Sell","user") != null){
-            menu.getItem(0).setIcon(R.drawable.ic_alert_message);
+            menu.getItem(0).setIcon(R.drawable.ic_alert_message2);
         }else {
             menu.getItem(0).setIcon(R.drawable.ic_message);
         }

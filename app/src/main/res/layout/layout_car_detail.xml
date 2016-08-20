@@ -3,143 +3,195 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/message_item_car_detail_call_them"
     android:orientation="vertical">
 
-    <com.dollarandtrump.angelcar.banner.ImageBanner
-        android:id="@+id/custom_view_imageBanner"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        app:bb_barColor="#FFB13D"
-        app:bb_delay="2"
-        app:bb_period="10"
-        app:bb_scale="0.5625" />
-
     <LinearLayout
+        android:gravity="center"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/custom_view_text_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:text="[Title]"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/image_icon_profile"
+            android:src="@drawable/icon_logo"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/colorAccent" />
-
-
-        <TextView
-            android:id="@+id/custom_view_text_brand"
+        <LinearLayout
+            android:layout_marginLeft="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:drawableLeft="@drawable/ic_car"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:text="[Brand]"
-            android:textColor="@android:color/white"
-            android:textSize="13sp" />
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/text_shop_name"
+                android:text="[Shop Name]"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:drawablePadding="4dp"
+                android:drawableLeft="@drawable/ic_24_hours"
+                android:id="@+id/text_time"
+                android:text="[Time]"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_marginTop="2dp"
+                android:background="#FFE0E0E0"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:background="@drawable/message_item_car_detail_call_them"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.dollarandtrump.angelcar.banner.ImageBanner
+            android:id="@+id/custom_view_imageBanner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            app:bb_delay="2"
+            app:bb_period="10"
+            app:bb_scale="0.5625" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/custom_view_text_year"
+                android:id="@+id/custom_view_text_title"
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:text="[Title]"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/colorAccent" />
+
+
+            <TextView
+                android:id="@+id/custom_view_text_brand"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:drawableLeft="@drawable/ic_calendar"
+                android:drawableLeft="@drawable/ic_car"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
-                android:text="[Year]"
+                android:text="[Brand]"
                 android:textColor="@android:color/white"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/custom_view_text_year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:drawableLeft="@drawable/ic_calendar"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="[Year]"
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/custom_view_text_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="6dp"
+                    android:drawableLeft="@drawable/ic_price"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="[Price]"
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
 
             <TextView
-                android:id="@+id/custom_view_text_price"
+                android:id="@+id/custom_view_text_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:drawableLeft="@drawable/ic_custom_header_profile"
+                android:drawablePadding="10dp"
+                android:gravity="center_vertical"
+                android:text="[Details]"
+                android:textColor="@android:color/white"
+                android:textSize="13sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:drawableLeft="@drawable/ic_price"
-                android:drawablePadding="10dp"
-                android:gravity="center_vertical"
-                android:text="[Price]"
-                android:textColor="@android:color/white"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/custom_view_text_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selector_phone"
+                    android:clickable="true"
+
+                    android:drawableLeft="@drawable/ic_tel"
+                    android:drawablePadding="10dp"
+                    android:gravity="center_vertical"
+                    android:text="[Phone]"
+                    android:textColor="@android:color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/text_follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center|end"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/selector_follow"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:text="@string/follow"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
         </LinearLayout>
 
-
-        <TextView
-            android:id="@+id/custom_view_text_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:drawableLeft="@drawable/ic_custom_header_profile"
-            android:drawablePadding="10dp"
-            android:gravity="center_vertical"
-            android:text="[Details]"
-            android:textColor="@android:color/white"
-            android:textSize="13sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/custom_view_text_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/selector_phone"
-                android:clickable="true"
-
-                android:drawableLeft="@drawable/ic_tel"
-                android:drawablePadding="10dp"
-                android:gravity="center_vertical"
-                android:text="[Phone]"
-                android:textColor="@android:color/white"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/text_follow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|end"
-                android:layout_marginLeft="16dp"
-                android:background="@drawable/selector_follow"
-                android:clickable="true"
-                android:gravity="center_vertical"
-                android:text="@string/follow"
-                android:textColor="#000000"
-                android:textStyle="bold" />
-
-        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

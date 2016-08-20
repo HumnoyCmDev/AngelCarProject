@@ -1,186 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#ffffff"
     android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingTop="5dp"
+    android:paddingRight="5dp"
+    android:paddingLeft="5dp"
+    android:paddingBottom="2dp">
+
+    <!--<TextView-->
+        <!--android:id="@+id/custom_view_text_time"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:text="[Time]"-->
+        <!--android:textSize="11sp"-->
+        <!--android:textStyle="bold" />-->
+
 
     <!--<LinearLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:orientation="vertical">-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
 
-    <TextView
-        android:id="@+id/custom_view_text_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="[Time]"
-        android:textSize="11sp"
-        android:textStyle="bold" />
+        <!--<ImageView-->
+            <!--android:layout_marginRight="8dp"-->
+            <!--android:id="@+id/custom_view_icon_profile"-->
+            <!--android:layout_width="32dp"-->
+            <!--android:layout_height="32dp"-->
+            <!--android:layout_gravity="bottom" />-->
 
+        <!--<include layout="@layout/layout_car_detail" />-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_marginRight="8dp"
-            android:id="@+id/custom_view_icon_profile"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_gravity="bottom" />
-
-        <!--<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/message_item_car_detail_call_them"
-            android:orientation="vertical">
-
-            <com.dollarandtrump.angelcar.banner.ImageBanner
-                android:layout_marginTop="5dp"
-                android:id="@+id/custom_view_imageBanner"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                app:bb_barColor="#FFB13D"
-                app:bb_delay="2"
-                app:bb_period="10"
-                app:bb_scale="0.5625" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <TextView
-                    android:id="@+id/custom_view_text_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:padding="5dp"
-                    android:text="[Title]"
-                    android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorAccent" />
-
-
-                <TextView
-                    android:id="@+id/custom_view_text_brand"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:drawableLeft="@drawable/ic_car"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:text="[Brand]"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:textStyle="bold"
-                        android:id="@+id/custom_view_text_year"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:drawableLeft="@drawable/ic_calendar"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="[Year]"
-                        android:textColor="@android:color/white"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:textStyle="bold"
-                        android:id="@+id/custom_view_text_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="6dp"
-                        android:drawableLeft="@drawable/ic_price"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="[Price]"
-                        android:textColor="@android:color/white"
-                        android:textSize="13sp" />
-
-                </LinearLayout>
-
-
-                <TextView
-                    android:id="@+id/custom_view_text_detail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:drawableLeft="@drawable/ic_custom_header_profile"
-                    android:drawablePadding="10dp"
-                    android:gravity="center_vertical"
-                    android:text="[Details]"
-                    android:textColor="@android:color/white"
-                    android:textSize="13sp" />
-
-                <LinearLayout
-                    android:layout_marginTop="6dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:textStyle="bold"
-                        android:background="@drawable/selector_phone"
-                        android:id="@+id/custom_view_text_phone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-
-                        android:drawableLeft="@drawable/ic_tel"
-                        android:drawablePadding="10dp"
-                        android:gravity="center_vertical"
-                        android:text="[Phone]"
-                        android:textColor="@android:color/white"
-                        android:textSize="13sp"
-                        android:clickable="true"/>
-
-                    <Space
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp" />
-
-                    <TextView
-                        android:id="@+id/text_follow"
-                        android:layout_marginLeft="16dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center|end"
-                        android:background="@drawable/selector_follow"
-                        android:clickable="true"
-                        android:gravity="center_vertical"
-                        android:text="@string/follow"
-                        android:textColor="#000000"
-                        android:textStyle="bold" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-        </LinearLayout>-->
-
-        <include layout="@layout/layout_car_detail" />
-
-    </LinearLayout>
+    <!--</LinearLayout>-->
+    <include layout="@layout/layout_car_detail" />
 
     <LinearLayout
         android:id="@+id/group_chat_me"
@@ -244,7 +98,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/custom_view_item_title"
+        android:id="@+id/custom_view_item_message_before"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -252,20 +106,5 @@
         android:layout_marginTop="8dp"
         android:text="[ส่งข้อความถึงเจ้าของรถ]"
         android:textColor="@color/colorHintDark" />
-
-    <!--</LinearLayout>-->
-
-    <!--<ToggleButton-->
-    <!--android:id="@+id/custom_view_button_follow"-->
-    <!--android:layout_width="48dp"-->
-    <!--android:layout_height="48dp"-->
-    <!--android:layout_marginRight="30dp"-->
-    <!--android:background="@drawable/selector_button_follow"-->
-    <!--android:elevation="3dp"-->
-    <!--android:text=""-->
-    <!--android:textOff=""-->
-    <!--android:textOn=""-->
-    <!--app:layout_anchor="@id/custom_view_imageBanner"-->
-    <!--app:layout_anchorGravity="right|bottom" />-->
 
 </LinearLayout>
