@@ -329,6 +329,14 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         }
     }
 
+    @Override
+    public void onItemClickViewShop(PostCarDao post) {
+        Intent i = new Intent(ChatCarActivity.this, ShopActivity.class);
+        i.putExtra("user",post.getUser());
+        i.putExtra("shop",post.getShopRef());
+        startActivity(i);
+    }
+
 
     @Deprecated
     private void loadMessageNewer() {

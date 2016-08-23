@@ -32,6 +32,8 @@ import com.dollarandtrump.angelcar.model.ConversationCache;
 import com.dollarandtrump.angelcar.model.LoadConversation;
 import com.dollarandtrump.angelcar.module.Register;
 import com.google.android.gms.common.AccountPicker;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.List;
@@ -50,6 +52,7 @@ import rx.schedulers.Schedulers;
 
 public class SplashScreenActivity extends AppCompatActivity{
     private  final int EMAIL_RESOLUTION_REQUEST = 333;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     Handler handler;
     Runnable runnable;
     long delay_time;
@@ -110,20 +113,34 @@ public class SplashScreenActivity extends AppCompatActivity{
 
 
     private void registration(){
-        if (!Registration.getInstance().isFirstApp()){
-            Intent googlePicker =
-                    AccountPicker.newChooseAccountIntent(null, null,
-                            new String[]{"com.google"}, true, null, null, null, null);
-            startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
-        }else {
-            // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
-            String cache_User = Registration.getInstance().getUserId();
-            if (cache_User != null){
-                Toast.makeText(SplashScreenActivity.this,cache_User,Toast.LENGTH_LONG).show();
-                Toast.makeText(SplashScreenActivity.this,Registration.getInstance().getShopRef(),Toast.LENGTH_LONG).show();
-            }
 
+        if (checkPlayServices()) {
+            if (!Registration.getInstance().isFirstApp()) {
+                Intent googlePicker =
+                        AccountPicker.newChooseAccountIntent(null, null,
+                                new String[]{"com.google"}, true, null, null, null, null);
+                startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
+            } else {
+                // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
+                String cache_User = Registration.getInstance().getUserId();
+                if (cache_User != null) {
+                    Toast.makeText(SplashScreenActivity.this, cache_User, Toast.LENGTH_LONG).show();
+                    Toast.makeText(SplashScreenActivity.this, Registration.getInstance().getShopRef(), Toast.LENGTH_LONG).show();
+                }
+            }
         }
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
+        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(resultCode)) {
+                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
     }
 
     //  googlePicker

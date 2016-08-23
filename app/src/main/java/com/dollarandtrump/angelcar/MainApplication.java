@@ -21,7 +21,7 @@ public class MainApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
         Log.setLoggingEnabled(true);
         Contextor.getInstance().init(getApplicationContext());
         ActiveAndroid.initialize(this);
@@ -29,6 +29,7 @@ public class MainApplication extends Application{
         applicationComponent = DaggerApplicationComponent.builder().appModule(new AppModule(this))
                 .networkModule(new NetworkModule())
                 .storeModule(new StoreModule()).build();
+
     }
 
     public ApplicationComponent getApplicationComponent() {

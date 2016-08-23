@@ -40,6 +40,7 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.view.ImageViewGlide;
 import com.dollarandtrump.angelcar.view.ListHashTag;
+import com.dollarandtrump.angelcar.view.PhotoBanner;
 import com.dollarandtrump.angelcar.view.RecyclerGridAutoFit;
 import com.github.clans.fab.FloatingActionMenu;
 import com.hndev.library.view.AngelCarHashTag;
@@ -67,7 +68,7 @@ public class ShopFragment extends Fragment {
     @Bind(R.id.recycler_car) RecyclerGridAutoFit mList;
 
     @Bind(R.id.image_button_up_and_down) ImageView mImageUpDown;
-    @Bind(R.id.image_background_shop) ImageView mImageBgShop;
+    @Bind(R.id.image_background_shop) PhotoBanner mImageBgShop;
     @Bind(R.id.text_view_shop_decription) TextView mTextShopDescription;
     @Bind(R.id.text_view_shop_number) TextView mTextShopNumber;
     @Bind(R.id.text_view_shop_name) TextView mTextShopName;
@@ -285,7 +286,7 @@ public class ShopFragment extends Fragment {
         mImageHeaderAdapter.notifyDataSetChanged();
 
         //Check Shop Name
-        if (mProfileDao.getShopName() == null){
+        if (mProfileDao.getShopName() == null && isShop){
             dialogEditShop(mProfileDao.getShopName(), mProfileDao.getShopDescription(),
                     mProfileDao.getShopNumber(), mProfileDao.getUrlShopLogo());
         }

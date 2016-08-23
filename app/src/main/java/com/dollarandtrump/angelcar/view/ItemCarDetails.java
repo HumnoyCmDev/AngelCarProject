@@ -54,6 +54,8 @@ public class ItemCarDetails extends BaseCustomViewGroup {
     PictureCollectionDao mPictureDao ;
     PostCarDao mPostCarDao;
 
+    LinearLayout mGroupProfile;
+
     public ItemCarDetails(Context context) {
         super(context);
         initInflate();
@@ -104,7 +106,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mYear = (TextView) findViewById(R.id.custom_view_text_year);
         mPhone = (TextView) findViewById(R.id.custom_view_text_phone);
         mPrice = (TextView) findViewById(R.id.custom_view_text_price);
-
+        mGroupProfile = (LinearLayout) findViewById(R.id.group_profile);
     }
 
     public void bindCellViewHolder(PictureCollectionDao images, PostCarDao postCar){
@@ -266,12 +268,20 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 onItemClickL.onItemClickPhone(mPostCarDao.getPhone());
             }
         });
+
+        mGroupProfile.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickL.onItemClickViewShop(mPostCarDao);
+            }
+        });
     }
 
     public interface OnClickItemHeaderChatListener {
-        void onItemClickBanner(int position);
+        public void onItemClickBanner(int position);
 //        void onItemClickFollow(boolean isFollow);
         public void onItemClickPhone(String phone);
+        public void onItemClickViewShop(PostCarDao post);
 
     }
 

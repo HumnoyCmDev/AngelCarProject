@@ -660,13 +660,9 @@ public class FeedPostFragment extends Fragment{
 
             if (response.isSuccessful()) {
                 PostCarCollectionDao dao = response.body();
-                int firstVisiblePosition = 0;
-                int top = 0;
-                if (mListView != null) {
-                    firstVisiblePosition = mListView.getFirstVisiblePosition();
+                    int firstVisiblePosition = mListView.getFirstVisiblePosition();
                     View c = mListView.getChildAt(0);
-                    top = c == null ? 0 : c.getTop();
-                }
+                    int top = c == null ? 0 : c.getTop();
 
                 if (mode == MODE_RELOAD_NEWER) {
                     mPostManager.insertDaoAtTopPosition(dao);

@@ -419,6 +419,8 @@ public class ViewMessageAdapter extends RecyclerView.Adapter<ViewMessageAdapter.
         public ItemCarDetailViewHolder(View itemView) {
             super(itemView);
             itemCarDetails = (ItemCarDetails) itemView;
+
+
         }
     }
 

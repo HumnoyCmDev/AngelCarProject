@@ -284,6 +284,14 @@ public class ViewCarActivity extends AppCompatActivity{
                 });
     }
 
+    @OnClick(R.id.group_profile)
+    public void onClickViewProfile(){
+        Intent i = new Intent(ViewCarActivity.this, ShopActivity.class);
+        i.putExtra("user",mCarDao.getUser());
+        i.putExtra("shop",mCarDao.getShopRef());
+        startActivity(i);
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

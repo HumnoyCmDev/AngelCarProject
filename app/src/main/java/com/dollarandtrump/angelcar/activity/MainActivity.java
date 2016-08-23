@@ -82,13 +82,13 @@ public class MainActivity extends AppCompatActivity{
     private static final String TAG = "MainActivity";
 
     @Bind(R.id.tl_1) CommonTabLayout mTabLayout;
-    private String[] mTitles = {"Home", "Finance", "Shop", "Info"};
+    private String[] mTitles = {"Home", "Finance", "Shop", "Menu"};
     private int[] mIconSelectIds = {
             R.drawable.ic_tab_select_home, R.drawable.ic_tab_select_finance,
-            R.drawable.ic_tab_select_shop, R.drawable.ic_info_select};
+            R.drawable.ic_tab_select_shop, R.drawable.ic_tab_select_menu};
     private int[] mIconUnSelectIds = {
             R.drawable.ic_tab_home, R.drawable.ic_tab_finance,
-            R.drawable.ic_tab_shop, R.drawable.ic_info};
+            R.drawable.ic_tab_shop, R.drawable.ic_tab_menu};
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
     private Menu mMenu;
 
@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity{
             case R.id.fab_ac_PostSell:
                 //Check Shop Name
                 ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
-                if (mProfile.getShopName() == null){
+                if (mProfile == null || mProfile.getShopName() == null){
                     new AlertDialog.Builder(this)
                             .setCancelable(false)
                             .setTitle("แจ้งเตือน")

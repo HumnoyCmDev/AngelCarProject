@@ -109,11 +109,15 @@ public class TopicChatActivity extends AppCompatActivity {
             }
         });
 
+
         if (mTopicMessage == null) {// view message
             mGroupButtChat.setVisibility(View.VISIBLE);
             mRoomId = String.valueOf(mTopic.getId());
             String message = mRoomId+"||"+mTopic.getUserId()+"||0";
             loadMessage(message);
+        }else {
+            // create toppic set max line 1
+            messageText.setSingleLine(true);
         }
 
     }
@@ -153,6 +157,7 @@ public class TopicChatActivity extends AppCompatActivity {
     @OnClick(R.id.message_button_send)
     public void buttonSendMessage(){
         if (mTopicMessage != null){ // Create Topic
+            messageText.setSingleLine(false);
             createTopic(messageText.getText().toString());
         }else { // Send message Room
             sendMessageRoom(messageText.getText().toString());

@@ -106,11 +106,6 @@ public class MenuFragment extends Fragment {
             mDescription.setText(mProfile.getShopDescription());
         }
 
-        if (savedInstanceState == null) {
-            getChildFragmentManager().beginTransaction()
-                    .replace(R.id.content_container, new InfoFragment()).commit();
-        }
-
     }
 
 

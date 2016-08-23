@@ -47,9 +47,10 @@ public class ImageBanner extends BaseIndicatorBanner<PictureDao, ImageBanner> {
         PhotoBanner iv  = ViewFindUtils.find(inflate,R.id.iv);
 
         final PictureDao item = mDatas.get(position);
-//        int itemWidth = mDisplayMetrics.widthPixels;
+        int itemWidth = mDisplayMetrics.widthPixels;
 //        int itemHeight = (int) (itemWidth * 360 * 1.0f / 640);
-//        iv.setLayoutParams(new LinearLayout.LayoutParams(itemWidth, itemHeight));
+        int itemHeight =  (itemWidth * 2 / 3);
+        iv.setLayoutParams(new LinearLayout.LayoutParams(itemWidth, itemHeight));
         String BASE_URL_THUMBNAIL = item.getCarImageFullHDPath();
 //        String urlImage ="http://angelcar.com/"+item.getCarImagePath()
 //                .replace("carimages","thumbnailcarimages");
@@ -57,7 +58,7 @@ public class ImageBanner extends BaseIndicatorBanner<PictureDao, ImageBanner> {
         if (!TextUtils.isEmpty(BASE_URL_THUMBNAIL)) {
             Glide.with(mContext)
                     .load(BASE_URL_THUMBNAIL)
-//                    .override(itemWidth, itemHeight)
+                    .override(itemWidth, itemHeight)
                     .crossFade()
                     .centerCrop()
                     .placeholder(colorDrawable)
