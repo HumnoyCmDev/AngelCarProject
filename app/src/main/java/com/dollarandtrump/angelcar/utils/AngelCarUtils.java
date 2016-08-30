@@ -28,9 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by humnoy on 10/3/59.
- */
+
 public class AngelCarUtils {
 
     private static final int TIME_HOURS_24 = 24 * 60 * 60 * 1000;

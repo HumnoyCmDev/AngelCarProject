@@ -4,16 +4,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--<android.support.v7.widget.Toolbar-->
-        <!--app:title="Info"-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="?attr/actionBarSize"-->
-        <!--android:background="@color/colorPrimary"-->
-        <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"-->
-        <!--app:theme="@style/ThemeOverlay.AppCompat.Dark"-->
-        <!--app:titleTextAppearance="@style/Toolbar.TitleText"-->
-        <!--app:titleTextColor="@android:color/white" />-->
+    <android.support.v7.widget.Toolbar
+        app:title="Info"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark"
+        app:titleTextAppearance="@style/Toolbar.TitleText"
+        app:titleTextColor="@android:color/white" />
 
     <WebView
         android:id="@+id/web_view_info"

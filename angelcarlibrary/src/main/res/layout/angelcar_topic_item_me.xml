@@ -70,8 +70,6 @@
                     android:id="@+id/call_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:autoLink="all"
-                    android:linksClickable="true"
                     android:textSize="14sp" />
 
             <!--</FrameLayout>-->

@@ -140,6 +140,10 @@ public interface ApiService {
                     @Field("telnumber") String telNumber // ชื่อ นามสกุล
             );
 
+    /**delete/update car**/
+    @GET("ios/api/ga_car.php?operation=updatestatus")
+    Observable<ResponseDao> observableDeleteCar(@Query("message") String message);/**carid||{offline(ลบ),online(เลื่อนประกาศ)}**/
+
      /**Feed Post Car**/
     @GET("android/api/getfeedpost.php")
     Call<PostCarCollectionDao> loadPostCar();

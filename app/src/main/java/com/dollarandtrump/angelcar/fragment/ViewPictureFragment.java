@@ -23,9 +23,6 @@ import org.parceler.Parcels;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-/**
- * Created by humnoyDeveloper on 6/4/59. 15:31
- */
 public class ViewPictureFragment extends Fragment {
     private static final String ARGS_PICTURE = "base_url";
     private static final String BUNDLE_STATE = "ImageViewState";

@@ -8,13 +8,18 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlacePicker;
 
 import java.io.File;
@@ -28,7 +33,7 @@ import java.util.Locale;
  * AngelCarProject
  * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
  ********************************************/
-public class HiddenActivity extends FragmentActivity {//implements GoogleApiClient.OnConnectionFailedListener{
+public class HiddenActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener{
     public static String RX_PICKER_SOURCE = "rx_picker_source";
 
     private static String TAG = "RxImagePicker";
@@ -38,18 +43,18 @@ public class HiddenActivity extends FragmentActivity {//implements GoogleApiClie
     private static final int LOCATION = 102;
 
     private Uri cameraPictureUrl;
-//    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        mGoogleApiClient = new GoogleApiClient
-//                .Builder(this)
-//                .addApi(LocationServices.API)
-////                .addApi(Places.GEO_DATA_API)
-////                .addApi(Places.PLACE_DETECTION_API)
-//                .enableAutoManage(this, this)
-//                .build();
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
 
         if (savedInstanceState == null) {
             handleIntent(getIntent());
@@ -125,18 +130,12 @@ public class HiddenActivity extends FragmentActivity {//implements GoogleApiClie
                 chooseCode = SELECT_PHOTO;
                 break;
             case LOCATION:
-
-//                LocationAvailability locationAvailability = LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient);
-//                if(locationAvailability.isLocationAvailable()) {
                     try {
                         pickerIntent = new PlacePicker.IntentBuilder().build(this);
                         chooseCode = LOCATION;
                     } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
                         Log.e(TAG, "handleIntent: ", e);
                     }
-//                } else {
-//                    Log.d(TAG, "handleIntent: open gps");
-//                }
                 break;
         }
 
@@ -171,22 +170,8 @@ public class HiddenActivity extends FragmentActivity {//implements GoogleApiClie
         return imageTempFile;
     }
 
-    private String getImagePath(Uri uri) {
-        String result = null;
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-        if (cursor != null) {
-            int column_index = cursor
-                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            result = cursor.getString(column_index);
-            cursor.close();
-        }
-        return result;
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e(TAG, "onConnectionFailed: "+connectionResult.getErrorMessage());
     }
-
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//        Log.e(TAG, "onConnectionFailed: "+connectionResult.getErrorMessage());
-//    }
 }

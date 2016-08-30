@@ -3,6 +3,7 @@ package com.dollarandtrump.angelcar.fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,6 +27,7 @@ import com.activeandroid.query.Select;
 import com.activeandroid.util.SQLiteUtils;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ProvinceAdapter;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
@@ -41,12 +43,15 @@ import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.InfoCarModel;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.dollarandtrump.angelcar.utils.Log;
-import com.dollarandtrump.angelcar.view.PhotoView;
+import com.dollarandtrump.angelcar.view.PhotoCollectionView;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -67,7 +72,8 @@ public class PostCarFragment extends Fragment {
     @Bind(R.id.text_shop_name) TextView mShopName;
     @Bind(R.id.text_status) TextView mStatus;
     @Bind(R.id.text_brand) TextView mBrand;
-    @Bind(R.id.photo) PhotoView mPhoto;
+    @Bind(R.id.photo)
+    PhotoCollectionView mPhoto;
     @Bind(R.id.toggle_button_gear) ToggleButton mGear;
     @Bind(R.id.edit_text_price) EditText mPrice;
     @Bind(R.id.edit_text_details) EditText mDetails;
@@ -76,21 +82,26 @@ public class PostCarFragment extends Fragment {
     @Bind(R.id.edit_text_telephone) EditText mTel;
     @Bind(R.id.spinner_province) Spinner mProvince;
     @Bind(R.id.button_post) Button mButtonPost;
+    @Bind(R.id.text_evidence) TextView mEvidence;
 
     @Bind(R.id.scroll_view) NestedScrollView mScroll;
 
     private ProgressDialog mProgressDialog;
 
     private List<ProvinceDao> mListProvince;
-    private ProvinceAdapter mProvinceAdapter;
     private int mIdProvince = 0;
     private InfoCarModel mCarModel;
     private Gallery mImageEvidence;
+
+    private String[] mTypeEvidence = {"owner","delegate","dealers"};
 
     /**control scroll up down**/
     private int mLastPositionScroll = 0;
     private boolean isControlScroll = true;
     private ProfileDao mProfileDB;
+
+    @Inject
+    @Named("default") SharedPreferences preferencesDefault;
 
     public PostCarFragment() {
         super();
@@ -126,11 +137,21 @@ public class PostCarFragment extends Fragment {
         mListProvince = new Select().from(ProvinceDao.class).execute();
 
         mImageEvidence = new Gallery();
+
+
+
+
     }
 
     @SuppressWarnings("UnusedParameters")
     private void initInstances(final View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
+
+        ((MainApplication) getActivity().getApplication()).getApplicationComponent().inject(this);
+
+        mTel.setText(preferencesDefault.getString("pre_phone",""));
+        mName.setText(preferencesDefault.getString("pre_shop_name",""));
+
 
 //        mTel.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
         // init data
@@ -141,8 +162,6 @@ public class PostCarFragment extends Fragment {
                 .placeholder(R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .crossFade().into(mProfile);
-        /**status**/
-        mStatus.setText("ประกาศขายฟรี");
 
         mProgressDialog = new ProgressDialog(getContext());
         mProgressDialog.setTitle("แจ้งเตือน");
@@ -168,7 +187,7 @@ public class PostCarFragment extends Fragment {
             }
         });
 
-            mProvinceAdapter = new ProvinceAdapter();
+        ProvinceAdapter mProvinceAdapter = new ProvinceAdapter();
             mProvinceAdapter.setProvince(mListProvince);
             mProvince.setAdapter(mProvinceAdapter);
 
@@ -222,13 +241,14 @@ public class PostCarFragment extends Fragment {
 
     @OnClick(R.id.text_evidence)
     public void onClickEvidence(){
+
         /**แนบหลักฐาน**/
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         Fragment fragment = getFragmentManager().findFragmentByTag("Evidence");
         if (fragment != null){
             ft.remove(fragment);
         }
-        EvidenceDialog evidenceDialog = EvidenceDialog.newInstance(0,mImageEvidence);
+        EvidenceDialog evidenceDialog = EvidenceDialog.newInstance(mCarModel.getCategory(),mImageEvidence);
         evidenceDialog.show(getChildFragmentManager(),"Evidence");
 
     }
@@ -337,7 +357,7 @@ public class PostCarFragment extends Fragment {
     private void uploadEvidence(ResponseDao responseDao) {
         String shopId = Registration.getInstance().getShopRef();
         HttpManager.getInstance().getService()
-                .observableEvidence(responseDao.getSuccess()+"||"+shopId+"||owner")
+                .observableEvidence(responseDao.getSuccess()+"||"+shopId+"||"+mTypeEvidence[mCarModel.getCategory()])
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<ResponseDao>() {
@@ -388,6 +408,18 @@ public class PostCarFragment extends Fragment {
         if (carModel.getGallery() != null && carModel.getGallery().getListGallery() != null) {
             mPhoto.onBindingData(carModel.getGallery());
         }
+        /**status**/
+        if(mCarModel.getCategory() != -1) {
+        int status ;
+            if (mCarModel.getCategory() == 0)
+                status = R.string.post_owner;
+            else if (mCarModel.getCategory() == 1)
+                status = R.string.post_delegate;
+            else
+                status = R.string.post_dealers;
+            mStatus.setText(status);
+        }
+
 
         if (carModel.isEditInfo()){
             //init data (Edit)
@@ -415,6 +447,11 @@ public class PostCarFragment extends Fragment {
     @Subscribe
     public void onSubscribeEvidence(Gallery imageEvidence){
         this.mImageEvidence = imageEvidence;
+        if (imageEvidence.getListGallery().size() > 0){
+             mEvidence.setBackgroundResource(R.drawable.selector_menu_bottom_evidence_success);
+        }else{
+            mEvidence.setBackgroundResource(R.drawable.selector_menu_bottom_evidence_unsuccess);
+        }
     }
 
     /*

@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 
 import com.dollarandtrump.angelcar.model.LoadConversation;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -19,6 +20,13 @@ public class StoreModule {
     @Singleton
     SharedPreferences providesPreferences(Application application){
         return application.getSharedPreferences("user", Context.MODE_PRIVATE);
+    }
+
+    @Provides
+    @Singleton
+    @Named("default")
+    SharedPreferences providesDefaultSharedPreferences(Application application){
+        return PreferenceManager.getDefaultSharedPreferences(application.getBaseContext());
     }
 
     @Provides

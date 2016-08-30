@@ -3,8 +3,9 @@ package com.dollarandtrump.angelcar.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.widget.ImageView;
 
-public class PhotoBanner extends AdjustableImageView{
+public class PhotoBanner extends ImageView{
 
     public PhotoBanner(Context context) {
         super(context);

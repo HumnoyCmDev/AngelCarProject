@@ -39,6 +39,12 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
 
     private boolean isShop = true;
     private DecimalFormat formatter = new DecimalFormat("#,###");
+
+
+    public ShopAdapter(boolean isShop) {
+        this.isShop = isShop;
+    }
+
     public boolean isHeader(int position) {
         for (int i : positionHeader){
             if (i == position) return true;
@@ -60,15 +66,14 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     public void setDao(PostCarCollectionDao dao) {
+        positionHeader = dao.findPositionHeader(isShop);
         this.dao = dao;
         originalDao = dao;
-//        this.dao.sortBrand();
-        positionHeader = this.dao.findPositionHeader();
-//        listNameHeader = this.dao.findDuplicates();
 
         /*add position Header to Dao*/
         if (this.dao != null && this.dao.getListCar() != null &&
                 positionHeader != null) {
+
             for (int i = 0; i < positionHeader.size(); i++) {
                 this.dao.getListCar().add(positionHeader.get(i), new PostCarDao());
             }
@@ -104,7 +109,6 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-
         if (holder.getItemViewType() == ITEM_VIEW_TYPE_HEADER){
             HeaderViewHolder viewHolder = (HeaderViewHolder) holder;
 
@@ -135,8 +139,8 @@ public class ShopAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             viewHolder.shopSetting.setVisibility(isShop ? View.VISIBLE : View.GONE);
             if (item.getStatus() != null)
                 viewHolder.subDeal.setVisibility(item.getStatus().equals("wait") ? View.VISIBLE : View.GONE);
-
         }
+
 
     }
 

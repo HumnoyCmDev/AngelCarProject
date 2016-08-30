@@ -138,16 +138,26 @@
 
             </LinearLayout>
 
-
             <TextView
-                android:id="@+id/custom_view_text_detail"
+                android:id="@+id/custom_view_text_details"
+                android:layout_marginTop="6dp"
+                android:text="[Details]"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"/>
+
+
+
+            <TextView
+                android:id="@+id/custom_view_text_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 android:drawableLeft="@drawable/ic_custom_header_profile"
                 android:drawablePadding="10dp"
                 android:gravity="center_vertical"
-                android:text="[Details]"
+                android:text="[Name]"
                 android:textColor="@android:color/white"
                 android:textSize="13sp" />
 
@@ -178,6 +188,8 @@
                     android:layout_weight="1" />
 
                 <TextView
+                    android:drawableLeft="@drawable/ic_follow_on"
+                    android:drawablePadding="4dp"
                     android:id="@+id/text_follow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

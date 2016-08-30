@@ -11,8 +11,12 @@
     <color name="colorButtonGalleryNormal">@color/colorAccent</color>
     <color name="colorButtonGalleryPress">#ddffb13d</color>
     <color name="colorActivityViewImage">#64000000</color>
+
     <color name="colorButtonEvidenceNormal">#ff0000</color>
     <color name="colorButtonEvidencePress">#ba0000</color>
+
+    <color name="colorButtonEvidenceSuccessNormal">#26ff00</color>
+    <color name="colorButtonEvidenceSuccessPress">#19ab00</color>
 
     <color name="overlay_color">#80000000</color>
     <color name="colorSelectorNormal">@color/colorAccent</color>

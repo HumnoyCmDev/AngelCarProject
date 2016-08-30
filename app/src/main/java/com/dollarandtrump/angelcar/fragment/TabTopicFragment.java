@@ -4,16 +4,20 @@ package com.dollarandtrump.angelcar.fragment;
  * Created by ABaD on 12/15/2015.
  */
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.TopicChatActivity;
+import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.TopicDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
@@ -84,21 +88,39 @@ public class TabTopicFragment extends Fragment{
 
      @OnClick({R.id.fab_finance,R.id.fab_refinance,R.id.fab_pawn})
      public void onClickFabButton(View v){
-         if (mMenuFab.isOpened())
-             mMenuFab.close(true);
-         switch (v.getId()){
-             case R.id.fab_finance:
-                 if (Log.isLoggable(Log.DEBUG)) Log.d("Finance");
-                 intentNewTopic(TopicFragment.Type.FINANCE.toString(),0);
-                 break;
-             case R.id.fab_refinance:
-                 if (Log.isLoggable(Log.DEBUG)) Log.d("ReFinance");
-                 intentNewTopic(TopicFragment.Type.REFINANCE.toString(),1);
-                 break;
-             default:
-                 if (Log.isLoggable(Log.DEBUG)) Log.d("Pawn");
-                 intentNewTopic(TopicFragment.Type.PAWN.toString(),2);
-                 break;
+
+         ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
+         if (mProfile == null || mProfile.getShopName() == null || mProfile.getUrlShopLogo().contains("default.png")){
+             new AlertDialog.Builder(getActivity())
+                     .setCancelable(false)
+                     .setTitle(R.string.alert)
+                     .setMessage(R.string.alert_edit_shop)
+                     .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                         public void onClick(DialogInterface dialog, int which) {
+
+                         }
+                     })
+                     .setIcon(android.R.drawable.ic_dialog_alert)
+                     .show();
+
+         }else {
+
+             if (mMenuFab.isOpened())
+                 mMenuFab.close(true);
+             switch (v.getId()) {
+                 case R.id.fab_finance:
+                     if (Log.isLoggable(Log.DEBUG)) Log.d("Finance");
+                     newTopic(TopicFragment.Type.FINANCE.toString(), 0);
+                     break;
+                 case R.id.fab_refinance:
+                     if (Log.isLoggable(Log.DEBUG)) Log.d("ReFinance");
+                     newTopic(TopicFragment.Type.REFINANCE.toString(), 1);
+                     break;
+                 default:
+                     if (Log.isLoggable(Log.DEBUG)) Log.d("Pawn");
+                     newTopic(TopicFragment.Type.PAWN.toString(), 2);
+                     break;
+             }
          }
      }
 
@@ -121,14 +143,35 @@ public class TabTopicFragment extends Fragment{
             intent.putExtra("topic", Parcels.wrap(topic));
             intent.putExtra("room",title[segmentTabLayout.getCurrentTab()]);
             startActivity(intent);
+        }else {
+            alertMessage();
         }
     }
 
-    private void intentNewTopic(String topic,int idRoom){
+    private void newTopic(String topic,int idRoom){
         Intent intent = new Intent(getActivity(), TopicChatActivity.class);
         intent.putExtra("topic_message",topic);
         intent.putExtra("room",title[idRoom]);
         startActivity(intent);
+    }
+
+    private void alertMessage(){
+        new AlertDialog.Builder(getActivity())
+                .setCancelable(true)
+                .setTitle(R.string.alert)
+                .setMessage(R.string.alert_message_topic)
+                .setPositiveButton(R.string.alert_new_topic, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        newTopic(title[segmentTabLayout.getCurrentTab()],segmentTabLayout.getCurrentTab());
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     /*

@@ -41,8 +41,6 @@ public class BrandFragment extends Fragment {
     BrandGridAdapter adapter;
     Subscription subscription;
 
-    private static final String TAG = "BrandFragment";
-
     public static BrandFragment newInstance(){
         BrandFragment fragment = new BrandFragment();
         return fragment;
@@ -122,7 +120,6 @@ public class BrandFragment extends Fragment {
     @Subscribe
     public void onSubscribeInfoCarModel(InfoCarModel infoCarModel){
         carModel = infoCarModel;
-        Toast.makeText(getActivity(),"onSubscribePostCar "+infoCarModel.isEditInfo(),Toast.LENGTH_LONG).show();
     }
 
     @Override

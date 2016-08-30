@@ -3,11 +3,10 @@ package com.dollarandtrump.angelcar.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,67 +17,51 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.activeandroid.query.Select;
-import com.activeandroid.query.Update;
 import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.Adapter.MainViewPagerAdapter;
 import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
-import com.dollarandtrump.angelcar.dao.RegisterResultDao;
-import com.dollarandtrump.angelcar.dao.ResponseDao;
+import com.dollarandtrump.angelcar.dialog.InformationDialog;
 import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
 import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
-import com.dollarandtrump.angelcar.fragment.RegistrationAlertFragment;
-import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
-import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.model.ActivityResultEvent;
 import com.dollarandtrump.angelcar.model.ConversationCache;
-import com.dollarandtrump.angelcar.utils.RegistrationResult;
-import com.dollarandtrump.angelcar.utils.RxNotification;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity{
 
-//    private  final int EMAIL_RESOLUTION_REQUEST = 333;
     private  final int REQUEST_CODE_ASK_PERMISSIONS = 123;
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     @Bind(R.id.toolbar_top) Toolbar toolbar;
     @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.floating_action_menu_fab) FloatingActionMenu menuFab;
-    @Bind(R.id.fab_ac_Deposit) FloatingActionButton fabAcDeposit;
-    @Bind(R.id.fab_ac_Dealer) FloatingActionButton fabAcDealer;
+//    @Bind(R.id.fab_dealers) FloatingActionButton fabAcDeposit;
+//    @Bind(R.id.fab_delegate) FloatingActionButton fabAcDealer;
 
     @Inject SharedPreferences sharedPreferences;
+    @Inject
+    @Named("default")
+    SharedPreferences preferencesDefault;
+
     private static final String TAG = "MainActivity";
 
     @Bind(R.id.tl_1) CommonTabLayout mTabLayout;
@@ -92,7 +75,6 @@ public class MainActivity extends AppCompatActivity{
     private ArrayList<CustomTabEntity> mTabEntities = new ArrayList<>();
     private Menu mMenu;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,29 +86,17 @@ public class MainActivity extends AppCompatActivity{
 
         ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
-
-        fabAcDealer.setEnabled(false);
-        fabAcDeposit.setEnabled(false);
         menuFab.setClosedOnTouchOutside(true);
 
     }
 
-//  googlePicker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == EMAIL_RESOLUTION_REQUEST && resultCode == RESULT_OK) {
-//            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-//            Toast.makeText(MainActivity.this,accountName,Toast.LENGTH_LONG).show();
-//            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(accountName);
-//            call.enqueue(callbackRegistrationEmail);
-//        }
-
         if (requestCode == ShopUpLoadDialog.REQUEST_CODE && resultCode == RESULT_OK){
            // requestCode ShopUpLoadDialog
             MainThreadBus.getInstance()
                    .post(new ActivityResultEvent(requestCode,resultCode,data));
         }
-
         if (requestCode == ShopEditDialog.REQUEST_CODE && resultCode == RESULT_OK){
             MainThreadBus.getInstance()
                     .post(new ActivityResultEvent(requestCode,resultCode,data));
@@ -134,49 +104,32 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        Toast.makeText(MainActivity.this,"RequestPermission ::"+requestCode,Toast.LENGTH_LONG).show();
-        switch (requestCode) {
-            case REQUEST_CODE_ASK_PERMISSIONS:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // Permission Granted
-//                    dialogConfirmFragment();
-                } else {
-                    // Permission Denied
-                }
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-//    private void initInstance() {
-//        if (!Registration.getInstance().isFirstApp()){
-//            Intent googlePicker =
-//                    AccountPicker.newChooseAccountIntent(null, null,
-//                            new String[]{"com.google"}, true, null, null, null, null);
-//            startActivityForResult(googlePicker, EMAIL_RESOLUTION_REQUEST);
-//        }else {
-//            // กรณีลงทะเบียนแล้วให้ เช็ค cache // หากไม่พบ ให้ Registration Email
-//            String cache_User = Registration.getInstance().getUserId();
-//            if (cache_User != null){
-//                Toast.makeText(MainActivity.this,cache_User,Toast.LENGTH_LONG).show();
-//                Toast.makeText(MainActivity.this,Registration.getInstance().getShopRef(),Toast.LENGTH_LONG).show();
-//            }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode) {
+//            case REQUEST_CODE_ASK_PERMISSIONS:
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    // Permission Granted
+////                    dialogConfirmFragment();
+//                } else {
+//                    // Permission Denied
+//                }
+//                break;
+//            default:
+//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 //        }
 //    }
 
-    @Subscribe //Produce form RegistrationAlertFragment.java
-    public void onRegistrationEmail(RegistrationResult result){
-        if (result.getResult() == RegistrationAlertFragment.REGISTRATION_OK){
-            // ติดต่อ server
-            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(result.getEmail());
-            call.enqueue(callbackRegistrationEmail);
-
-
-        }
-    }
+//    @Subscribe //Produce form RegistrationAlertFragment.java
+//    public void onRegistrationEmail(RegistrationResult result){
+//        if (result.getResult() == RegistrationAlertFragment.REGISTRATION_OK){
+//            // ติดต่อ server
+//            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(result.getEmail());
+//            call.enqueue(callbackRegistrationEmail);
+//
+//
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
@@ -233,43 +186,62 @@ public class MainActivity extends AppCompatActivity{
             menuFab.hideMenuButton(false);
     }
 
-    @OnClick({R.id.fab_ac_Deposit,R.id.fab_ac_Dealer,R.id.fab_ac_PostSell})
+    @OnClick({R.id.fab_dealers,R.id.fab_delegate,R.id.fab_owner})
     public void fabButtonAction(View v){
-        switch (v.getId()){
-            case R.id.fab_ac_Deposit:
-                Snackbar.make(getWindow().getDecorView(),"กำลังพัฒนาระบบ",Snackbar.LENGTH_SHORT).show();
-                break;
-            case R.id.fab_ac_Dealer:
-                Snackbar.make(getWindow().getDecorView(),"กำลังพัฒนาระบบ",Snackbar.LENGTH_SHORT).show();
-                break;
-            case R.id.fab_ac_PostSell:
-                //Check Shop Name
-                ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
-                if (mProfile == null || mProfile.getShopName() == null){
-                    new AlertDialog.Builder(this)
-                            .setCancelable(false)
-                            .setTitle("แจ้งเตือน")
-                            .setMessage("กรุณาใส่ชื่อที่ Shop ก่อนประกาศขาย")
-                            .setPositiveButton("Shop", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    viewPager.setCurrentItem(2,true);
-                                }
-                            })
-                            .setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
+        ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
+        if (mProfile == null || mProfile.getShopName() == null || mProfile.getUrlShopLogo().contains("default.png")){
+            alertDialogEditShop();
+        }else {
+            switch (v.getId()) {
 
-                                }
-                            })
-                            .setIcon(android.R.drawable.ic_dialog_alert)
-                            .show();
-
-                }else {
-                    startActivity(initIntent(PostActivity.class));
-                }
-                break;
-            default:
-                break;
+                case R.id.fab_dealers:
+                    String name = preferencesDefault.getString("pre_name",null);
+                    String tel = preferencesDefault.getString("pre_phone",null);
+                    if (name == null || tel == null || name.trim().equals("") || name.trim().equals("")){
+                        alertDialogInformation();
+                    }else {
+                        startActivity(postCar(2, PostActivity.class));
+                    }
+                    break;
+                case R.id.fab_delegate:
+                    startActivity(postCar(1,PostActivity.class));
+                    break;
+                case R.id.fab_owner:
+                    startActivity(postCar(0,PostActivity.class));
+                    break;
+                default:
+                    break;
+            }
         }
+    }
+
+    private void alertDialogEditShop() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.alert)
+                .setMessage(R.string.alert_edit_shop)
+                .setPositiveButton(R.string.goto_shop, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        viewPager.setCurrentItem(2,true);
+                    }
+                })
+                .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
+    private void alertDialogInformation(){
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("InformationDialog");
+        if (fragment != null){
+            ft.remove(fragment);
+        }
+        InformationDialog dialog = new InformationDialog();
+        dialog.show(getSupportFragmentManager(),"InformationDialog");
     }
 
     public void setIconMessage(Menu menu) {
@@ -329,16 +301,10 @@ public class MainActivity extends AppCompatActivity{
         return new Intent(MainActivity.this,cls);
     }
 
-    private boolean checkPlayServices() {
-        GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
-        int resultCode = apiAvailability.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (apiAvailability.isUserResolvableError(resultCode)) {
-                apiAvailability.getErrorDialog(this, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }
-            return false;
-        }
-        return true;
+    private Intent postCar(int category,Class<?> cls){
+        Intent intent = new Intent(MainActivity.this,cls);
+        intent.putExtra("category",category);
+        return intent;
     }
 
     boolean doubleBackToExitPressedOnce = false;
@@ -366,7 +332,7 @@ public class MainActivity extends AppCompatActivity{
     /**************
     *Listener Zone*
     ***************/
-    Callback<RegisterResultDao> callbackRegistrationEmail = new Callback<RegisterResultDao>() {
+   /* Callback<RegisterResultDao> callbackRegistrationEmail = new Callback<RegisterResultDao>() {
         @Override
         public void onResponse(Call<RegisterResultDao> call, Response<RegisterResultDao> response) {
             if (response.isSuccessful()) {
@@ -402,7 +368,7 @@ public class MainActivity extends AppCompatActivity{
         public void onFailure(Call<RegisterResultDao> call, Throwable t) {
             Toast.makeText(MainActivity.this, "" + t.toString(), Toast.LENGTH_SHORT).show();
         }
-    };
+    };*/
 
     OnTabSelectListener onTabSelectListener = new OnTabSelectListener() {
         @Override

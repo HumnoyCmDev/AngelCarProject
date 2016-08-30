@@ -1,5 +1,6 @@
 package com.dollarandtrump.angelcar.dialog;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,8 +15,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.ResponseDao;
+import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
@@ -23,6 +26,9 @@ import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
 import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.github.siyamed.shapeimageview.CircularImageView;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,9 +41,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-/**
- * Created by humnoy on 24/2/59.
- */
+
 public class ShopEditDialog extends DialogFragment {
     public final static int REQUEST_CODE = 100;
     public interface EditShopCallback{
@@ -54,10 +58,17 @@ public class ShopEditDialog extends DialogFragment {
 
     String shopName, shopDescription,shopNumber , logoShop;
     Uri mUri = null;
+
+//    @Inject
+//    @Named("default")
+//    SharedPreferences preferencesDefault;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         init(savedInstanceState);
+
+//        ((MainApplication) Contextor.getInstance().getContext()).getApplicationComponent().inject(this);
     }
 
     private void init(Bundle savedInstanceState) {
@@ -120,8 +131,8 @@ public class ShopEditDialog extends DialogFragment {
     @OnClick(R.id.btnSaveShop)
     public void saveShop(){
 
-        String shopName = editShopName.getText().toString().trim();
-        String shopDescription = editShopDescription.getText().toString().trim();
+        final String shopName = editShopName.getText().toString().trim();
+        final String shopDescription = editShopDescription.getText().toString().trim();
         if (shopName.equals("") || shopDescription.equals("")){
             Snackbar.make(getActivity().getWindow().getDecorView(),"กรุณาใส่ข้อมูลให้ครบ",Snackbar.LENGTH_SHORT).show();
             return;
@@ -145,6 +156,10 @@ public class ShopEditDialog extends DialogFragment {
 
             @Override
             public void onNext(ResponseDao responseDao) {
+
+//                preferencesDefault.edit().putString("pre_shop_name",shopName).apply();
+//                preferencesDefault.edit().putString("pre_description",shopDescription).apply();
+
                 if (editShopCallback != null)
                     editShopCallback.onSuccess();
                 dismiss();

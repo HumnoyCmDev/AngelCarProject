@@ -142,29 +142,14 @@ public class PostCarManager {
 
     private void saveCache(){
 
-        PostCarCollectionDao cacheDao =
+        /*PostCarCollectionDao cacheDao =
                 new PostCarCollectionDao();
         if (dao != null && dao.getListCar() != null) {
             LinkedList<PostCarDao> sub = new LinkedList<>(dao.getListCar().subList(0,
                     Math.min(20, dao.getListCar().size())));
             cacheDao.setListCar(sub);
-
-//            //cache object
-//            CacheFeed.delete(CacheFeed.class,1);
-//            ActiveAndroid.beginTransaction();
-//            try {
-//                for (PostCarDao d : cacheDao.getListCar()) {
-//                    d.save();
-//                    CacheFeed feed = new CacheFeed();
-//                    feed.setPostCarDao(d);
-//                    feed.save();
-//                }
-//                ActiveAndroid.setTransactionSuccessful();
-//            } finally {
-//                ActiveAndroid.endTransaction();
-//            }
             mCache.save("postDao",cacheDao);
-        }
+        }*/
 
 
 
@@ -172,10 +157,9 @@ public class PostCarManager {
 
     private void loadCache(){
 //        load cache Object
-        if(mCache.isFile("postDao")){
+        /*if(mCache.isFile("postDao")){
             dao = mCache.load("postDao",PostCarCollectionDao.class);
-        }
-
+        }*/
     }
 
     public void clearCache(){

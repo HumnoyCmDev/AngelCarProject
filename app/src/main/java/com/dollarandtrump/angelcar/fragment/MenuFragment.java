@@ -12,6 +12,7 @@ import android.support.v4.app.NotificationManagerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.activeandroid.Model;
@@ -19,6 +20,7 @@ import com.activeandroid.query.Select;
 import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.InfoActivity;
+import com.dollarandtrump.angelcar.activity.SettingsActivity;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -60,6 +62,13 @@ public class MenuFragment extends Fragment {
     @Bind(R.id.image_view_glide_profile) ImageViewGlide mImageProfile;
     @Bind(R.id.text_name) TextView mName;
     @Bind(R.id.text_description) TextView mDescription;
+
+//    @Bind(R.id.text_emoji)  TextView textEmoji;
+//    @Bind(R.id.emoji) EditText emoji;
+//    @OnClick(R.id.btn_emoji)
+//    public void onClickButtonEmoji(){
+//        textEmoji.setText(emoji.getText());
+//    }
 
     private ProfileDao mProfile;
 
@@ -112,16 +121,22 @@ public class MenuFragment extends Fragment {
     @OnClick(R.id.menu_button_profile)
     public void showProfileActivity(){
         Intent i = new Intent(getActivity(), ShopActivity.class);
-        i.putExtra("user",Registration.getInstance().getUserId());
-        i.putExtra("shop",Registration.getInstance().getShopRef());
+        i.putExtra("user", Registration.getInstance().getUserId());
+        i.putExtra("shop", Registration.getInstance().getShopRef());
         startActivity(i);
     }
 
-//    @OnClick(R.id.text_button_info)
-//    public void onClickInfo(){
-//        Intent intent = new Intent(getActivity(), InfoActivity.class);
-//        startActivity(intent);
-//    }
+    @OnClick(R.id.text_button_info)
+    public void onClickInfo(){
+        Intent intent = new Intent(getActivity(), InfoActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.text_button_setting)
+    public void onClickSetting(){
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void onStart() {

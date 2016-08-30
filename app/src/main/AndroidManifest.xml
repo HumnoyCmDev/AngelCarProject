@@ -3,20 +3,17 @@
     package="com.dollarandtrump.angelcar">
 
     <!-- gcm -->
-    <!--<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />-->
-    <!--<uses-permission android:name="android.permission.WAKE_LOCK" />-->
+    <!-- <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" /> -->
+    <!-- <uses-permission android:name="android.permission.WAKE_LOCK" /> -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!--<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
 
-
-
+    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
     <application
         android:name=".MainApplication"
         android:allowBackup="true"
@@ -25,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--Configuration Glide ARGB8888-->
+        <!-- Configuration Glide ARGB8888 -->
         <meta-data
             android:name="com.dollarandtrump.angelcar.configuration.GlideConfiguration"
             android:value="GlideModule" />
@@ -36,27 +33,25 @@
             android:windowSoftInputMode="stateHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activity.ChatCarActivity"
             android:label="ห้องสนทนา"
-            android:windowSoftInputMode="stateHidden|adjustResize" >
-            <!--<intent-filter>-->
-                <!--<action android:name="com.dollarandtrump.angelcar.chat"/>-->
-                <!--<category android:name="android.intent.category.DEFAULT"/>-->
-            <!--</intent-filter>-->
+            android:windowSoftInputMode="stateHidden|adjustResize">
         </activity>
-
-        <activity android:name=".activity.ConversationActivity" >
+        <activity android:name=".activity.ConversationActivity">
             <intent-filter>
-                <action android:name="com.dollarandtrump.angelcar.chat"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+                <action android:name="com.dollarandtrump.angelcar.chat" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <!--<activity
+        <!--
+        <activity
             android:name=".activity.DialogNotificationActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -65,29 +60,31 @@
                 <action android:name="com.dollarandtrump.angelcar.DialogNotificationActivity"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
-        </activity>-->
-
+        </activity>
+        -->
 
         <activity
             android:name=".activity.TopicChatActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-
         <activity
             android:name=".activity.PostActivity"
             android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity
-            android:name=".activity.ShopActivity" />
+        <activity android:name=".activity.ShopActivity" />
         <activity
             android:name=".activity.FollowActivity"
             android:label="Follow" />
         <activity android:name=".activity.GuideLineActivity" />
-        <activity android:name=".activity.ViewPictureActivity" android:theme="@style/AppThemeDark"/>
-        <activity android:name=".activity.SingleViewImageActivity" android:theme="@style/AppThemeDark"/>
-        <activity android:name=".activity.EditPostActivity"/>
-        <activity android:name=".activity.ViewDetailActivity"/>
-        <activity android:name=".activity.ViewCarActivity"/>
-        <activity android:name=".activity.MainActivity"/>
-        <!--<activity android:name=".activity.InfoActivity"/>-->
+        <activity
+            android:name=".activity.ViewPictureActivity"
+            android:theme="@style/AppThemeDark" />
+        <activity
+            android:name=".activity.SingleViewImageActivity"
+            android:theme="@style/AppThemeDark" />
+        <activity android:name=".activity.EditPostActivity" />
+        <activity android:name=".activity.ViewDetailActivity" />
+        <activity android:name=".activity.ViewCarActivity" />
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.InfoActivity"/>
 
         <activity
             android:name=".rx_picker.HiddenActivity"
@@ -95,41 +92,42 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
-        <meta-data android:name="AA_DB_NAME" android:value="AngelCar1.db" />
-        <meta-data android:name="AA_DB_VERSION" android:value="3" />
-        <meta-data android:name="AA_SERIALIZERS"
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="AngelCar1.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="3" />
+        <meta-data
+            android:name="AA_SERIALIZERS"
             android:value="com.dollarandtrump.angelcar.utils.ListStringSerializer" />
 
-        <!--############################-->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAcE_P3xffVRk_EU8aOAGlBzFm6wamBCx8"/>
+            android:value="AIzaSyAcE_P3xffVRk_EU8aOAGlBzFm6wamBCx8" />
 
-
-        <!-- [START firebase_service] -->
-        <service
-            android:name=".service.FireBaseMessaging">
+        <service android:name=".service.FireBaseMessaging">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <!-- [END firebase_service] -->
-        <!-- [START firebase_iid_service] -->
-        <service
-            android:name=".service.FireBaseInstanceID">
+
+        <service android:name=".service.FireBaseInstanceID">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <!-- [END firebase_iid_service] -->
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="3b92869d9b7a1090f30ce768ff8cf5516d17eb08" />
 
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings" android:theme="@style/AppThemeActionBar"/>
     </application>
 
 </manifest>

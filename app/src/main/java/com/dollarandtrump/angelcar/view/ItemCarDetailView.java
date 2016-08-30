@@ -74,7 +74,7 @@ public class ItemCarDetailView extends BaseCustomViewGroup {
         title = (TextView) findViewById(R.id.custom_view_text_title);
 //        detail = (TextView) findViewById(R.id.custom_view_chat_header_tvDetails);
         brand = (TextView) findViewById(R.id.custom_view_text_brand);
-        profile = (TextView) findViewById(R.id.custom_view_text_detail);
+        profile = (TextView) findViewById(R.id.custom_view_text_name);
         ic_Profile = (ImageView) findViewById(R.id.custom_view_icon_profile);
         btnFollow = (ToggleButton) findViewById(R.id.custom_view_button_follow);
         time = (TextView) findViewById(R.id.custom_view_text_time);

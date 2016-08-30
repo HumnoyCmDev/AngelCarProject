@@ -2,8 +2,7 @@ package com.dollarandtrump.angelcar.activity;
 
 import android.accounts.AccountManager;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -28,7 +27,6 @@ import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
 import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.ConversationCache;
 import com.dollarandtrump.angelcar.model.LoadConversation;
 import com.dollarandtrump.angelcar.module.Register;
 import com.google.android.gms.common.AccountPicker;
@@ -39,6 +37,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,9 +45,11 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import xyz.kotlindev.lib.network.ReactiveNetwork;
 
 public class SplashScreenActivity extends AppCompatActivity{
     private  final int EMAIL_RESOLUTION_REQUEST = 333;
@@ -64,8 +65,12 @@ public class SplashScreenActivity extends AppCompatActivity{
     @Bind(R.id.button_start) TextView mStart;
 
     @Inject Register register;
-    @Inject
-    LoadConversation loadConversation;
+    @Inject LoadConversation loadConversation;
+    @Inject @Named("default") SharedPreferences preferencesDefault;
+//    @Inject @Named("netConnecting") boolean isConnecting;
+
+//    private Subscription networkConnectivitySubscription;
+    private Subscription internetConnectivitySubscription;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,32 +83,61 @@ public class SplashScreenActivity extends AppCompatActivity{
 
         ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
-
-
-
-
-
-//        Log.d("Dagger2", ""+register.getUser() +" , "+register.getShop());
         mStart.setVisibility(View.GONE);
 
-        isFirstApp = Registration.getInstance().isFirstApp();
-        time = isFirstApp ? 500L : 2000L;
 
-        handler = new Handler();
-        runnable = new Runnable() {
-            public void run() {
-                if (isFirstApp){
-                    Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
-                    loadConversation.load();
-                }else {
-                    mStart.setVisibility(View.VISIBLE);
+            isFirstApp = Registration.getInstance().isFirstApp();
+            time = isFirstApp ? 500L : 2000L;
+            handler = new Handler();
+            runnable = new Runnable() {
+                public void run() {
+                    if (isFirstApp) {
+                        checkNetwork();
+                    } else {
+                        mStart.setVisibility(View.VISIBLE);
+                    }
                 }
+            };
 
-            }
-        };
+    }
 
+    private void checkNetwork() {
+        internetConnectivitySubscription = ReactiveNetwork.observeInternetConnectivity()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean isConnectedToInternet) {
+                        Log.d("Sp", isConnectedToInternet.toString());
+                        if (isConnectedToInternet) {
+                            Intent intent = new Intent(SplashScreenActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                            loadConversation.load();
+                        } else {
+                            Snackbar.make(mStart,R.string.status_network,Snackbar.LENGTH_INDEFINITE).setAction("Ok!", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).show();
+                        }
+                    }
+                });
+
+//        networkConnectivitySubscription =
+//                ReactiveNetwork.observeNetworkConnectivity(getApplicationContext())
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribe(new Action1<Connectivity>() {
+//                            @Override public void call(final Connectivity connectivity) {
+//                                Log.d("Sp", connectivity.toString());
+//                                final NetworkInfo.State state = connectivity.getState();
+//                                final String name = connectivity.getName();
+//                                Log.d("Sp", String.format("state: %s, name: %s", state, name));
+//
+//                            }
+//                        });
     }
 
     @OnClick(R.id.button_start)
@@ -157,15 +191,20 @@ public class SplashScreenActivity extends AppCompatActivity{
 
     public void onResume() {
         super.onResume();
-        delay_time = time;
-        handler.postDelayed(runnable, delay_time);
-        time = System.currentTimeMillis();
+        if (handler != null) {
+            delay_time = time;
+            handler.postDelayed(runnable, delay_time);
+            time = System.currentTimeMillis();
+        }
     }
 
     public void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable);
-        time = delay_time - (System.currentTimeMillis() - time);
+        if (handler != null) {
+            handler.removeCallbacks(runnable);
+            time = delay_time - (System.currentTimeMillis() - time);
+        }
+        safelyUnsubscribe(internetConnectivitySubscription);
     }
 
 
@@ -181,9 +220,10 @@ public class SplashScreenActivity extends AppCompatActivity{
 
                 register.registerUser(response.body());
 
+
+                preferencesDefault.edit().putString("pre_user_id",user).apply();
+
                 Log.d("register",register.getUser());
-
-
 
                 loadProvince();
                 loadShop(user, shop);
@@ -259,6 +299,14 @@ public class SplashScreenActivity extends AppCompatActivity{
                         finish();
                     }
                 });
+    }
+
+    private void safelyUnsubscribe(Subscription... subscriptions) {
+        for (Subscription subscription : subscriptions) {
+            if (subscription != null && !subscription.isUnsubscribed()) {
+                subscription.unsubscribe();
+            }
+        }
     }
 
 

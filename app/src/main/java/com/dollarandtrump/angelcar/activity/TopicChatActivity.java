@@ -8,9 +8,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.dollarandtrump.angelcar.Adapter.TopicViewMessageAdapter;
 import com.dollarandtrump.angelcar.R;
@@ -56,6 +59,7 @@ public class TopicChatActivity extends AppCompatActivity {
     @Bind(R.id.recycler_list) RecyclerView list;
     @Bind(R.id.message_button_send) Button mButtonSend;
     @Bind(R.id.linear_layout_group_button_chat) LinearLayout mGroupButtChat;
+    @Bind(R.id.text_status)TextView mStatus;
 
 
     private MessageManager messageManager;
@@ -111,6 +115,10 @@ public class TopicChatActivity extends AppCompatActivity {
 
 
         if (mTopicMessage == null) {// view message
+            mStatus.setVisibility(View.GONE);
+            Animation animOut = AnimationUtils.loadAnimation(this,R.anim.zoom_face_out);
+            mStatus.setAnimation(animOut);
+
             mGroupButtChat.setVisibility(View.VISIBLE);
             mRoomId = String.valueOf(mTopic.getId());
             String message = mRoomId+"||"+mTopic.getUserId()+"||0";
@@ -118,6 +126,10 @@ public class TopicChatActivity extends AppCompatActivity {
         }else {
             // create toppic set max line 1
             messageText.setSingleLine(true);
+
+            mStatus.setVisibility(View.VISIBLE);
+            Animation animOut = AnimationUtils.loadAnimation(this,R.anim.zoom_face_in);
+            mStatus.setAnimation(animOut);
         }
 
     }
@@ -192,6 +204,9 @@ public class TopicChatActivity extends AppCompatActivity {
                          if (Log.isLoggable(Log.DEBUG)) Log.d("Topic -> onCompleted");
                         mTopicMessage = null;
                         mGroupButtChat.setVisibility(View.VISIBLE);
+                        mStatus.setVisibility(View.GONE);
+                        Animation animOut = AnimationUtils.loadAnimation(TopicChatActivity.this,R.anim.zoom_face_out);
+                        mStatus.setAnimation(animOut);
                     }
 
                     @Override

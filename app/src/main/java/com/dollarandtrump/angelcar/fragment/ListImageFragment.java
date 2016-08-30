@@ -164,7 +164,7 @@ public class  ListImageFragment extends Fragment {
 
     private void checkGallery(){
         OnSelectData selectData = (OnSelectData) getActivity();
-        if (mGallery.getListGallery().size() > 2){
+        if (mGallery.getListGallery().size() > 0){
             // post event
             mInfoCarModel.setGallery(mGallery);
             MainThreadBus.getInstance().post(onProduceData());
@@ -262,12 +262,12 @@ public class  ListImageFragment extends Fragment {
 
         Gallery mGallery;
 
-        public void setGallery(Gallery mGallery) {
-            this.mGallery = mGallery;
-        }
-
         public ListImageAdapter(Context mContext) {
             this.mContext = mContext;
+        }
+
+        public void setGallery(Gallery mGallery) {
+            this.mGallery = mGallery;
         }
 
         public void setOnItemClickListener(OnItemClickListener onItemListener) {
@@ -287,11 +287,22 @@ public class  ListImageFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(ListImageAdapter.ViewHolder holder, int position) {
+
+//            holder.mImageGallery.setMinimumWidth(mListImage.getThumbnailSize());
+//            holder.mImageGallery.setMinimumHeight(mListImage.getThumbnailSize());
+//            holder.mImageGallery.setMaxWidth(mListImage.getThumbnailSize());
+//            holder.mImageGallery.setMaxHeight(mListImage.getThumbnailSize());
+
              if (getItemViewType(position) == 0){
                  Glide.with(mContext)
                          .load(mGallery.getListGallery().get(position).getUri())
+//                         .override(200,200)
                          .crossFade()
+                         .centerCrop()
                          .into(holder.mImageGallery);
+             }else {
+                 holder.mImageGallery.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                 holder.mImageGallery.setBackgroundResource(android.R.color.darker_gray);
              }
         }
 

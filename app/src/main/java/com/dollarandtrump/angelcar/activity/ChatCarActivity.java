@@ -46,7 +46,6 @@ import com.dollarandtrump.angelcar.utils.Cache;
 import com.dollarandtrump.angelcar.view.ItemCarDetails;
 import com.google.android.gms.location.places.Place;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
 import com.squareup.otto.Subscribe;
@@ -103,10 +102,10 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_car_detail);
         ButterKnife.bind(this);
+        ((MainApplication) getApplication()).getApplicationComponent().inject(this);
         initToolbar();
         initInstance();
 
-        ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
         if (savedInstanceState == null) {
             // load message
@@ -119,7 +118,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
                 mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
                 mViewMessageAdapter.notifyDataSetChanged();
-                mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
+//                mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
                 loadMoreMessage(mMessageManager.getMaximumId());
             } else {
                 loadMoreMessage(0);
@@ -169,9 +168,12 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
         //TODO-GREEN Test new adapter InitInstance
         mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setStackFromEnd(true);
+//        mLinearLayoutManager.setStackFromEnd(true);
         mListChat.setLayoutManager(mLinearLayoutManager);
         mViewMessageAdapter = new ViewMessageAdapter(this,mMessageBy);
+
+        mViewMessageAdapter.setCarInfo(mPostCarDao);
+
         mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
         mListChat.setAdapter(mViewMessageAdapter);
         mViewMessageAdapter.setOnClickItemBannerListener(this);
@@ -437,7 +439,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         mMessageManager.appendDataToBottomPosition(dao);
         mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
         mViewMessageAdapter.notifyDataSetChanged();
-        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
+//        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
     }
 
     @Override

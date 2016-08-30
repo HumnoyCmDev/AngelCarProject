@@ -11,12 +11,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
@@ -49,19 +51,16 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
-/********************************************
- * Created by HumNoy Developer on 2/8/2559.
- * ผู้คร่ำหวอดในกวงการ Android มากกว่า 1 ปี
- * AngelCarProject
- ********************************************/
+
 public class ViewCarActivity extends AppCompatActivity{
     @Bind(R.id.custom_view_imageBanner) ImageBanner mBanner;
     @Bind(R.id.custom_view_text_title)  TextView mTitle;
     @Bind(R.id.custom_view_text_brand)  TextView mBrand;
-    @Bind(R.id.custom_view_text_detail) TextView mDetail;
+    @Bind(R.id.custom_view_text_name) TextView mName;
     @Bind(R.id.custom_view_text_year)   TextView mYear;
     @Bind(R.id.custom_view_text_phone)  TextView mPhone;
     @Bind(R.id.custom_view_text_price)  TextView mPrice;
+    @Bind(R.id.custom_view_text_details) TextView mDetail;
     @Bind(R.id.text_time) TextView mTime;
     @Bind(R.id.text_shop_name) TextView mShopName;
     @Bind(R.id.text_follow)  TextView mFollow;
@@ -206,6 +205,7 @@ public class ViewCarActivity extends AppCompatActivity{
         mYear.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",String.valueOf(postCarDao.getCarYear()))));
         mPrice.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",price)));
         mShowCountView.setText(postCarDao.getCarView());
+        mDetail.setText(AngelCarUtils.convertLineUp(postCarDao.getCarDetail()));
 
         int dealImage ;
         int detailDeal;
@@ -232,10 +232,10 @@ public class ViewCarActivity extends AppCompatActivity{
         if (postCarDao.getName() != null && postCarDao.getPhone() != null) {
             String name = postCarDao.getName().equals("NULL") ? "ไม่มีข้อมูล" : postCarDao.getName();
             String phone = postCarDao.getPhone().equals("NULL") ? "ไม่มีข้อมูล" : postCarDao.getPhone();
-            mDetail.setText(name);
+            mName.setText(name);
             mPhone.setText(phone);
         }else {
-            mDetail.setText("-ไม่มีข้อมูล");
+            mName.setText("-ไม่มีข้อมูล");
         }
 
     }
@@ -280,6 +280,21 @@ public class ViewCarActivity extends AppCompatActivity{
                     public void call(ResponseDao responseDao) {
                         Snackbar.make(getWindow().getDecorView(),"เลื่อนประกาศได้อีกครั้ง "+ responseDao.getResult()+" ชั่วโมง",Snackbar.LENGTH_SHORT)
                                 .show();
+                    }
+                });
+    }
+
+    @OnClick(R.id.button_delete)
+    public void onDeletePost(){
+        HttpManager.getInstance().getService().observableDeleteCar(mCarDao.getCarId()+"||offline")
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<ResponseDao>() {
+                    @Override
+                    public void call(ResponseDao responseDao) {
+                        Log.d("ViewCar", "call success");
+                        Toast.makeText(ViewCarActivity.this,"ลบโพสสำเร็จ",Toast.LENGTH_LONG).show();
+                        finish();
                     }
                 });
     }

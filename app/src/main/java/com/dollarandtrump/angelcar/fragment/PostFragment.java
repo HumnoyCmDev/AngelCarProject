@@ -61,6 +61,7 @@ import rx.functions.Func1;
 import rx.functions.Func5;
 import rx.schedulers.Schedulers;
 
+@Deprecated
 public class PostFragment extends Fragment {
     private static final String TAG = "PostFragment";
 
@@ -83,10 +84,10 @@ public class PostFragment extends Fragment {
         super();
     }
 
-    public static PostFragment newInstance() {
-        PostFragment fragment = new PostFragment();
-        return fragment;
-    }
+//    public static PostFragment newInstance() {
+//        PostFragment fragment = new PostFragment();
+//        return fragment;
+//    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

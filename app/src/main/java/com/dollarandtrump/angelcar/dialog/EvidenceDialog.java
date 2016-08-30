@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
@@ -33,17 +34,14 @@ import rx.functions.Action1;
 public class EvidenceDialog extends DialogFragment {
 
     @Bind(R.id.recycler_evidence) RecyclerGridAutoFit mListImage;
-
+    @Bind(R.id.title_evidence) TextView mTitle;
     private EvidenceAdapter adapter;
     private Gallery mGallery;
-
-    private int index = 0;
-    private int maxImage = 1;
-
-    public static EvidenceDialog newInstance(int maxImage,Gallery imageEvidence) {
+    private int category;
+    public static EvidenceDialog newInstance(int category,Gallery imageEvidence) {
         Bundle args = new Bundle();
         EvidenceDialog fragment = new EvidenceDialog();
-        args.putInt("max",maxImage);
+        args.putInt("category",category);
         args.putParcelable("image_evidence", Parcels.wrap(imageEvidence));
         fragment.setArguments(args);
         return fragment;
@@ -56,7 +54,7 @@ public class EvidenceDialog extends DialogFragment {
     }
 
     private void init(Bundle savedInstanceState) {
-        maxImage = getArguments().getInt("max");
+        category = getArguments().getInt("category");
         mGallery = Parcels.unwrap(getArguments().getParcelable("image_evidence"));
     }
 
@@ -73,16 +71,25 @@ public class EvidenceDialog extends DialogFragment {
     private void initInstance(View view, Bundle savedInstanceState) {
         ButterKnife.bind(this, view);
 
+       switch (category){
+           case 0 : mTitle.setText(R.string.evidence_owner);
+               break;
+           case 1 : mTitle.setText( R.string.evidence_delegate);
+               break;
+           default : mTitle.setText(R.string.evidence_dealers);
+               break;
+       }
+
         adapter = new EvidenceAdapter();
         mListImage.setAdapter(adapter);
         adapter.setListPicture(mGallery);
         adapter.setOnItemClickListener(new EvidenceAdapter.OnItemClickListener() {
             @Override
             public void onItemClickSelect() {
-                if (mGallery != null && mGallery.getListGallery() != null){
-                    if (mGallery.getListGallery().size() > maxImage)
-                        return;
-                }
+//                if (mGallery != null && mGallery.getListGallery() != null){
+//                    if (mGallery.getListGallery().size() > maxImage)
+//                        return;
+//                }
                 rxImagePicker();
             }
 
@@ -90,6 +97,7 @@ public class EvidenceDialog extends DialogFragment {
             public void onItemClickDelete(int position) {
                 mGallery.getListGallery().remove(position);
                 adapter.notifyDataSetChanged();
+                MainThreadBus.getInstance().post(onProduceImageEvidence());
             }
         });
 
@@ -101,11 +109,13 @@ public class EvidenceDialog extends DialogFragment {
                 .subscribe(new Action1<Uri>() {
                     @Override
                     public void call(Uri uri) {
-                        mGallery.setListGallery(new ImageModel(uri,String.valueOf(index)));
-                        index++;
+                        mGallery.setListGallery(new ImageModel(uri,""));
                         adapter.setListPicture(mGallery);
                         adapter.notifyDataSetChanged();
                         MainThreadBus.getInstance().post(onProduceImageEvidence());
+
+                        // image > 0
+//                        RxNotification.with(getContext()).isNotification(true);
                     }
                 });
     }
@@ -169,12 +179,17 @@ public class EvidenceDialog extends DialogFragment {
         }
 
         @Override
-        public void onBindViewHolder(EvidenceAdapter.ViewHolder holder, int position) {
+        public void onBindViewHolder(final EvidenceAdapter.ViewHolder holder, int position) {
             if (getItemViewType(position) == 1) {
                 Glide.with(mContext)
                         .load(mGallery.getListGallery().get(position - 1).getUri())
+//                        .override(200,200)
                         .crossFade()
+                        .centerCrop()
                         .into(holder.imageGallery);
+            }else {
+                holder.imageGallery.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                holder.imageGallery.setBackgroundResource(android.R.color.darker_gray);
             }
         }
 
@@ -182,7 +197,6 @@ public class EvidenceDialog extends DialogFragment {
         public int getItemCount() {
             if (mGallery == null) return 1;
             if (mGallery.getListGallery() == null) return 1;
-
             return mGallery.getListGallery().size() + 1;
 
         }

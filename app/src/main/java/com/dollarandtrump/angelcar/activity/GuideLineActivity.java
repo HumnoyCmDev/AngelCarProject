@@ -34,7 +34,7 @@ public class GuideLineActivity extends AppCompatActivity {
                 .setSelectAnimClass(ZoomInEnter.class)
                 .setTransformerClass(DepthTransformer.class)
                 .barPadding(0, 10, 0, 10)
-                .setSource(geUsertGuides())
+                .setSource(getUserGuides())
                 .startScroll();
 
         sgb.setOnJumpClickL(new SimpleGuideBanner.OnJumpClickL() {
@@ -45,15 +45,9 @@ public class GuideLineActivity extends AppCompatActivity {
         });
     }
 
-    public static ArrayList<Integer> geUsertGuides() {
+    public static ArrayList<Integer> getUserGuides() {
         ArrayList<Integer> list = new ArrayList<>();
         list.add(R.drawable.guide_line_1);
-        list.add(R.drawable.guide_line_2);
-        list.add(R.drawable.guide_line_3);
-        list.add(R.drawable.guide_line_4);
-        list.add(R.drawable.guide_line_5);
-        list.add(R.drawable.guide_line_6);
-        list.add(R.drawable.guide_line_7);
         return list;
     }
 }

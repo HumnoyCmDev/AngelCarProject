@@ -19,7 +19,7 @@ public class InfoCarModel {
     * */
     // edit post
     boolean isEditInfo = false;
-
+    int category =-1 ;//0 = owner,1 = delegate,2 = dealers
     int resIdLogo; //logo
     int year = 0;//2016
     String gear = "gear"; // all = 0 , mt = 1 , at = 2
@@ -37,6 +37,14 @@ public class InfoCarModel {
     Gallery gallery;
 
     PostCarDao postCarDao;
+
+    public int getCategory() {
+        return category;
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
+    }
 
     public PostCarDao getPostCarDao() {
         return postCarDao;
@@ -61,16 +69,6 @@ public class InfoCarModel {
     public void setGallery(Gallery gallery) {
         this.gallery = gallery;
     }
-
-    //    List<ImageModel> listImage = new ArrayList<>();
-//
-//    public List<ImageModel> getListImage() {
-//        return listImage;
-//    }
-//
-//    public void setListImage(List<ImageModel> listImage) {
-//        this.listImage = listImage;
-//    }
 
     public String getPriceStart() {
         return priceStart;

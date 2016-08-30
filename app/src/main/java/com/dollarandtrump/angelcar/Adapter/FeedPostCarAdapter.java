@@ -178,7 +178,8 @@ public class FeedPostCarAdapter extends BaseAdapter implements Filterable {
         holderPost.angelCarPost.setDetails(strTitle);
         holderPost.angelCarPost.setDetails2Html(strDetail);
         String datetime = AngelCarUtils.formatTimeAndDay(mContext,dao.getCarModifyTime());
-        holderPost.angelCarPost.setTime(datetime);
+        String countView = " ("+dao.getCarView()+"view)";
+        holderPost.angelCarPost.setTime(datetime +countView);
         holderPost.angelCarPost.setImageDeal(dao.getDeal());
 
         if (onClickImageProfile != null) {

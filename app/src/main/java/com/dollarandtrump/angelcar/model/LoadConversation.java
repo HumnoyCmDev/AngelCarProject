@@ -12,6 +12,7 @@ import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func3;
@@ -23,9 +24,19 @@ public class LoadConversation {
         HttpManager.getInstance().getService()
                 .observableLoadCarId(Registration.getInstance().getShopRef())
                 .subscribeOn(Schedulers.newThread())
-                .subscribe(new Action1<CarIdDao>() {
+                .subscribe(new Observer<CarIdDao>() {
                     @Override
-                    public void call(CarIdDao carIdDao) {
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(CarIdDao carIdDao) {
                         loadAllMessage(carIdDao);
                     }
                 });
@@ -56,7 +67,22 @@ public class LoadConversation {
                     }
                 }).subscribeOn(Schedulers.io())
 //                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe();
+                        .subscribe(new Observer<MessageManager>() {
+                            @Override
+                            public void onCompleted() {
+
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
+
+                            @Override
+                            public void onNext(MessageManager manager) {
+
+                            }
+                        });
     }
 
     private void insertConversation(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao dao, MessageAdminCollectionDao messageAdminCollectionDao2) {

@@ -1,35 +1,39 @@
-package com.dollarandtrump.angelcar;
+package xyz.kotlindev.lib;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import rx.Observable;
 import rx.Observer;
+import rx.functions.Action1;
+import rx.functions.Func0;
+import rx.schedulers.Schedulers;
 import rx.subjects.AsyncSubject;
 
 /**
  * Created by humnoyDeveloper on 21/4/59. 16:00
  */
 public class SampleRx {
-    enum Type {
-        REFINANCE {
-            @Override
-            public String toString() {
-                return "refinance";
-            }
-        },PAWN {
-            @Override
-            public String toString() {
-                return "pawn";
-            }
-        }
-    }
+
     public static void main(String[] str) {
 
-        for (int i = 10; i > 0 ; i--) {
-            System.out.println(i);
-        }
+        Observable.interval(2000, TimeUnit.MILLISECONDS,Schedulers.io())
+                .distinctUntilChanged()
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<Long>() {
+            @Override
+            public void call(Long aLong) {
+                System.out.print("----------------" + aLong);
+            }
+        });
+
+
+
     }
 
     static class MyObject {

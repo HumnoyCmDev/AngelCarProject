@@ -40,7 +40,6 @@ import butterknife.OnClick;
 
 
 public class PostActivity extends AppCompatActivity implements OnSelectData ,OnScrolling {
-    private static final String TAG = "PostActivity";
     public static final int CALL_BRAND = 1;
     public static final int CALL_CAR_TYPE = 2;
     public static final int CALL_CAR_TYPE_DETAIL = 3;
@@ -48,6 +47,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
     public static final int CALL_GALLERY_CANCEL = -4;
     public static final int CALL_GALLERY_NEXT = -3;
     public static final int CALL_FINISH_POST = 5;
+
 
     private int lastPosition = 0;
 
@@ -61,7 +61,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
     List<Fragment> mFragment;
     private PostAdapterViewpager adapter;
     boolean isEdit = false;
-
+    int category;
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -76,9 +76,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
         MainThreadBus.getInstance().register(this);
         ButterKnife.bind(this);
         initInstance();
-        /*String[] mTitles_3 = {"首页", "消息", "联系人", "更多"};
-        SegmentTabLayout segment = ViewFindUtils.find(getWindow().getDecorView(),R.id.segment_tab);
-        segment.setTabData(mTitles_3);*/
+
 
     }
 
@@ -95,16 +93,18 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
         mFragment.add(BrandFragment.newInstance());
         mFragment.add(CarSubFragment.newInstance());
         mFragment.add(CarSubDetailFragment.newInstance());
-
+        infoCarModel = new InfoCarModel();
         Bundle arg = getIntent().getExtras();
-        if (arg != null && arg.getBoolean("isEdit",false)){
+        if (arg != null && arg.getBoolean("isEdit",false)){ // edit
             isEdit = arg.getBoolean("isEdit",false);
             PostCarDao modelCar = Parcels.unwrap(arg.getParcelable("carModel"));
-            infoCarModel = new InfoCarModel();
             infoCarModel.setEditInfo(true);
             infoCarModel.setPostCarDao(modelCar);
-
             MainThreadBus.getInstance().post(onProduceInfo());
+        }
+
+        if (arg != null) {
+            category = arg.getInt("category", -1);
         }
 
         adapter = new PostAdapterViewpager(getSupportFragmentManager());
@@ -118,6 +118,7 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
         pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
@@ -127,12 +128,13 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
 
             @Override
             public void onPageScrollStateChanged(int state) {
+
             }
         });
     }
 
     @OnClick({R.id.btnNext,R.id.btnPrevious})
-    public void next(View v){
+    public void next(View v) {
         if (v.getId() == R.id.btnNext)
             pager.setCurrentItem(pager.getCurrentItem()+1);
         else
@@ -149,13 +151,13 @@ public class PostActivity extends AppCompatActivity implements OnSelectData ,OnS
     @Override
     public void onSelectedCallback(int callback,InfoCarModel infoCarModel) {
         this.infoCarModel = infoCarModel;
+        this.infoCarModel.setCategory(category);
         if (callback != CALL_BRAND && callback != CALL_CAR_TYPE) {
             switch (callback) {
                 case CALL_CAR_TYPE_DETAIL:
                     if (!isEdit)
                         mFragment.add(ListImageFragment.newInstance(infoCarModel));
                     mFragment.add(PostCarFragment.newInstance());
-//                    mFragment.add(PostFragment.newInstance());
                     adapter.notifyDataSetChanged();
                     break;
                 case CALL_GALLERY_OK:

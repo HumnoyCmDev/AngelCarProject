@@ -72,30 +72,34 @@
         fab:menu_labels_position="left">
 
         <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_ac_Deposit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_post_mini_dis"
-            fab:fab_size="mini"
-            fab:fab_label="ผู้ประกอบการรถมือสอง(เต็นท์รถ)" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_ac_Dealer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_post_mini_dis"
-            fab:fab_size="mini"
-            fab:fab_label="ตัวแทนเจ้าของรถ" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_ac_PostSell"
+            android:id="@+id/fab_dealers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_post_mini"
             fab:fab_colorNormal="@color/colorPrimary"
             fab:fab_colorPressed="@color/colorDarkItem"
             fab:fab_size="mini"
-            fab:fab_label="ประกาศขายฟรี" />
+            fab:fab_label="@string/post_dealers" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_delegate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorDarkItem"
+            fab:fab_size="mini"
+            fab:fab_label="@string/post_delegate" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_post_mini"
+            fab:fab_colorNormal="@color/colorPrimary"
+            fab:fab_colorPressed="@color/colorDarkItem"
+            fab:fab_size="mini"
+            fab:fab_label="@string/post_owner" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

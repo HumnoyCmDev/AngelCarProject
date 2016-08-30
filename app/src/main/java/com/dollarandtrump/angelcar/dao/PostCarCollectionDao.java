@@ -36,9 +36,20 @@ public class PostCarCollectionDao implements Serializable {
 
 
     // หาตำแหน่งหัวข้อยี่ห้อ
-    public @Nullable List<Integer> findPositionHeader(){
+    public @Nullable List<Integer> findPositionHeader(boolean isShop){
         if ((this.listCar != null)
                 && this.listCar.size() > 0) {
+
+            if (!isShop){
+            for (int i = 0; i < this.listCar.size(); i++){
+                PostCarDao item = this.listCar.get(i);
+                    if (item.getStatus().equals("wait") || item.getCarStatus().equals("offline")){
+                        this.listCar.remove(i);
+                    }
+                }
+            }
+
+
             ArrayList<String> listBrand = new ArrayList<>();
             for (PostCarDao d : this.listCar) {
                 listBrand.add(d.getCarName());

@@ -3,6 +3,7 @@ package com.dollarandtrump.angelcar.fragment;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,11 +22,14 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
+import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.activity.MainActivity;
 import com.dollarandtrump.angelcar.activity.PostActivity;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
 import com.dollarandtrump.angelcar.activity.ViewCarActivity;
@@ -48,6 +52,9 @@ import com.hndev.library.view.AngelCarHashTag;
 import org.parceler.Parcels;
 
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -101,6 +108,9 @@ public class ShopFragment extends Fragment {
     private int mLastRecycler = 0;
     private int mLast = -100;
 
+    @Inject
+    @Named("default")
+    SharedPreferences preferencesDefault;
 
     public ShopFragment() {
         super();
@@ -141,14 +151,17 @@ public class ShopFragment extends Fragment {
     @SuppressWarnings("UnusedParameters")
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
+
+        ((MainApplication) getActivity().getApplication()).getApplicationComponent().inject(this);
+
         mMenuFab.setVisibility(isShop ? View.VISIBLE : View.GONE);
 
         mMenuFab.setClosedOnTouchOutside(true);
         mAppBarLayout.setExpanded(false,true);
 
-        if (savedInstanceState == null){
-            loadData();
-        }
+//        if (savedInstanceState == null){
+//            loadData();
+//        }
 
         //Header Shop
         mListImageHeader.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
@@ -166,8 +179,8 @@ public class ShopFragment extends Fragment {
 
         mManager = new GridLayoutManager(getActivity(),3);
         mList.setLayoutManager(mManager);
-        mAdapter = new ShopAdapter();
-        mAdapter.setShop(isShop);
+        mAdapter = new ShopAdapter(isShop);
+//        mAdapter.setShop(isShop);
         mAdapter.setDao(mShopCollectionDao.getPostCarCollection());
         mList.setAdapter(mAdapter);
         mAdapter.setOnclickListener(recyclerOnItemClickListener);
@@ -245,10 +258,9 @@ public class ShopFragment extends Fragment {
         viewSubProgressbar(View.VISIBLE);
         String userRef = getArguments().getString("user");
         String shopRef = getArguments().getString("shop");
-
+        Log.d(TAG, userRef + " *** "+shopRef);
             Observable<ShopCollectionDao> rxCall = HttpManager.getInstance().getService()
                     .observableLoadShop(userRef, shopRef)
-//                    .observableLoadShop("2016050200001", "68")
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());
         mSubscription = rxCall.subscribe(shopCollectionDaoObserver);
@@ -256,9 +268,25 @@ public class ShopFragment extends Fragment {
 
     private void initData(ShopCollectionDao shopCollectionDao){
         initProfile(shopCollectionDao.getProfileDao());
+
+        //delete car == offline
+        if (isShop) {
+            for (int i = 0; i < shopCollectionDao.getPostCarDao().size(); i++){
+                if (shopCollectionDao.getPostCarDao().get(i).getCarStatus().equals("offline")){
+                    shopCollectionDao.getPostCarDao().remove(i);
+                }
+            }
+        }
+        //
         this.mShopCollectionDao = shopCollectionDao;
-        this.mShopCollectionDao.deleteAll();
-        this.mShopCollectionDao.insertAll();
+        if (isShop) {
+            this.mShopCollectionDao.deleteAll();
+            this.mShopCollectionDao.insertAll();
+
+            preferencesDefault.edit().putString("pre_user_id",shopCollectionDao.getProfileDao().getShopUserRef()).apply();
+            preferencesDefault.edit().putString("pre_shop_name",shopCollectionDao.getProfileDao().getShopName()).apply();
+            preferencesDefault.edit().putString("pre_description",shopCollectionDao.getProfileDao().getShopDescription()).apply();
+        }
 
         /*Query PostCar*/
         mHashTagAdapter.setDao(this.mShopCollectionDao.queryFindBrandDuplicates());
@@ -268,6 +296,8 @@ public class ShopFragment extends Fragment {
 
         mAdapter.setDao(this.mShopCollectionDao.getPostCarCollection());
         mAdapter.notifyDataSetChanged();
+
+        Log.d(TAG, ""+mShopCollectionDao.getPostCarCollection().getListCar().size());
     }
 
 
@@ -276,6 +306,8 @@ public class ShopFragment extends Fragment {
         String strViewShop = profileDao.getShopView()+" View | "+profileDao.getShopFollow()+" Follow";
         mTextViewShop.setText(strViewShop);
         mImageProfile.setImageUrl(getActivity(),profileDao.getUrlShopLogo());
+
+        Log.d(TAG, ""+profileDao.getShopName() +" , "+profileDao.getShopDescription());
 
         mTextShopName.setText(profileDao.getShopName());
         mTextShopDescription.setText(profileDao.getShopDescription());
@@ -317,16 +349,25 @@ public class ShopFragment extends Fragment {
     }
 
     private void hideProfile(){
+        if (mImageProfile != null)
             mImageProfile.setVisibility(View.GONE);
 
-        if (mListImageHeader.getVisibility() == View.VISIBLE){
-            mListImageHeader.setVisibility(View.GONE);
-            Log.d(TAG, "hideProfile: "+mListImageHeader.isAnimating());
-            Animation animationHeader = AnimationUtils.loadAnimation(
-                    Contextor.getInstance().getContext(),
-                    R.anim.activity_slide_right_out);
-            mListImageHeader.startAnimation(animationHeader);
+        if(mListImageHeader != null) {
+            if (mListImageHeader.getVisibility() == View.VISIBLE) {
+                mListImageHeader.setVisibility(View.GONE);
+                Log.d(TAG, "hideProfile: " + mListImageHeader.isAnimating());
+                Animation animationHeader = AnimationUtils.loadAnimation(
+                        Contextor.getInstance().getContext(),
+                        R.anim.activity_slide_right_out);
+                mListImageHeader.startAnimation(animationHeader);
+            }
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
     }
 
     @OnClick(R.id.image_button_up_and_down)
@@ -336,7 +377,8 @@ public class ShopFragment extends Fragment {
     }
 
     void imageUpDownIcon(){
-        mImageUpDown.setImageResource(!isShow ? R.drawable.ic_shop_hide_back:R.drawable.ic_shop_show_back);
+        if (mImageUpDown != null)
+            mImageUpDown.setImageResource(!isShow ? R.drawable.ic_shop_hide_back:R.drawable.ic_shop_show_back);
     }
 
     @OnClick({R.id.fab_editShop})

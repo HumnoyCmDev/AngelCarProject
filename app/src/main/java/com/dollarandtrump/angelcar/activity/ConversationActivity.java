@@ -104,7 +104,8 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     }
 
     private void loadAllMessage(final CarIdDao carIdDao) {
-        Log.d("view", "loadAllMessage: "+carIdDao.getAllCarId());
+        Log.d("view", "all car: "+carIdDao.getAllCarId());
+        Log.d("view", "Topic id: "+carIdDao.getTopicId());
         //topic
         Observable<MessageAdminCollectionDao> rxCallLoadTopic =
                 HttpManager.getInstance().getService().observableConversationTopic(carIdDao.getTopicId());
@@ -267,6 +268,7 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     }
 
     private void findPostCar(String carId, final String messageFromUser){
+        Log.d("Conversation", "findPostCar: "+carId);
         Call<PostCarCollectionDao> call =
                 HttpManager.getInstance().getService().loadCarModel(carId);
         call.enqueue(new Callback<PostCarCollectionDao>() {

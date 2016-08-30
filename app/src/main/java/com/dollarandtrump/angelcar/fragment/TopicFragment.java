@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dollarandtrump.angelcar.Adapter.TopicMessageAdapter;
+import com.dollarandtrump.angelcar.Adapter.TopicAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.TopicCollectionDao;
 import com.dollarandtrump.angelcar.dao.TopicDao;
@@ -30,11 +30,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย Humnoy Android Developer
- * ลงวันที่ 11/16/2014. เวลา 11:42
- ***************************************/
 @SuppressWarnings("unused")
 public class TopicFragment extends Fragment {
 
@@ -60,7 +55,7 @@ public class TopicFragment extends Fragment {
     @Bind(R.id.recycler_list_chat) RecyclerView mListChat;
     @Bind(R.id.refresh) SwipeRefreshLayout mRefresh;
 
-    private TopicMessageAdapter mAdapter;
+    private TopicAdapter mAdapter;
     private Type mType;
     private Subscription mSubscription;
     private TopicCollectionDao mTopicCollectionDao;
@@ -109,17 +104,15 @@ public class TopicFragment extends Fragment {
                 Color.parseColor("#FFC11E"),
                 Color.parseColor("#FFC11E"));
 
-
-
-
         final String user = Registration.getInstance().getUserId();
         if (user != null) {
-            mAdapter = new TopicMessageAdapter(getContext(), user);
+            mAdapter = new TopicAdapter(getContext(), user);
             mListChat.setAdapter(mAdapter);
             mAdapter.setTopicDao(mTopicCollectionDao);
-            mAdapter.setOnClickItemChatListener(new TopicMessageAdapter.OnClickItemChatListener() {
+            mAdapter.setOnClickItemChatListener(new TopicAdapter.OnClickItemChatListener() {
                 @Override
                 public void onSelectItem(TopicDao topicDao, int position) {
+                    Log.d("click"+position);
                     MainThreadBus.getInstance().post(topicDao);
                 }
             });

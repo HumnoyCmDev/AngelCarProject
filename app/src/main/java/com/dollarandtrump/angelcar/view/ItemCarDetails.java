@@ -33,7 +33,6 @@ import com.hndev.library.view.BaseCustomViewGroup;
 import com.hndev.library.view.sate.BundleSavedState;
 
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 
 import java.text.DecimalFormat;
 
@@ -48,7 +47,7 @@ import rx.schedulers.Schedulers;
 public class ItemCarDetails extends BaseCustomViewGroup {
     ImageView mImageProfile;
     ImageBanner mBanner;
-    TextView mTitle, mBrand, mDetail, mTime, mCallMe, mYear, mPhone, mPrice,mBefore,mShopName;
+    TextView mTitle, mBrand, mName, mTime, mCallMe, mYear, mPhone, mPrice,mBefore,mShopName,mDetails;
     TextView mFollow;
     boolean isFollow = false;
     PictureCollectionDao mPictureDao ;
@@ -96,7 +95,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mBanner = (ImageBanner) findViewById(R.id.custom_view_imageBanner);
         mTitle = (TextView) findViewById(R.id.custom_view_text_title);
         mBrand = (TextView) findViewById(R.id.custom_view_text_brand);
-        mDetail = (TextView) findViewById(R.id.custom_view_text_detail);
+        mName = (TextView) findViewById(R.id.custom_view_text_name);
         mImageProfile = (ImageView) findViewById(R.id.image_icon_profile);
         mTime = (TextView) findViewById(R.id.text_time);
         mCallMe = (TextView) findViewById(R.id.custom_view_cell_text);
@@ -107,6 +106,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mPhone = (TextView) findViewById(R.id.custom_view_text_phone);
         mPrice = (TextView) findViewById(R.id.custom_view_text_price);
         mGroupProfile = (LinearLayout) findViewById(R.id.group_profile);
+        mDetails = (TextView) findViewById(R.id.custom_view_text_details);
     }
 
     public void bindCellViewHolder(PictureCollectionDao images, PostCarDao postCar){
@@ -183,17 +183,6 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 .placeholder(com.hndev.library.R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getContext()))
                 .into(mImageProfile);
-
-//        Glide.with(getContext()).load(url).asBitmap().centerCrop().into(new BitmapImageViewTarget(ic_Profile) {
-//            @Override
-//            protected void setResource(Bitmap resource) {
-//                RoundedBitmapDrawable circularBitmapDrawable =
-//                        RoundedBitmapDrawableFactory.create(getResources(), resource);
-//                circularBitmapDrawable.setCircular(true);
-//                circularBitmapDrawable.setBounds(1,1,1,1);
-//                ic_Profile.setImageDrawable(circularBitmapDrawable);
-//            }
-//        });
     }
 
     private void bindDataPostCar(PostCarDao postCarDao){
@@ -206,22 +195,20 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         String carBrand = postCarDao.getCarName() + " " +
                 postCarDao.getCarSub() + " " + postCarDao.getCarSubDetail();
 
-//        String details = "<br> ปี "+ AngelCarUtils.textFormatHtml("#FFB13D",String.valueOf(postCarDao.getCarYear())) +
-//                " ราคา " + AngelCarUtils.textFormatHtml("#FFB13D",price) +" บาท";
-//        mBrand.setText(Html.fromHtml(carBrand+details+"<br>"+ AngelCarUtils.subDetail(postCarDao.getCarDetail()).replaceAll("\n"," ")));
         mShopName.setText(postCarDao.getShopName());
         mBrand.setText(Html.fromHtml(carBrand));
         mYear.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",String.valueOf(postCarDao.getCarYear()))));
         mPrice.setText(Html.fromHtml(AngelCarUtils.textFormatHtml("#FFFFFF",price)));
+        mDetails.setText(AngelCarUtils.convertLineUp(postCarDao.getCarDetail()));
 
 
         if (postCarDao.getName() != null && postCarDao.getPhone() != null) {
             String name = postCarDao.getName().equals("NULL") ? "ไม่มีข้อมูล" : postCarDao.getName();
             String phone = postCarDao.getPhone().equals("NULL") ? "ไม่มีข้อมูล" : postCarDao.getPhone();
-            mDetail.setText(name);
+            mName.setText(name);
             mPhone.setText(phone);
         }else {
-            mDetail.setText("-ไม่มีข้อมูล");
+            mName.setText("-ไม่มีข้อมูล");
         }
 
         //

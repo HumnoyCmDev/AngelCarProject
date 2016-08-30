@@ -105,6 +105,7 @@ public class FeedPostFragment extends Fragment{
     private boolean isFilter = false;
 
     private Subscription subscribeCountCar;
+    Call<PostCarCollectionDao> callPost;
 
     public FeedPostFragment() {
         super();
@@ -193,9 +194,9 @@ public class FeedPostFragment extends Fragment{
     private void reloadDataNewer() {
         loadCountCar();
         // load post newer
-        Call<PostCarCollectionDao> call =
+        callPost =
                 HttpManager.getInstance().getService().loadNewerPostCar(mPostManager.firstDateDao());
-        call.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD_NEWER));
+        callPost.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD_NEWER));
     }
 
     private void loadCountCar() {
@@ -222,8 +223,8 @@ public class FeedPostFragment extends Fragment{
     private void reloadData() {
         loadCountCar();
         //load Post
-        Call<PostCarCollectionDao> call = HttpManager.getInstance().getService().loadPostCar();
-        call.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD));
+        callPost = HttpManager.getInstance().getService().loadPostCar();
+        callPost.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD));
     }
 
     private void loadMoreData(){
@@ -233,9 +234,9 @@ public class FeedPostFragment extends Fragment{
 
         isLoadingMore = true;
         mAdapter.setLoading(true);
-        Call<PostCarCollectionDao> callLoadingMore = HttpManager.getInstance()
+        callPost = HttpManager.getInstance()
                 .getService().loadMorePostCar(mPostManager.lastDateDao());
-        callLoadingMore.enqueue(new FeedCallback(FeedCallback.MODE_LOAD_MORE));
+        callPost.enqueue(new FeedCallback(FeedCallback.MODE_LOAD_MORE));
         Log.d(TAG, "loadMoreData 2: "+isStopLoadingMore +" "+isLoadingMore);
 
     }
@@ -249,9 +250,9 @@ public class FeedPostFragment extends Fragment{
         if (mCopyInformLoadMore == null) return;
         // get date
         mCopyInformLoadMore.setDateMore(mPostManager.lastDateDao());
-        Call<PostCarCollectionDao> call = HttpManager.getInstance()
+        callPost = HttpManager.getInstance()
                 .getService().loadFilterFeed(mCopyInformLoadMore.getMapFilter());
-        call.enqueue(new FilterCallback(1));
+        callPost.enqueue(new FilterCallback(1));
     }
 
 
@@ -269,6 +270,15 @@ public class FeedPostFragment extends Fragment{
           mPostManager.onRestoreInstanceState(savedInstanceState);
         mLastPositionInteger.onRestoreInstanceState(
                 savedInstanceState.getBundle("lastPositionInteger"));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (callPost.isCanceled()){
+            callPost.cancel();
+            Log.d(TAG, "onPause: cancel");
+        }
     }
 
     @OnClick(R.id.btFilter)
@@ -660,6 +670,7 @@ public class FeedPostFragment extends Fragment{
 
             if (response.isSuccessful()) {
                 PostCarCollectionDao dao = response.body();
+                    if (mListView == null) return;
                     int firstVisiblePosition = mListView.getFirstVisiblePosition();
                     View c = mListView.getChildAt(0);
                     int top = c == null ? 0 : c.getTop();

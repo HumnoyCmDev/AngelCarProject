@@ -70,12 +70,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.dollarandtrump.angelcar.view.PhotoView
+            <com.dollarandtrump.angelcar.view.PhotoCollectionView
                 android:id="@+id/photo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:textStyle="bold"
                 android:id="@+id/text_evidence"
                 android:gravity="center"
                 android:clickable="true"
@@ -83,15 +84,13 @@
                 android:textColor="@android:color/white"
                 android:text="@string/evidence"
                 android:textSize="18sp"
-                android:background="@drawable/selector_menu_bottom_evidence"
+                android:background="@drawable/selector_menu_bottom_evidence_unsuccess"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
 
             <LinearLayout
                 android:layout_marginLeft="6dp"
                 android:layout_marginRight="6dp"
-                android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -105,7 +104,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
-                <ToggleButton
+                <!--<ToggleButton
                     android:layout_gravity="center"
                     android:checked="false"
                     android:text=""
@@ -114,7 +113,16 @@
                     android:id="@+id/toggle_button_gear"
                     android:background="@drawable/selector_gear_toggle_button"
                     android:layout_width="80dp"
-                    android:layout_height="40dp" />
+                    android:layout_height="40dp" />-->
+
+                <ToggleButton
+                    android:id="@+id/toggle_button_gear"
+                    android:textStyle="bold"
+                    android:checked="false"
+                    android:textOff="ธรรมดา"
+                    android:textOn="อัตโนมัติ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
 
                 <TextView
@@ -129,8 +137,6 @@
                     android:id="@+id/spinner_province"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
-
-
 
             </LinearLayout>
 
@@ -152,6 +158,7 @@
                 android:layout_height="wrap_content" />
 
             <EditText
+                android:selectAllOnFocus="true"
                 android:textStyle="bold"
                 android:textSize="15sp"
                 android:inputType="text"
@@ -194,6 +201,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:inputType="number|text"
                         android:maxLines="1"
                         android:textSize="15sp"
@@ -209,6 +217,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content">
                     <EditText
+                        android:selectAllOnFocus="true"
                         android:textSize="15sp"
                         android:inputType="phone|text"
                         android:maxLength="10"
@@ -285,7 +294,7 @@
                 android:textColor="@color/colorHintDark"
                 android:layout_gravity="center"
                 android:padding="4dp"
-                android:text="คำโฆษณาไม่เกิน 30 ตัวอักษร"
+                android:text="คำโฆษณาไม่เกิน 40 ตัวอักษร"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -296,10 +305,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:textStyle="bold"
                     android:maxLines="1"
                     android:inputType="text"
-                    android:maxLength="30"
+                    android:maxLength="40"
                     android:textSize="15sp"
                     android:id="@+id/edit_text_topic"
                     android:layout_width="match_parent"
@@ -316,8 +326,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <EditText
+                    android:selectAllOnFocus="true"
                     android:textStyle="bold"
-                    android:maxLength="100"
                     android:scrollbars="vertical"
                     android:textSize="15sp"
                     android:id="@+id/edit_text_details"

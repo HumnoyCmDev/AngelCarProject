@@ -1,5 +1,9 @@
 package com.dollarandtrump.angelcar.module;
 
+import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+
 import com.dollarandtrump.angelcar.manager.http.ApiService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,11 +28,13 @@ public class NetworkModule {
     OkHttpClient.Builder providesOkHttpBuilder(){
         return new OkHttpClient.Builder();
     }
+
     @Provides
     @Singleton
     OkHttpClient providesOkHttpClient(){
         return new OkHttpClient();
     }
+
     @Provides
     @Singleton
     Gson providesGson(){
@@ -39,6 +45,7 @@ public class NetworkModule {
                 .setDateFormat("yyyy-MM-dd HH:mm:ss")
                 .create();
     }
+
     @Provides
     @Singleton
     Retrofit.Builder providesRetrofit(Gson gson){
@@ -47,19 +54,32 @@ public class NetworkModule {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson));
     }
+
     @Provides
     @Singleton
     @Named("apitimeout")
     ApiService providesApiServiceTimeout(OkHttpClient.Builder okHttpBuilder, Retrofit.Builder retrofitBuilder) {
         OkHttpClient client = okHttpBuilder.readTimeout(60*1000, TimeUnit.MILLISECONDS).build();
-        ApiService service = retrofitBuilder.client(client).build().create(ApiService.class);
-        return service;
+        return retrofitBuilder.client(client).build().create(ApiService.class);
     }
+
     @Provides
     @Singleton
     ApiService providesApiService(OkHttpClient client, Retrofit.Builder retrofitBuilder) {
-        ApiService service = retrofitBuilder.client(client).build().create(ApiService.class);
-        return service;
+        return retrofitBuilder.client(client).build().create(ApiService.class);
+    }
+
+    @Provides
+    @Singleton
+    @Named("netConnecting")
+    boolean providesisConnectedOrConnecting(Application application){
+        ConnectivityManager manager = (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        boolean is3g = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+                .isConnectedOrConnecting();
+        boolean isWifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+                .isConnectedOrConnecting();
+        return is3g || isWifi;
     }
 
 

@@ -1,4 +1,4 @@
-package com.dollarandtrump.angelcar.setting;
+package com.dollarandtrump.angelcar.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

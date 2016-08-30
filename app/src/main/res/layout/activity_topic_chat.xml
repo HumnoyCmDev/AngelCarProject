@@ -16,12 +16,29 @@
         app:titleTextAppearance="@style/Toolbar.TitleText"
         app:titleTextColor="@android:color/white" />
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_marginTop="2dp"
-        android:id="@+id/recycler_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1">
+
+        <android.support.v7.widget.RecyclerView
+            android:layout_marginTop="2dp"
+            android:id="@+id/recycler_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/text_status"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:text="ตั้งคำถาม/สอบถาม พนักงาน CLS"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+
 
         <View
             android:background="#b4b4b4"

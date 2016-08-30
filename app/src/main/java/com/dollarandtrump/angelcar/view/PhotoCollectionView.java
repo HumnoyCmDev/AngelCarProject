@@ -25,7 +25,7 @@ import com.hndev.library.view.sate.BundleSavedState;
 
 import org.parceler.Parcels;
 
-public class PhotoView extends BaseCustomViewGroup {
+public class PhotoCollectionView extends BaseCustomViewGroup {
     public interface OnClickListener {
         public void onClickListener(Uri uri, int position);
     }
@@ -34,20 +34,20 @@ public class PhotoView extends BaseCustomViewGroup {
     private Gallery mGallery;
     private PhotoAdapter mAdapter;
     private OnClickListener clickListener;
-    public PhotoView(Context context) {
+    public PhotoCollectionView(Context context) {
         super(context);
         initInflate();
         initInstances();
     }
 
-    public PhotoView(Context context, AttributeSet attrs) {
+    public PhotoCollectionView(Context context, AttributeSet attrs) {
         super(context, attrs);
         initInflate();
         initInstances();
         initWithAttrs(attrs, 0, 0);
     }
 
-    public PhotoView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PhotoCollectionView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initInflate();
         initInstances();
@@ -55,7 +55,7 @@ public class PhotoView extends BaseCustomViewGroup {
     }
 
     @TargetApi(21)
-    public PhotoView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PhotoCollectionView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initInflate();
         initInstances();
@@ -82,6 +82,7 @@ public class PhotoView extends BaseCustomViewGroup {
         Glide.with(getContext())
                 .load(mGallery.getListGallery().get(0).getUri())
                 .crossFade()
+                .centerCrop()
                 .into(mPhoto);
         mAdapter.setGallery(mGallery);
         mAdapter.notifyDataSetChanged();
@@ -151,6 +152,7 @@ public class PhotoView extends BaseCustomViewGroup {
             Glide.with(getContext())
                     .load(this.mGallery.getListGallery().get(position).getUri())
                     .crossFade()
+                    .centerCrop()
                     .into(holder.mImageChildPhoto);
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

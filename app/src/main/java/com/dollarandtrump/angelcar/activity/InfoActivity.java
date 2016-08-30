@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.webkit.WebView;
 
 import com.dollarandtrump.angelcar.R;
@@ -14,7 +15,7 @@ import butterknife.ButterKnife;
 
 public class InfoActivity extends AppCompatActivity{
 
-//    @Bind(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.web_view_info) WebView mWebViewInfo;
 
     @Override
@@ -23,15 +24,24 @@ public class InfoActivity extends AppCompatActivity{
         setContentView(R.layout.activity_info);
         ButterKnife.bind(this);
 
-//        setSupportActionBar(mToolbar);
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setHomeButtonEnabled(true);
-//            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        }
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         mWebViewInfo.getSettings().setTextZoom(110);
         mWebViewInfo.loadUrl("file:///android_asset/about.html");
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

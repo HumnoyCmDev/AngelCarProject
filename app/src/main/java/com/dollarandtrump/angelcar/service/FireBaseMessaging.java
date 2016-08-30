@@ -21,6 +21,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * สร้างสรรค์ผลงานโดย humnoyDeveloper ลงวันที่ 7/6/59.11:23น.
@@ -34,6 +35,8 @@ public class FireBaseMessaging extends FirebaseMessagingService{
     SharedPreferences sharedPreferences;
     @Inject
     LoadConversation loadConversation;
+    @Inject @Named("default")
+    SharedPreferences preferencesDefault;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -41,14 +44,17 @@ public class FireBaseMessaging extends FirebaseMessagingService{
         ((MainApplication) getApplication()).getApplicationComponent().inject(this);
         //inti notification icon
 
-        String type = remoteMessage.getData().get("type");
-        if (type.equals("chatfinance") || type.equals("chatrefinance") || type.equals("chatpawn") || type.equals("chatcar")){
-            sharedPreferences.edit().putBoolean("notification_chat",true).apply();
+
+        if (preferencesDefault.getBoolean("notifications_new_message",true)) {
+            String type = remoteMessage.getData().get("type");
+            if (type.equals("chatfinance") || type.equals("chatrefinance") || type.equals("chatpawn") || type.equals("chatcar")) {
+                sharedPreferences.edit().putBoolean("notification_chat", true).apply();
 //            RxNotification.with(getBaseContext())
 //                    .isNotification(true);
-            loadConversation.load();
-            MainThreadBus.getInstance().post(remoteMessage);
-            sendNotification(remoteMessage);
+                loadConversation.load();
+                MainThreadBus.getInstance().post(remoteMessage);
+                sendNotification(remoteMessage);
+            }
         }
 
     }
@@ -94,4 +100,6 @@ public class FireBaseMessaging extends FirebaseMessagingService{
         notificationView.setTextViewText(R.id.text_message,message);
         return notificationView;
     }
+
+
 }

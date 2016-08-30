@@ -27,7 +27,7 @@ import java.util.Map;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
-public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapter.ViewHolder> {
+public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ViewHolder> {
     private final static int TYPE_THEM = 0;
     private final static int TYPE_ME = 1;
     private TopicCollectionDao mTopicDao;
@@ -40,7 +40,7 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
     private final DateFormat mTimeFormat;
     private OnClickItemChatListener onClickItemChatListener;
 
-    public TopicMessageAdapter(Context context, String userId) {
+    public TopicAdapter(Context context, String userId) {
         this.mContext = context;
         this.mUserId = userId;
         mUiThreadHandler = new Handler(Looper.getMainLooper());
@@ -113,13 +113,8 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
             viewHolder.mTimeGroup.setVisibility(View.GONE);
         }
 
-//        // chat text or image
-//        View view = LayoutInflater.from(mContext).inflate(R.layout.call_chat_text,null);
-//        view.setBackgroundResource(getItemViewType(position) == TYPE_ME ? R.drawable.message_item_call_me :R.drawable.message_item_call_them);
-//        TextView textView = (TextView) view.findViewById(R.id.call_text);
 
-
-        if (getItemViewType(position) == TYPE_ME){
+        if (viewHolder.getItemViewType() == TYPE_ME){
 
             if (AngelCarUtils.isMessageText(topic.getMessage())) {
                 viewHolder.mCallText.setText(topic.getMessage());
@@ -173,17 +168,6 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
 
     }
 
-//    private GradientDrawable createBackgroundMessage(CellMeViewHolder viewHolder, int color) {
-//        GradientDrawable gradientDrawable = new GradientDrawable();
-//        gradientDrawable.setColor(color);
-//        gradientDrawable.setCornerRadius(35);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN){
-//            viewHolder.mCell.setBackground(gradientDrawable);
-//        }else {
-//            viewHolder.mCell.setBackgroundDrawable(gradientDrawable);
-//        }
-//        return gradientDrawable;
-//    }
 
 
     @Override
@@ -197,21 +181,20 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
         return userId.equals(userIdDao) ? TYPE_ME : TYPE_THEM;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ViewHolder extends RecyclerView.ViewHolder {//implements View.OnClickListener{
         public ViewHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
+//            itemView.setOnClickListener(this);
         }
 
-        @Override
-        public void onClick(View v) {
-            if (Log.isLoggable(Log.DEBUG)) Log.d(""+getAdapterPosition());
-
-            if (onClickItemChatListener != null){
-                onClickItemChatListener.onSelectItem(mTopicDao.getTopic().get(getAdapterPosition()),getAdapterPosition());
-            }
-
-        }
+//        @Override
+//        public void onClick(View v) {
+//            if (Log.isLoggable(Log.DEBUG)) Log.d(""+getAdapterPosition());
+//
+//            if (onClickItemChatListener != null){
+//                onClickItemChatListener.onSelectItem(mTopicDao.getTopic().get(getAdapterPosition()),getAdapterPosition());
+//            }
+//        }
     }
 
     //==============================================================================================
@@ -322,6 +305,15 @@ public class TopicMessageAdapter extends RecyclerView.Adapter<TopicMessageAdapte
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
 
             mCallText = (TextView) itemView.findViewById(R.id.call_text);
+
+            mCallText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onClickItemChatListener != null){
+                        onClickItemChatListener.onSelectItem(mTopicDao.getTopic().get(getAdapterPosition()),getAdapterPosition());
+                    }
+                }
+            });
         }
     }
 

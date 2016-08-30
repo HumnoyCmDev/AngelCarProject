@@ -7,6 +7,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 
+import com.dollarandtrump.angelcar.R;
+
 
 public class RecyclerGridAutoFit extends RecyclerView{
     private int columnWidth;
@@ -40,8 +42,12 @@ public class RecyclerGridAutoFit extends RecyclerView{
 
         manager = new GridLayoutManager(getContext(), 1);
         setLayoutManager(manager);
+
+        spacing = getResources().getDimensionPixelSize(R.dimen.bottom_image_title_spacing);
     }
 
+    int thumbnailSize;
+    int spacing;
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
@@ -49,6 +55,18 @@ public class RecyclerGridAutoFit extends RecyclerView{
             int spanCount = Math.max(1, getMeasuredWidth() / columnWidth);
             manager.setSpanCount(spanCount);
         }
+
+        /*// new
+        int width  = MeasureSpec.getSize(widthSpec);
+        float density = getResources().getDisplayMetrics().density;
+        final int numColumns = (int) (width / (columnWidth * density));
+        thumbnailSize = Math.round((width - ((numColumns - 1) * spacing)) / 3.0f);
+        manager.setSpanCount(numColumns);
+        super.onMeasure(widthSpec, heightSpec);*/
+    }
+
+    public int getThumbnailSize() {
+        return thumbnailSize;
     }
 
     public void setColumnWidth(int columnWidth) {
