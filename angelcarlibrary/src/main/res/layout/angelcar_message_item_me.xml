@@ -73,8 +73,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:minHeight="30dp"
-                android:minWidth="30dp"
-                android:padding="5dp"/>
+                android:minWidth="30dp"/>
 
         </LinearLayout>
 

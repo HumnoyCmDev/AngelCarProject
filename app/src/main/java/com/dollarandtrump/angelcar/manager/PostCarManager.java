@@ -5,13 +5,12 @@ import android.os.Bundle;
 
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
-import com.dollarandtrump.angelcar.utils.Cache;
+import com.dollarandtrump.angelcar.utils.CacheData;
 
 import org.parceler.Parcels;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -21,15 +20,15 @@ import java.util.LinkedList;
 public class PostCarManager {
 
     private PostCarCollectionDao dao;
-    private Cache mCache;
+    private CacheData mCache;
 
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat dateFormat =
             new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public PostCarManager() {
-        mCache = new Cache();
-        //Load Cache
+        mCache = new CacheData();
+        //Load CacheData
         loadCache();
     }
 
@@ -39,7 +38,7 @@ public class PostCarManager {
 
     public void setDao(PostCarCollectionDao messageDao) {
         this.dao = messageDao;
-        //Save Cache
+        //Save CacheData
         saveCache();
     }
 
@@ -71,7 +70,7 @@ public class PostCarManager {
             }
 
             dao.getListCar().addAll(0, newDao.getListCar());
-            //Save Cache
+            //Save CacheData
             saveCache();
         }
     }
@@ -83,7 +82,7 @@ public class PostCarManager {
             if (dao.getListCar() == null)
                 dao.setListCar(new ArrayList<PostCarDao>());
             dao.getListCar().addAll(getCount(), newDao.getListCar());
-            //Save Cache
+            //Save CacheData
             saveCache();
         }
     }

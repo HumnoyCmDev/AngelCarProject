@@ -9,7 +9,7 @@
         app:showAsAction="always"
         />
     <item android:id="@+id/action_follow"
-        android:title="chat"
+        android:title="Follow"
         android:icon="@drawable/ic_follow"
         app:showAsAction="always"
         />

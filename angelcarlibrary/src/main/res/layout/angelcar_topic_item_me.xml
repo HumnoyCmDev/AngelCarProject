@@ -67,6 +67,7 @@
                 <!--android:padding="5dp">-->
 
                 <TextView
+                    android:textColor="@android:color/black"
                     android:id="@+id/call_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

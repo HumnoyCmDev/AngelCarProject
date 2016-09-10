@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,7 @@ import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ResponseDao;
+import com.dollarandtrump.angelcar.interfaces.OnItemChatClickListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Permission;
 import com.dollarandtrump.angelcar.manager.Registration;
@@ -42,7 +44,8 @@ import com.dollarandtrump.angelcar.manager.http.RxSendMessage;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.RxLocationPicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
-import com.dollarandtrump.angelcar.utils.Cache;
+import com.dollarandtrump.angelcar.utils.CacheData;
+import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.dollarandtrump.angelcar.view.ItemCarDetails;
 import com.google.android.gms.location.places.Place;
 import com.google.gson.Gson;
@@ -82,7 +85,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     Button mSend;
 
     @Bind(R.id.recycler_chat) RecyclerView mListChat;
-    ViewMessageAdapter mViewMessageAdapter;
+    private ViewMessageAdapter mAdapter;
 
     private PictureCollectionDao mPictureCollectionDao;
     private MessageManager mMessageManager;
@@ -96,6 +99,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     private String mKeyMessage;
 
     @Inject Gson mGson;
+    @Inject CacheData cacheData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,14 +114,13 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         if (savedInstanceState == null) {
             // load message
              /*save message json [message_json_[carId]_[messageFromUser]]*/
-            Cache cache = new Cache();
-            if (cache.isFile(mKeyMessage)) {
-                String json = cache.load(mKeyMessage, String.class);
+            if (cacheData.isFile(mKeyMessage)) {
+                String json = cacheData.load(mKeyMessage, String.class);
                 MessageCollectionDao messageDao = mGson.fromJson(json, MessageCollectionDao.class);
                 mMessageManager.setMessageDao(messageDao);
 
-                mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
-                mViewMessageAdapter.notifyDataSetChanged();
+                mAdapter.setMessageDao(mMessageManager.getMessageDao());
+                mAdapter.notifyDataSetChanged();
 //                mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
                 loadMoreMessage(mMessageManager.getMaximumId());
             } else {
@@ -146,6 +149,11 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         mKeyMessage = String.format("message_json_%s_%s",
                 mPostCarDao.getCarId(),mMessageFromUser);
 
+        /**title**/
+//        String carBrand = mPostCarDao.getCarName() + " " +
+//                mPostCarDao.getCarSub() + " " + mPostCarDao.getCarSubDetail();
+//        if (getSupportActionBar() != null)
+//        getSupportActionBar().setTitle(carBrand);
 
         /*check user*/
             mMessageBy = mPostCarDao.getShopRef().contains(Registration.getInstance().getShopRef()) ? "shop" : "user";
@@ -170,32 +178,24 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         mLinearLayoutManager = new LinearLayoutManager(this);
 //        mLinearLayoutManager.setStackFromEnd(true);
         mListChat.setLayoutManager(mLinearLayoutManager);
-        mViewMessageAdapter = new ViewMessageAdapter(this,mMessageBy);
+        mAdapter = new ViewMessageAdapter(this,mMessageBy);
 
-        mViewMessageAdapter.setCarInfo(mPostCarDao);
+        mAdapter.setCarInfo(mPostCarDao);
 
-        mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
-        mListChat.setAdapter(mViewMessageAdapter);
-        mViewMessageAdapter.setOnClickItemBannerListener(this);
+        mAdapter.setMessageDao(mMessageManager.getMessageDao());
+        mListChat.setAdapter(mAdapter);
+        mAdapter.setOnClickItemBannerListener(this);
 
-        mViewMessageAdapter.setOnItemChatClickListener(new ViewMessageAdapter.OnItemChatClickListener() {
+        mAdapter.setOnItemChatClickListener(new OnItemChatClickListener() {
             @Override
-            public void onClickItemChat(MessageDao message, int position) {
+            public void onClickImageChat(String imageUrl, int position) {
                 // Intent View Image
-                if (message != null) {
                     if (position > 1) {
-                        if (message.getMessageText().contains("<img>") &&
-                                message.getMessageText().contains("</img>")) {
-                            String url = message.getMessageText()
-                                    .substring("<img>".length(),
-                                            message.getMessageText().lastIndexOf("</img>"));
                             Intent intent = new Intent(ChatCarActivity.this,
                                     SingleViewImageActivity.class);
-                            intent.putExtra("url", url);
+                            intent.putExtra("url", imageUrl);
                             startActivity(intent);
-                        }
                     }
-                }
             }
         });
 
@@ -211,7 +211,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                 mSend.setVisibility(aBoolean ? View.VISIBLE : View.INVISIBLE);
             }
         });
-
     }
 
     private void initToolbar() {
@@ -235,17 +234,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
             break;
 
             case R.id.button_personnel:
-                Dialog dialog = new AlertDialog.Builder(ChatCarActivity.this)
-                        .setTitle("Message!")
-                        .setMessage("เชิญเจ้าหน้าที่")
-                        .setNegativeButton("Ok", listenerDialogConfirm)
-                        .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create();
+                Dialog dialog = personnelDialog();
                 dialog.show();
             break;
 
@@ -278,8 +267,25 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
     }
 
+    private Dialog personnelDialog() {
+        return new AlertDialog.Builder(ChatCarActivity.this)
+                            .setTitle("เชิญเจ้าหน้าที่")
+                            .setMessage(R.string.alert_message_personnel)
+                            .setNegativeButton("Ok", listenerDialogConfirm)
+                            .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog1, int which) {
+                                    dialog1.dismiss();
+                                }
+                            })
+                            .create();
+    }
+
 
     private void sendImageMessage(final String user, final Uri uri) {
+
+        addMessageToAdapter("<img>"+ FileUtils.getFile(getBaseContext(),uri).getPath()+"</img>");
+
         RxSendMessage rxSendMessage = new RxSendMessage(uri,
                 ""+ mPostCarDao.getCarId(),mMessageFromUser, mMessageBy,user);
         Observable.create(rxSendMessage)
@@ -296,10 +302,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     private void sendMessage(final String user, final String messageText) {
         //add model message
 //        mMessageManager.addMessageMe(mMessageBy,messageText);
-        mMessageManager.addMessageMe(mMessageBy,messageText);
-        mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
-        mViewMessageAdapter.notifyItemInserted(mViewMessageAdapter.getItemCount()-1);
-        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
+        addMessageToAdapter(messageText);
 
         RxSendMessage rxSendMessage = new RxSendMessage(String.valueOf(mPostCarDao.getCarId()),
                 mMessageFromUser, messageText, mMessageBy, user);
@@ -308,6 +311,13 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe();
 
+    }
+
+    private void addMessageToAdapter(String messageText) {
+        mMessageManager.addMessageMe(mMessageBy,messageText);
+        mAdapter.setMessageDao(mMessageManager.getMessageDao());
+        mAdapter.notifyItemInserted(mAdapter.getItemCount()-1);
+        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mAdapter.getItemCount());
     }
 
 
@@ -339,45 +349,31 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         startActivity(i);
     }
 
+    boolean isLoadingMessageOld = true;
+    @Override
+    public boolean onItemClickLoadMessageBefore() {
+        if (isLoadingMessageOld) {
+            isLoadingMessageOld = mMessageManager.addMessageStepAtTopPosition();
+            mAdapter.setMessageDao(mMessageManager.getMessageDao());
+
+            int firstVisibleItems = mLinearLayoutManager.findFirstVisibleItemPosition();
+            View c = mLinearLayoutManager.getChildAt(2);
+            int top = c == null ? 0 : c.getTop();
+            mAdapter.notifyDataSetChanged();
+            mLinearLayoutManager.scrollToPositionWithOffset(firstVisibleItems + mMessageManager.getAdditionalSize() ,top);
+        }
+        return isLoadingMessageOld;
+    }
+
+    @Override
+    public void onAddPersonnel() {
+        Dialog dialog = personnelDialog();
+        dialog.show();
+    }
+
 
     @Deprecated
     private void loadMessageNewer() {
-        Log.d(TAG, "loadMessageNewer: "+mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
-        /*Call<MessageCollectionDao> call =
-                HttpManager.getInstance().getService()
-                        .viewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
-        call.enqueue(new Callback<MessageCollectionDao>() {
-            @Override
-            public void onResponse(Call<MessageCollectionDao> call, Response<MessageCollectionDao> response) {
-                if (response.isSuccessful()){
-
-                    initMessageAdapter(response.body());
-
-                    String gson = new Gson().toJson(response.body());
-                    boolean isSuccess = new Cache().save(mKeyMessage, gson);
-
-                    *//*start Time Out 1000L wait message *//*
-                    *//**observable wait message **//*
-                    mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_CAR,mMessageManager.getMaximumId(),
-                            String.valueOf(mPostCarDao.getCarId()), mMessageFromUser,mMessageManager.getCurrentIdStatus());
-                    mSubscription = Observable.create(mWaitMessage)
-                            .subscribeOn(Schedulers.newThread()).subscribe();
-                    
-                }else {
-                    try {
-                        Toast.makeText(ChatCarActivity.this,response.errorBody().string(),Toast.LENGTH_SHORT).show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MessageCollectionDao> call, Throwable t) {
-//                Toast.makeText(ChatCarActivity.this,"Failure LogCat!!",Toast.LENGTH_SHORT).show();
-                Log.e(TAG, "onFailure: ", t);
-            }
-        });*/
 
         HttpManager.getInstance().getService()
                 .observableViewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0")
@@ -399,7 +395,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                         initMessageAdapter(messageCollectionDao);
 
                         String gson = mGson.toJson(messageCollectionDao);
-                        boolean isSuccess = new Cache().save(mKeyMessage, gson);
+                        boolean isSuccess = new CacheData().save(mKeyMessage, gson);
 
                     /*start Time Out 1000L wait message */
                         /**observable wait message **/
@@ -413,7 +409,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     }
 
     public void loadMoreMessage(int currentMessageId){
-        Log.d(TAG, "loadMoreMessage: ");
+//        Log.d(TAG, "loadMessageNewer: "+mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         HttpManager.getInstance().getService()
                 .observableViewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||"+currentMessageId)
                 .subscribeOn(Schedulers.newThread())
@@ -423,7 +419,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     public void call(MessageCollectionDao dao) {
                         initMessageAdapter(dao);
                         String gson = mGson.toJson(dao);
-                        boolean isSuccess = new Cache().save(mKeyMessage, gson);
+                        cacheData.save(mKeyMessage, gson);
 
                     /*start Time Out 1000L wait message */
                         /**observable wait message **/
@@ -435,10 +431,15 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                 });
     }
 
+    boolean isFirstSubList = true;
     private void initMessageAdapter(MessageCollectionDao dao) {
         mMessageManager.appendDataToBottomPosition(dao);
-        mViewMessageAdapter.setMessageDao(mMessageManager.getMessageDao());
-        mViewMessageAdapter.notifyDataSetChanged();
+        if (isFirstSubList){
+            mAdapter.setMessageDao(mMessageManager.messageSubList());
+            isFirstSubList = false;
+        }
+        mAdapter.setMessageDao(mMessageManager.getMessageDao());
+        mAdapter.notifyDataSetChanged();
 //        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
     }
 
@@ -463,23 +464,23 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                 if (message.getMessageStatus() == 0 ){ // ข้อความใหม่
                     if (message.getMessageBy().equals(mMessageBy)){ //Chat me แชทเก่าออกก่อน
                         mMessageManager.updateMessageMe(countMessage,message);
-                        mViewMessageAdapter.notifyDataSetChanged();
+                        mAdapter.notifyDataSetChanged();
 //                        mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
                     } else { //chat them
                         mMessageManager.updateMessageThem(message);
-                        mViewMessageAdapter.notifyDataSetChanged();
+                        mAdapter.notifyDataSetChanged();
                     }
                 } else { // อ่านแล้ว
                     mMessageManager.updateMessageMe(countMessage,message);
-                    mViewMessageAdapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                 }
             }
         }
 
         // scroll to bottom
         int lastPosition = mLinearLayoutManager.findLastVisibleItemPosition();
-        if (lastPosition >= mViewMessageAdapter.getItemCount() - 2){
-            mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
+        if (lastPosition >= mAdapter.getItemCount() - 2){
+            mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mAdapter.getItemCount());
         }
     }
 
@@ -563,9 +564,9 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                 mAdapter.notifyDataSetChanged();*/
 
                 // TODO-GREEN Test new adapter set images
-                mViewMessageAdapter.setImageCar(mPictureCollectionDao);
-                mViewMessageAdapter.setCarInfo(mPostCarDao);
-                mViewMessageAdapter.notifyDataSetChanged();
+                mAdapter.setImageCar(mPictureCollectionDao);
+                mAdapter.setCarInfo(mPostCarDao);
+                mAdapter.notifyDataSetChanged();
 
             } else {
                 try {
@@ -590,8 +591,8 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     for (FollowDao dao : response.body().getRows()) {
                         if (dao.getCarRef().
                                 contains(String.valueOf(mPostCarDao.getCarId()))) {
-                            mViewMessageAdapter.setFollow(true);
-                            mViewMessageAdapter.notifyDataSetChanged();
+                            mAdapter.setFollow(true);
+                            mAdapter.notifyDataSetChanged();
                         }
                     }
                 }

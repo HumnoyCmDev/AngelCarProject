@@ -76,7 +76,7 @@ public class ImageViewGlide extends ImageView{
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), SingleViewImageActivity.class);
-                i.putExtra("url",mUrl);
+                i.putExtra("url",mUrl.replace("shoplogo","shoplogofull"));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     activity.startActivity(i, ActivityOptions.makeSceneTransitionAnimation(activity, v, "image").toBundle());
                 }else {

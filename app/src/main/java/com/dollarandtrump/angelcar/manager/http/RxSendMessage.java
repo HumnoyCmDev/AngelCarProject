@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.utils.FileUtils;
+import com.dollarandtrump.angelcar.utils.ReduceSizeImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -127,7 +128,8 @@ public class RxSendMessage implements Observable.OnSubscribe<String> {
 
     /** Method Send Massage**/
     private void sendMessageFile(Subscriber<? super String> subscriber){
-        File f = FileUtils.getFile(mContext, mUri);
+        File f = new ReduceSizeImage(FileUtils.getFile(mContext, mUri)).resizeImageFile(ReduceSizeImage.SIZE_SMALL);
+
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("userfile", f.getName(),

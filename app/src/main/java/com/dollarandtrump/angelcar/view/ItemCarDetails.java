@@ -47,13 +47,14 @@ import rx.schedulers.Schedulers;
 public class ItemCarDetails extends BaseCustomViewGroup {
     ImageView mImageProfile;
     ImageBanner mBanner;
-    TextView mTitle, mBrand, mName, mTime, mCallMe, mYear, mPhone, mPrice,mBefore,mShopName,mDetails;
+    TextView mTitle, mBrand, mName, mTime, mCallMe, mYear, mPhone, mPrice,mLoadMessageBefore,mShopName,mDetails;
     TextView mFollow;
     boolean isFollow = false;
     PictureCollectionDao mPictureDao ;
     PostCarDao mPostCarDao;
 
     LinearLayout mGroupProfile;
+    private boolean isVisibleLoadMessageBefore = true;
 
     public ItemCarDetails(Context context) {
         super(context);
@@ -99,7 +100,7 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         mImageProfile = (ImageView) findViewById(R.id.image_icon_profile);
         mTime = (TextView) findViewById(R.id.text_time);
         mCallMe = (TextView) findViewById(R.id.custom_view_cell_text);
-        mBefore = (TextView) findViewById(R.id.custom_view_item_message_before);
+        mLoadMessageBefore = (TextView) findViewById(R.id.custom_view_load_message_before);
         mShopName = (TextView) findViewById(R.id.text_shop_name);
         mFollow = (TextView) findViewById(R.id.text_follow);
         mYear = (TextView) findViewById(R.id.custom_view_text_year);
@@ -174,8 +175,11 @@ public class ItemCarDetails extends BaseCustomViewGroup {
         }
     }
 
-    public void setBeforeVisibility(int visibility){
-        mBefore.setVisibility(visibility);
+    public void setTextLoadMessageBeforeVisibility(int visibility){
+        mLoadMessageBefore.setVisibility(visibility);
+    }
+    public void setTextLoadMessageBefore(String s){
+        mLoadMessageBefore.setText(s);
     }
 
     private void setIconProfile(String url){
@@ -262,6 +266,25 @@ public class ItemCarDetails extends BaseCustomViewGroup {
                 onItemClickL.onItemClickViewShop(mPostCarDao);
             }
         });
+
+        mLoadMessageBefore.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               isVisibleLoadMessageBefore = onItemClickL.onItemClickLoadMessageBefore();
+               setTextLoadMessageBeforeVisibility(isVisibleLoadMessageBefore ? VISIBLE : GONE);
+            }
+        });
+
+        mCallMe.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onItemClickL.onAddPersonnel();
+            }
+        });
+    }
+
+    public boolean isVisibleLoadMessageBefore() {
+        return isVisibleLoadMessageBefore;
     }
 
     public interface OnClickItemHeaderChatListener {
@@ -269,6 +292,8 @@ public class ItemCarDetails extends BaseCustomViewGroup {
 //        void onItemClickFollow(boolean isFollow);
         public void onItemClickPhone(String phone);
         public void onItemClickViewShop(PostCarDao post);
+        public boolean onItemClickLoadMessageBefore();
+        void onAddPersonnel();
 
     }
 

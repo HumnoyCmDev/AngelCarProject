@@ -8,12 +8,16 @@ import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.utils.Log;
 import com.google.gson.Gson;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -29,11 +33,13 @@ public class MessageManager {
 
     private MessageCollectionDao mConversationTopic;
 
+    private MessageCollectionDao mDuplicateMessage;
+
     private CarIdDao mProductIds;
 
     public MessageManager() {
         mContext = Contextor.getInstance().getContext();
-        //Load Cache
+        //Load CacheData
 //        loadCache();
     }
 
@@ -43,7 +49,10 @@ public class MessageManager {
 
     public void setMessageDao(MessageCollectionDao messageDao) {
         this.messageDao = messageDao;
-        //Save Cache
+
+        mDuplicateMessage = new MessageCollectionDao();
+        mDuplicateMessage.setListMessage(messageDao.getListMessage());
+        //Save CacheData
 //        saveCache();
     }
 
@@ -63,14 +72,23 @@ public class MessageManager {
         return messageDao.getListMessage().size();
     }
 
-    public void insertDaoAtTopPosition(MessageCollectionDao newDao){
+    public void insertMessageAtTopPosition(MessageCollectionDao newDao){
         if (messageDao == null)
             messageDao = new MessageCollectionDao();
         if (messageDao.getListMessage() == null)
             messageDao.setListMessage(new ArrayList<MessageDao>());
         messageDao.getListMessage().addAll(0,newDao.getListMessage());
-        //Save Cache
+        //Save CacheData
 //        saveCache();
+    }
+
+    public void insertMessageAtTopPosition(List<MessageDao> newDao){
+        if (messageDao == null)
+            messageDao = new MessageCollectionDao();
+        if (messageDao.getListMessage() == null)
+            messageDao.setListMessage(new ArrayList<MessageDao>());
+        messageDao.getListMessage().addAll(0,newDao);
+
     }
 
     public MessageCollectionDao getConversationSell() {
@@ -97,7 +115,7 @@ public class MessageManager {
         this.mConversationBuy = conversationSell;
     }
 
-    public void unifyDao(MessageAdminCollectionDao mConversationSell, MessageCollectionDao mConversationBuy){
+    /*public void unifyDao(MessageAdminCollectionDao mConversationSell, MessageCollectionDao mConversationBuy){
         this.mConversationSell = mConversationSell.convertToMessageCollectionDao();
         this.mConversationBuy = mConversationBuy;
         if (messageDao == null){
@@ -110,7 +128,7 @@ public class MessageManager {
         messageDao.getListMessage().addAll(getCount(),mConversationBuy.getListMessage());
 
 //        saveCache();
-    }
+    }*/
 
     public void appendDataToBottomPosition(MessageCollectionDao dao){
         if (messageDao == null){
@@ -120,8 +138,18 @@ public class MessageManager {
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
         messageDao.getListMessage().addAll(getCount(),dao.getListMessage());
-        //Save Cache
-//        saveCache();
+
+
+        /**Dup message**/
+        if (mDuplicateMessage == null){
+            mDuplicateMessage = new MessageCollectionDao();
+        }
+        if (mDuplicateMessage.getListMessage() == null){
+            mDuplicateMessage.setListMessage(new ArrayList<MessageDao>());
+        }
+
+        mDuplicateMessage.getListMessage().addAll(mDuplicateMessage.getListMessage().size(),dao.getListMessage());
+
     }
 
     public void updateMessageThem(MessageDao dao){
@@ -132,6 +160,8 @@ public class MessageManager {
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
         messageDao.getListMessage().add(getCount(),dao);
+
+//        this.mDuplicateMessage.getListMessage().add(getCount(),dao);
     }
 
     public void updateMessageMe(int countMessage,MessageDao message){
@@ -143,6 +173,8 @@ public class MessageManager {
         }
         int removeId = (getCount()-1)-countMessage;
         messageDao.getListMessage().set(removeId,message);
+
+//        this.mDuplicateMessage.getListMessage().set(removeId,message);
     }
 
     public void addMessageMe(String messageBy,String messageText){
@@ -153,6 +185,8 @@ public class MessageManager {
             messageDao.setListMessage(new ArrayList<MessageDao>());
         }
         messageDao.getListMessage().add(setMessageMe(messageBy,messageText));
+
+//        this.mDuplicateMessage.getListMessage().add(setMessageMe(messageBy,messageText));
     }
 
     public int getMaximumId(){
@@ -230,18 +264,7 @@ public class MessageManager {
     }
 
     private MessageDao setMessageMe(String messageBy, String messageText) {
-// find model message me
         MessageDao mMessageMe = new MessageDao();
-//            for (MessageDao messageMe : this.messageDao.getListMessage()) {
-//                if (messageMe.getMessageBy().equals(messageBy)) {
-//                    mMessageMe = messageMe;
-//                    break;
-//                }
-//            }
-//
-//        if (mMessageMe == null) {
-//           mMessageMe = new MessageDao();
-//        }
         mMessageMe.setMessageId(-1);
         mMessageMe.setMessageBy(messageBy);
         mMessageMe.setMessageStatus(3);
@@ -249,5 +272,50 @@ public class MessageManager {
         mMessageMe.setMessageStamp(new Date());
         mMessageMe.setSent(false);
         return mMessageMe;
+    }
+
+    /**@จัดการ message model**/
+    public MessageCollectionDao messageSubList(){
+        final int maxSubLst = 20;
+        if (messageDao != null && messageDao.getListMessage() != null){
+            int max = messageDao.getListMessage().size();
+            if (max > maxSubLst){
+                int min = max - maxSubLst;
+                LinkedList<MessageDao> sub = new LinkedList<>(messageDao.getListMessage().subList(min,max));
+                messageDao.setListMessage(sub);
+                //update message duplicate
+//                mDuplicateMessage.setListMessage(mDuplicateMessage.getListMessage().subList(0,min));
+            }
+            return messageDao;
+        }
+        return new MessageCollectionDao();
+    }
+
+    private int additionalSize = 0;
+    public boolean addMessageStepAtTopPosition(){
+        if (messageDao != null && messageDao.getListMessage() != null) {
+            if (messageDao.getListMessage().size() != mDuplicateMessage.getListMessage().size()){
+                MessageCollectionDao copy = new MessageCollectionDao();
+            copy.setListMessage(mDuplicateMessage.getListMessage());
+            int currentMaxMessageCopy = copy.getListMessage().size();
+            int currentMaxMessageDao = messageDao.getListMessage().size();
+
+            int maxMessageCopy = currentMaxMessageCopy - currentMaxMessageDao;
+            int min = maxMessageCopy - 20;
+            if (min < 0) min = 0;
+            if (maxMessageCopy < 0) return false;
+            LinkedList<MessageDao> sub = new LinkedList<>(copy.getListMessage().subList(min, maxMessageCopy));
+            additionalSize = sub.size();
+            insertMessageAtTopPosition(sub);
+                return true;
+        }
+            return false;
+
+        }
+        return false;
+    }
+
+    public int getAdditionalSize() {
+        return additionalSize;
     }
 }

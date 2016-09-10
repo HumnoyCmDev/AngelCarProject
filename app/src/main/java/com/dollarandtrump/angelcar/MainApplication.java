@@ -13,6 +13,8 @@ import com.dollarandtrump.angelcar.module.StoreModule;
 import com.dollarandtrump.angelcar.utils.Log;
 
 import io.fabric.sdk.android.Fabric;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class MainApplication extends Application{
 
@@ -21,7 +23,7 @@ public class MainApplication extends Application{
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
+//        Fabric.with(this, new Crashlytics());
         Log.setLoggingEnabled(true);
         Contextor.getInstance().init(getApplicationContext());
         ActiveAndroid.initialize(this);
@@ -30,6 +32,9 @@ public class MainApplication extends Application{
                 .networkModule(new NetworkModule())
                 .storeModule(new StoreModule()).build();
 
+        /** Realm Config **/
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this).build();
+        Realm.setDefaultConfiguration(realmConfiguration);
     }
 
     public ApplicationComponent getApplicationComponent() {

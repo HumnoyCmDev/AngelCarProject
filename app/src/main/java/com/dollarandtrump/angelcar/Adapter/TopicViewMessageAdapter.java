@@ -16,10 +16,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
+import com.dollarandtrump.angelcar.configuration.GlideTargetBitmap;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.interfaces.OnItemChatClickListener;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.utils.AngelCarUtils;
+import com.dollarandtrump.angelcar.utils.ReduceSizeImage;
 import com.hndev.library.view.Transformtion.ScalingUtilities;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
@@ -30,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import rx.schedulers.Schedulers;
 
 
@@ -44,6 +48,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
     private final Map<Integer, Cluster> mClusterCache = new HashMap<>();
     protected final Handler mUiThreadHandler;
     private final DateFormat mTimeFormat;
+    private OnItemChatClickListener onItemChatClickListener;
 
     public TopicViewMessageAdapter(Context context, String mMessageBy) {
         this.mContext = context;
@@ -61,6 +66,9 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         this.mMessageDao = mMessageDao;
     }
 
+    public void setOnItemChatClickListener(OnItemChatClickListener onItemChatClickListener) {
+        this.onItemChatClickListener = onItemChatClickListener;
+    }
 
 
     @Override
@@ -132,6 +140,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
 
                 TextView textMessage = new TextView(mContext);
                 textMessage.setBackgroundResource(R.drawable.message_item_call_me);
+                textMessage.setTextColor(Color.BLACK);
                 textMessage.setText(msgDao.getMessageText());
                 viewHolder.mCell.addView(textMessage);
 
@@ -144,6 +153,15 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                         .transform(new PictureReSize())
                         .into(img);
                 viewHolder.mCell.addView(img);
+
+//                /**Sample Glide**/
+//                final ImageView img = new ImageView(mContext);
+//                Glide.with(mContext)
+//                        .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
+//                        .asBitmap()
+//                        .transform(new RoundedCornersTransformation(mContext,20,10))
+//                        .into(new GlideTargetBitmap(img));
+//                viewHolder.mCell.addView(img);
 
             }
 
@@ -174,9 +192,17 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
                 Picasso.with(mContext)
                         .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
                         .transform(new PictureReSize())
-                        .placeholder(com.hndev.library.R.drawable.icon_logo)
                         .into(imageView);
                 viewHolder.mCell.addView(imageView);
+
+                /**Sample Glide**/
+//                final ImageView img = new ImageView(mContext);
+//                Glide.with(mContext)
+//                        .load(AngelCarUtils.subUrlMessage(msgDao.getMessageText()))
+//                        .asBitmap()
+//                        .transform(new RoundedCornersTransformation(mContext,20,0))
+//                        .into(new GlideTargetBitmap(img));
+//                viewHolder.mCell.addView(img);
             }
             // Sender name, only for first message in cluster // User > 2
             if (!oneOnOne && (cluster.mClusterWithPrevious == null || cluster.mClusterWithPrevious == ClusterType.NEW_SENDER)) {
@@ -320,7 +346,7 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
         public ClusterType mClusterWithNext;
     }
 
-    static class CellViewHolder extends ViewHolder {
+    class CellViewHolder extends ViewHolder {
         public final static int RESOURCE_ID_ME = R.layout.angelcar_message_item_me;
         public final static int RESOURCE_ID_THEM = R.layout.angelcar_message_item_them;
 
@@ -345,6 +371,26 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
             mCell = (FrameLayout) itemView.findViewById(R.id.cell);
             mReceipt = (TextView) itemView.findViewById(R.id.receipt);
             mAvatar = (ImageView) itemView.findViewById(R.id.avatar);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    MessageDao message = mMessageDao.getListMessage().get(getAdapterPosition());
+                    if (message != null) {
+                            if (message.getMessageText().contains("<img>") &&
+                                    message.getMessageText().contains("</img>")) {
+                                if (onItemChatClickListener != null){
+                                    String url = message.getMessageText()
+                                            .substring("<img>".length(),
+                                                    message.getMessageText().lastIndexOf("</img>"));
+                                    onItemChatClickListener.onClickImageChat(url,
+                                            getAdapterPosition());
+                                }
+                            }
+
+                    }
+                }
+            });
 
         }
 
@@ -385,14 +431,9 @@ public class TopicViewMessageAdapter extends RecyclerView.Adapter<TopicViewMessa
     private class PictureReSize implements Transformation {
         @Override
         public Bitmap transform(Bitmap source) {
-            int width = 450;
-            int height = 750;
+            ReduceSizeImage.Size newSize = ReduceSizeImage.solution(ReduceSizeImage.SIZE_SMALL, source.getWidth(), source.getHeight());
             Bitmap scaledBitmap;
-            if (source.getWidth() < source.getHeight()){ // w น้อยกว่า h แนวตั้ง
-                scaledBitmap = ScalingUtilities.createScaledBitmap(source, width, height, ScalingUtilities.ScalingLogic.CROP);
-            }else { // แนวนอน
-                scaledBitmap = ScalingUtilities.createScaledBitmap(source, height, width, ScalingUtilities.ScalingLogic.CROP);
-            }
+            scaledBitmap = ScalingUtilities.createScaledBitmap(source, newSize.getWidth(), newSize.getHeight(), ScalingUtilities.ScalingLogic.CROP);
             source.recycle();
             return scaledBitmap;
         }

@@ -8,7 +8,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
@@ -58,6 +62,7 @@ import rx.schedulers.Schedulers;
 public class ConversationActivity extends AppCompatActivity implements OnClickItemMessageListener {
     @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.tl_8) SlidingTabLayout slidingTabLayout;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
     private Subscription subscriptionMessage;
     private Subscription subscriptionCarId;
     private MessageManager mgsManager;
@@ -70,6 +75,13 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversation);
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+
         initViewPager();
         ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
@@ -254,6 +266,15 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
             slidingTabLayout.setMsgMargin(2,22,15);
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

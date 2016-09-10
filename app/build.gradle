@@ -12,6 +12,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
 apply plugin: 'com.neenbedankt.android-apt' //Dagger
+apply plugin: 'realm-android'
 
 repositories {
     mavenCentral()
@@ -26,8 +27,8 @@ android {
         applicationId "com.dollarandtrump.angelcar"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 108
-        versionName "1.0.8"
+        versionCode 111
+        versionName "1.0.9"
     }
     buildTypes {
         release {

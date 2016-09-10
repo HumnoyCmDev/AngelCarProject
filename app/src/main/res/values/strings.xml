@@ -51,7 +51,7 @@
     <string name="alert_message_topic">เฉพาะเจ้าของข้อความแชท เท่านั้นจึงจะเข้าดูรายละเอียดแชทได้</string>
     <string name="alert_new_topic">สอบถามเจ้าหน้าที่ cls</string>
     <string name="alert_edit_shop">กรุณาใส่(ชื่อ,รูป)ที่ Shop เพื่อระบุตัวตนก่อนประกาศขาย</string>
-
+    <string name="alert_message_personnel">"ต้องการสอบถามยอดจัดจากเจ้าหน้าที่\n(เวลาทำการ จันทร์-ศุกร์ 8.30-17.00 และเสาร์ 8.30-12.00 หากติดต่อนอกเวลาดังกล่าวเจ้าหน้าที่จะมาตอบในวันทำการถัดไปค่ะ)"</string>
     <string name="evidence_owner">กรณีเจ้าของรถ แนบภาพถ่ายเจ้าของรถ</string>
     <string name="evidence_delegate">กรณีตัวแทนเจ้าของ แนบภาพถ่ายเจ้าของรถและภาพถ่ายผู้ประกาศ</string>
     <string name="evidence_dealers">กรณีเต้นท์รถ แนบภาพถ่ายเต้นท์และภาพถ่ายเจ้าของ \n(**สิทธิประโยชน์สำหรับเต้นท์** )\n ลงรถได้ไม่จำกัด, เลื่อนประกาศฟรี, ไม่ต้องส่งเอกสารทุกครั้งที่มีประกาศ</string>
@@ -204,5 +204,7 @@
     <string name="post_dealers">ผู้ประกอบการรถมือสอง(เต็นท์รถ)</string>
     <string name="post_delegate">ตัวแทนเจ้าของรถ</string>
     <string name="post_owner">เจ้าของรถ(ลงประกาศขายเอง)</string>
+    <string name="shop_text_name">ชื่อของคุณหรือชื่อร้าน</string>
+    <string name="shop_text_description">รายละเอียดเกี่ยวกับคุณ</string>
 
 </resources>

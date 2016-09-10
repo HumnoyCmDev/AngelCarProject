@@ -16,20 +16,18 @@ import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.UUID;
 
-/**
- * Created by humnoyDeveloper on 25/4/59. 11:19
- */
-public class Cache {
+
+public class CacheData {
     private Context mContext;
 
-    public Cache() {
+    public CacheData() {
         mContext = Contextor.getInstance().getContext();
     }
 
-    public Cache(String key,Object object){
-        mContext = Contextor.getInstance().getContext();
-        save(key,object);
-    }
+//    public CacheData(String key, Object object){
+//        mContext = Contextor.getInstance().getContext();
+//        save(key,object);
+//    }
 
     public String getUUIdCode(){
         return UUID.randomUUID().toString();

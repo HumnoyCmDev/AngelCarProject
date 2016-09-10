@@ -1,15 +1,21 @@
 package com.dollarandtrump.angelcar.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -21,6 +27,7 @@ import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.TopicDao;
+import com.dollarandtrump.angelcar.interfaces.OnItemChatClickListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.WaitMessageObservable;
@@ -29,6 +36,7 @@ import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.RxSendTopicMessage;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
+import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.dollarandtrump.angelcar.utils.Log;
 import com.jakewharton.rxbinding.widget.RxTextView;
 import com.jakewharton.rxbinding.widget.TextViewTextChangeEvent;
@@ -46,13 +54,15 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
+import xyz.kotlindev.lib.network.ReactiveNetwork;
+import xyz.kotlindev.lib.view.BarStatusView;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
  * โดย humnoy Android Developer
  * ลงวันที่ 27/1/59. เวลา 13:42
  ***************************************/
-public class TopicChatActivity extends AppCompatActivity {
+public class TopicChatActivity extends AppCompatActivity implements OnItemChatClickListener {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.edit_text_input_chat) EditText messageText;
@@ -61,9 +71,11 @@ public class TopicChatActivity extends AppCompatActivity {
     @Bind(R.id.linear_layout_group_button_chat) LinearLayout mGroupButtChat;
     @Bind(R.id.text_status)TextView mStatus;
 
+//    @Bind(R.id.bar_status) BarStatusView mBarStatus;
+
 
     private MessageManager messageManager;
-    private TopicViewMessageAdapter messageAdapter;
+    private TopicViewMessageAdapter mAdapter;
     private String mRoomId;
     private String mUserId;
     private String mTopicMessage = null;
@@ -72,11 +84,17 @@ public class TopicChatActivity extends AppCompatActivity {
     private Subscription mSubscription;
     private LinearLayoutManager linearManager;
 
+    private boolean isLoadingMessageOld = false;
+    private Subscription internetConnectivitySubscription;
+    InputMethodManager imm;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_chat);
         ButterKnife.bind(this);
+        initToolbar();
+
+        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
         mUserId = Registration.getInstance().getUserId();
         TopicDao mTopic = null;
@@ -85,20 +103,19 @@ public class TopicChatActivity extends AppCompatActivity {
             mTopic = Parcels.unwrap(arg.getParcelable("topic"));
             String room = "ห้องสนทนา "+arg.getString("room");
             mTopicMessage = arg.getString("topic_message",null);
-
-            toolbar.setTitle(room);
-            setSupportActionBar(toolbar);
+            if(getSupportActionBar() != null)
+                getSupportActionBar().setTitle(room);
             if (Log.isLoggable(Log.DEBUG)) Log.d("Room -->"+room);
         }
 
 
         messageManager = new MessageManager();
-        messageAdapter = new TopicViewMessageAdapter(TopicChatActivity.this, "user");
-        messageAdapter.setMessageDao(messageManager.getMessageDao());
+        mAdapter = new TopicViewMessageAdapter(TopicChatActivity.this, "user");
+        mAdapter.setMessageDao(messageManager.getMessageDao());
         linearManager = new LinearLayoutManager(this);
         linearManager.setStackFromEnd(true);
         list.setLayoutManager(linearManager);
-        list.setAdapter(messageAdapter);
+        list.setAdapter(mAdapter);
 
         RxTextView.textChangeEvents(messageText).map(new Func1<TextViewTextChangeEvent, Boolean>() {
             @Override
@@ -122,7 +139,15 @@ public class TopicChatActivity extends AppCompatActivity {
             mGroupButtChat.setVisibility(View.VISIBLE);
             mRoomId = String.valueOf(mTopic.getId());
             String message = mRoomId+"||"+mTopic.getUserId()+"||0";
+            Log.d(message);
             loadMessage(message);
+
+//            getWindow().setSoftInputMode(
+//                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+            View v = getCurrentFocus();
+            if (v != null)
+            imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_IMPLICIT_ONLY);
+
         }else {
             // create toppic set max line 1
             messageText.setSingleLine(true);
@@ -132,9 +157,66 @@ public class TopicChatActivity extends AppCompatActivity {
             mStatus.setAnimation(animOut);
         }
 
+        /**scroll list**/
+        list.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+                int visibleItemCount = linearManager.getChildCount();
+                int totalItemCount = linearManager.getItemCount();
+                int firstVisibleItems = linearManager.findFirstVisibleItemPosition();
+                int lastVisibleItems = linearManager.findLastVisibleItemPosition();
+//                if (firstVisibleItems + visibleItemCount >= totalItemCount) {}
+
+                if (firstVisibleItems <= 0){
+                    if (isLoadingMessageOld) {
+                        isLoadingMessageOld = messageManager.addMessageStepAtTopPosition();
+                        mAdapter.setMessageDao(messageManager.getMessageDao());
+
+                        View c = linearManager.getChildAt(0);
+                        int top = c == null ? 0 : c.getTop();
+                        mAdapter.notifyDataSetChanged();
+                        linearManager.scrollToPositionWithOffset(firstVisibleItems+messageManager.getAdditionalSize(),top);
+                        Log.d("Load message old");
+                    }
+                }
+
+            }
+        });
+
+//        mBarStatus.start();
+//        connectivity();
+
+    }
+
+    private void initToolbar() {
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void connectivity() {
+        internetConnectivitySubscription = ReactiveNetwork.observeInternetConnectivity()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean isConnectedToInternet) {
+                        if (isConnectedToInternet){
+//                            mBarStatus.hide();
+                        }else{
+//                            mBarStatus.show();
+//                            mBarStatus.setTitle(R.string.status_network);
+                        }
+                    }
+                });
     }
 
     private void loadMessage(String message) {
+//        mBarStatus.expand();
         HttpManager.getInstance().getService().observableViewMessageTopic(message)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -155,8 +237,13 @@ public class TopicChatActivity extends AppCompatActivity {
                     public void onNext(MessageCollectionDao dao) {
                         messageManager.setMessageDao(dao);
 
-                        messageAdapter.setMessageDao(messageManager.getMessageDao());
-                        messageAdapter.notifyDataSetChanged();
+                        /**Message SubList 20**/
+                        mAdapter.setMessageDao(messageManager.messageSubList());
+//                        mAdapter.setMessageDao(messageManager.getMessageDao());
+                        mAdapter.notifyDataSetChanged();
+
+                        isLoadingMessageOld = true;
+//                        mBarStatus.close();
 
 //                        topicViewMessageBaseAdapter.setMessageDao(messageManager.getMessageDao());
 //                        topicViewMessageBaseAdapter.notifyDataSetChanged();
@@ -174,9 +261,13 @@ public class TopicChatActivity extends AppCompatActivity {
         }else { // Send message Room
             sendMessageRoom(messageText.getText().toString());
         }
-        messageManager.addMessageMe("user",messageText.getText().toString());
-        messageAdapter.notifyDataSetChanged();
-        linearManager.smoothScrollToPosition(list,null,messageAdapter.getItemCount());
+        addMessageToAdapter(messageText.getText().toString());
+    }
+
+    private void addMessageToAdapter(String message) {
+        messageManager.addMessageMe("user",message);
+        mAdapter.notifyDataSetChanged();
+        linearManager.smoothScrollToPosition(list,null,mAdapter.getItemCount());
         messageText.setText(null);
     }
 
@@ -240,12 +331,24 @@ public class TopicChatActivity extends AppCompatActivity {
         }
     }
 
+//    @OnClick({R.id.button_test_anim})
+//    public void onTestingAnim(){
+//        if (mBarStatus.isOpened()) {
+//            mBarStatus.hide();
+//            Log.d("hide");
+//        }else {
+//            mBarStatus.show();
+//            Log.d("show");
+//        }
+//    }
+
     private void onImagePicker(Sources sources){
         RxImagePicker.with(this).requestImage(sources).subscribe(new Action1<Uri>() {
             @Override
             public void call(Uri uri) {
             //TODO-RED Send Files To Chat Room
                 if (mTopicMessage == null) {
+                    addMessageToAdapter("<img>"+FileUtils.getFile(getBaseContext(),uri).getPath()+"</img>");
                     RxSendTopicMessage imageTopicMessage = new RxSendTopicMessage(uri,mRoomId,mUserId);
                     Observable.create(imageTopicMessage).subscribeOn(Schedulers.newThread())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -269,6 +372,19 @@ public class TopicChatActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         MainThreadBus.getInstance().unregister(this);
+
+        if (internetConnectivitySubscription != null && internetConnectivitySubscription.isUnsubscribed()){
+            internetConnectivitySubscription.unsubscribe();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Subscribe
@@ -280,15 +396,15 @@ public class TopicChatActivity extends AppCompatActivity {
                 if (message.getMessageStatus() == 0 ){ // ข้อความใหม่
                     if (message.getMessageBy().equals("user")){ //Chat me แชทเก่าออกก่อน
                         messageManager.updateMessageMe(countMessage,message);
-                        messageAdapter.notifyDataSetChanged();
-                        linearManager.smoothScrollToPosition(list,null,messageAdapter.getItemCount());
+                        mAdapter.notifyDataSetChanged();
+                        linearManager.smoothScrollToPosition(list,null,mAdapter.getItemCount());
                     } else { //chat them
                         messageManager.updateMessageThem(message);
-                        messageAdapter.notifyDataSetChanged();
+                        mAdapter.notifyDataSetChanged();
                     }
                 } else { // อ่านแล้ว
                     messageManager.updateMessageMe(countMessage,message);
-                    messageAdapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -296,8 +412,8 @@ public class TopicChatActivity extends AppCompatActivity {
 
             // scroll to bottom
             int lastPosition = linearManager.findLastVisibleItemPosition();
-            if (lastPosition >= messageAdapter.getItemCount() - 2){
-                linearManager.smoothScrollToPosition(list,null,messageAdapter.getItemCount());
+            if (lastPosition >= mAdapter.getItemCount() - 2){
+                linearManager.smoothScrollToPosition(list,null,mAdapter.getItemCount());
             }
 
 
@@ -312,6 +428,7 @@ public class TopicChatActivity extends AppCompatActivity {
         if (mSubscription != null) mSubscription.unsubscribe();
     }
 
+
     private void waitMessage(){
         /**observable wait message **/
         mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_TOPIC,messageManager.getMaximumId(),
@@ -320,4 +437,12 @@ public class TopicChatActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.newThread()).subscribe();
     }
 
+    @Override
+    public void onClickImageChat(String imageUrl, int position) {
+        Intent intent = new Intent(TopicChatActivity.this,
+                SingleViewImageActivity.class);
+        intent.putExtra("url", imageUrl);
+        startActivity(intent);
+
+    }
 }

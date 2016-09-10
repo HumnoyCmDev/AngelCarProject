@@ -1,6 +1,7 @@
 package com.dollarandtrump.angelcar.activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -286,17 +288,7 @@ public class ViewCarActivity extends AppCompatActivity{
 
     @OnClick(R.id.button_delete)
     public void onDeletePost(){
-        HttpManager.getInstance().getService().observableDeleteCar(mCarDao.getCarId()+"||offline")
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<ResponseDao>() {
-                    @Override
-                    public void call(ResponseDao responseDao) {
-                        Log.d("ViewCar", "call success");
-                        Toast.makeText(ViewCarActivity.this,"ลบโพสสำเร็จ",Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                });
+        alertDialogEditShop();
     }
 
     @OnClick(R.id.group_profile)
@@ -305,6 +297,16 @@ public class ViewCarActivity extends AppCompatActivity{
         i.putExtra("user",mCarDao.getUser());
         i.putExtra("shop",mCarDao.getShopRef());
         startActivity(i);
+    }
+
+    private void alertDialogEditShop() {
+        new AlertDialog.Builder(this)
+                .setCancelable(false)
+                .setTitle(R.string.alert)
+                .setMessage("ยืนยันการลบประกาศขายรถ")
+                .setPositiveButton("ตกลง", listenerDeletePost)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     @Override
@@ -336,6 +338,37 @@ public class ViewCarActivity extends AppCompatActivity{
         }
         @Override
         public void onFailure(Call<ResponseDao> call, Throwable t) {
+        }
+    };
+
+    DialogInterface.OnClickListener listenerDeletePost = new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+
+            HttpManager.getInstance().getService().observableDeletePost(String.valueOf(mCarDao.getCarId()))
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<ResponseDao>() {
+
+                        @Override
+                        public void call(ResponseDao responseDao) {
+                            Log.d("ViewCar", "call success");
+                            Toast.makeText(ViewCarActivity.this,"ลบโพสสำเร็จ",Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                    });
+
+            /*HttpManager.getInstance().getService().observableDeleteCar(mCarDao.getCarId()+"||offline")
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<ResponseDao>() {
+                        @Override
+                        public void call(ResponseDao responseDao) {
+                            Log.d("ViewCar", "call success");
+                            Toast.makeText(ViewCarActivity.this,"ลบโพสสำเร็จ",Toast.LENGTH_LONG).show();
+                            finish();
+                        }
+                    });*/
+
         }
     };
 }

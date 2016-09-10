@@ -139,6 +139,8 @@
             </LinearLayout>
 
             <TextView
+                android:clickable="true"
+                android:autoLink="phone"
                 android:id="@+id/custom_view_text_details"
                 android:layout_marginTop="6dp"
                 android:text="[Details]"
@@ -175,7 +177,7 @@
                     android:clickable="true"
 
                     android:drawableLeft="@drawable/ic_tel"
-                    android:drawablePadding="10dp"
+                    android:drawablePadding="4dp"
                     android:gravity="center_vertical"
                     android:text="[Phone]"
                     android:textColor="@android:color/white"

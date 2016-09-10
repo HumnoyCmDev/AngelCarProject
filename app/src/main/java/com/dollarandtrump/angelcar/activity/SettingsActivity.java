@@ -104,7 +104,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(preference.getContext())
-                        .getString(preference.getKey(), null));
+                        .getString(preference.getKey(), ""));
     }
 
     @Override

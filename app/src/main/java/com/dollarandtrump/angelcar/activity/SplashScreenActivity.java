@@ -182,7 +182,7 @@ public class SplashScreenActivity extends AppCompatActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == EMAIL_RESOLUTION_REQUEST && resultCode == RESULT_OK) {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-            Toast.makeText(SplashScreenActivity.this,accountName,Toast.LENGTH_LONG).show();
+//            Toast.makeText(SplashScreenActivity.this,accountName,Toast.LENGTH_LONG).show();
             Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(accountName);
             call.enqueue(callbackRegistrationEmail);
         }
@@ -212,7 +212,7 @@ public class SplashScreenActivity extends AppCompatActivity{
         @Override
         public void onResponse(Call<RegisterResultDao> call, Response<RegisterResultDao> response) {
             if (response.isSuccessful()) {
-                // Save Cache
+                // Save CacheData
                 Registration.getInstance().save(response.body());
                 Toast.makeText(SplashScreenActivity.this, "ลงทะเบียนเรียบร้อยแล้ว", Toast.LENGTH_LONG).show();
                 String user = Registration.getInstance().getUserId();

@@ -4,8 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="10dp"
-    android:minWidth="1000dp">
+    android:minWidth="1000dp"
+    android:minHeight="100dp">
 
     <!--<android.support.v7.widget.CardView-->
         <!--app:cardElevation="10dp"-->
@@ -24,7 +24,7 @@
            android:layout_gravity="center"
            android:id="@+id/recyclerShopAllPicture"
            android:numColumns="auto_fit"
-           android:columnWidth="80dp"
+           android:columnWidth="100dp"
            android:padding="10dp"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"/>

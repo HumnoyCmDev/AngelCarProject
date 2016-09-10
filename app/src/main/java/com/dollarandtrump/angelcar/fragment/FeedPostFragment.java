@@ -105,7 +105,7 @@ public class FeedPostFragment extends Fragment{
     private boolean isFilter = false;
 
     private Subscription subscribeCountCar;
-    Call<PostCarCollectionDao> callPost;
+//    Call<PostCarCollectionDao> callPost;
 
     public FeedPostFragment() {
         super();
@@ -194,7 +194,7 @@ public class FeedPostFragment extends Fragment{
     private void reloadDataNewer() {
         loadCountCar();
         // load post newer
-        callPost =
+        Call<PostCarCollectionDao> callPost =
                 HttpManager.getInstance().getService().loadNewerPostCar(mPostManager.firstDateDao());
         callPost.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD_NEWER));
     }
@@ -223,7 +223,7 @@ public class FeedPostFragment extends Fragment{
     private void reloadData() {
         loadCountCar();
         //load Post
-        callPost = HttpManager.getInstance().getService().loadPostCar();
+        Call<PostCarCollectionDao> callPost = HttpManager.getInstance().getService().loadPostCar();
         callPost.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD));
     }
 
@@ -234,7 +234,7 @@ public class FeedPostFragment extends Fragment{
 
         isLoadingMore = true;
         mAdapter.setLoading(true);
-        callPost = HttpManager.getInstance()
+        Call<PostCarCollectionDao> callPost = HttpManager.getInstance()
                 .getService().loadMorePostCar(mPostManager.lastDateDao());
         callPost.enqueue(new FeedCallback(FeedCallback.MODE_LOAD_MORE));
         Log.d(TAG, "loadMoreData 2: "+isStopLoadingMore +" "+isLoadingMore);
@@ -250,7 +250,7 @@ public class FeedPostFragment extends Fragment{
         if (mCopyInformLoadMore == null) return;
         // get date
         mCopyInformLoadMore.setDateMore(mPostManager.lastDateDao());
-        callPost = HttpManager.getInstance()
+        Call<PostCarCollectionDao> callPost = HttpManager.getInstance()
                 .getService().loadFilterFeed(mCopyInformLoadMore.getMapFilter());
         callPost.enqueue(new FilterCallback(1));
     }
@@ -275,10 +275,10 @@ public class FeedPostFragment extends Fragment{
     @Override
     public void onPause() {
         super.onPause();
-        if (callPost.isCanceled()){
-            callPost.cancel();
-            Log.d(TAG, "onPause: cancel");
-        }
+//        if (callPost != null && callPost.isCanceled()){
+//            callPost.cancel();
+//            Log.d(TAG, "onPause: cancel");
+//        }
     }
 
     @OnClick(R.id.btFilter)

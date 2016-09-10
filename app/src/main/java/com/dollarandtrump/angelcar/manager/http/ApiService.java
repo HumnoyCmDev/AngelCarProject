@@ -76,6 +76,10 @@ public interface ApiService {
     @GET("android/api/updatepost.php")
     Observable<ResponseDao> observableAnnounce(@Query("carid") String carId);
 
+    //delete topic
+    @GET("ios/api/ga_chatadmin.php?operation=deletetopic")
+    Observable<ResponseDao> observableDeleteTopic(@Query("message") String topicId);/**1,2,3,4,5**/
+
 
     //Insert Post Car
     @FormUrlEncoded
@@ -142,7 +146,10 @@ public interface ApiService {
 
     /**delete/update car**/
     @GET("ios/api/ga_car.php?operation=updatestatus")
-    Observable<ResponseDao> observableDeleteCar(@Query("message") String message);/**carid||{offline(ลบ),online(เลื่อนประกาศ)}**/
+    Observable<ResponseDao> observableDeleteCar(@Query("message") String message);/**carid||{offline(ลบ)}**/
+
+    @GET("ios/data/gadata/deletepost.php")
+    Observable<ResponseDao> observableDeletePost(@Query("carid") String carId);
 
      /**Feed Post Car**/
     @GET("android/api/getfeedpost.php")

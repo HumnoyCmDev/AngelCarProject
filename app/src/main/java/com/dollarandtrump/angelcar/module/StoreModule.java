@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.dollarandtrump.angelcar.model.LoadConversation;
+import com.dollarandtrump.angelcar.utils.CacheData;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -39,5 +40,11 @@ public class StoreModule {
     @Singleton
     LoadConversation providesLoadConversation(){
         return new LoadConversation();
+    }
+
+    @Provides
+    @Singleton
+    CacheData providesCacheData(){
+        return new CacheData();
     }
 }

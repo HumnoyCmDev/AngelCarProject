@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/group_network_status"
+    android:id="@+id/group_status"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FF0000"
+    android:background="@color/colorPrimary"
     android:gravity="center"
     android:orientation="horizontal"
     android:paddingBottom="4dp"
@@ -11,18 +11,21 @@
     android:paddingRight="16dp"
     android:paddingTop="4dp">
 
+
     <ProgressBar
-        android:id="@+id/network_status_progress_bar"
+        android:id="@+id/status_progress_bar"
         style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/network_status_title"
+        android:textStyle="bold"
+        android:id="@+id/status_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:text="[disconnect]"
-        android:textColor="@android:color/black" />
+        android:text="โหลดข้อความเพิ่มเติม"
+        android:padding="4dp"
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

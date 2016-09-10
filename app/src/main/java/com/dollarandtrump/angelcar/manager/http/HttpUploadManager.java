@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
+import com.dollarandtrump.angelcar.utils.ReduceSizeImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,19 +31,22 @@ public class HttpUploadManager {
 
     }
 
-    public static void uploadLogoShop(final File file, final String shopId, final Subscriber<String> subscriber) {
+    public static Observable<String> uploadLogoShop(final File file, final String shopId) {
                         final OkHttpClient okHttpClient = new OkHttpClient();
-                        Observable.create(new Observable.OnSubscribe<String>() {
+                     return   Observable.create(new Observable.OnSubscribe<String>() {
                             @Override
                             public void call(Subscriber<? super String> subscriber) {
+
+                                File newFile = new ReduceSizeImage(file)
+                                        .resizeImageFile(ReduceSizeImage.SIZE_SMALL);
 
                                 RequestBody requestBody = new MultipartBody.Builder()
                                         .setType(MultipartBody.FORM)
                                         .addFormDataPart("shopid", shopId)
                                         .addFormDataPart(
                                                 "userfile",
-                                                file.getName(),
-                                                RequestBody.create(MediaType.parse("image/png"), file)).build();
+                                                newFile.getName(),
+                                                RequestBody.create(MediaType.parse("image/png"), newFile)).build();
 
                                 Request request = new Request.Builder()
                                         .url("http://angelcar.com/ios/data/clsdata/clsshopupload.php")
@@ -59,8 +63,7 @@ public class HttpUploadManager {
                                 }
                             }
                         }).subscribeOn(Schedulers.newThread())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(subscriber);
+                                .observeOn(AndroidSchedulers.mainThread());
     }
 
     public static void uploadFileShop(final Context context, Gallery gallery, final String shopId, final Subscriber<String> subscriber) {
@@ -71,14 +74,17 @@ public class HttpUploadManager {
                 Observable.create(new Observable.OnSubscribe<String>() {
                     @Override
                     public void call(Subscriber<? super String> subscriber) {
+
+                        File newFile = new ReduceSizeImage(imageModel.convertToFile(context)).resizeImageFile(ReduceSizeImage.SIZE_BIG);
+
                         RequestBody requestBody = new MultipartBody.Builder()
                                 .setType(MultipartBody.FORM)
                                 .addFormDataPart("index",imageModel.getIndex())
                                 .addFormDataPart("shopid", shopId)
                                 .addFormDataPart(
                                         "userfile",
-                                        imageModel.convertToFile(context).getName(),
-                                        RequestBody.create(MediaType.parse("image/png"), imageModel.convertToFile(context))).build();
+                                        newFile.getName(),
+                                        RequestBody.create(MediaType.parse("image/png"), newFile)).build();
 
                         Request request = new Request.Builder()
                                 .url("http://angelcar.com/ios/data/clsdata/shopprofileupload.php")

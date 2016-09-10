@@ -34,6 +34,7 @@
                     <!--android:layout_height="match_parent" />-->
 
                 <com.dollarandtrump.angelcar.view.PhotoBanner
+                    android:src="@drawable/banner_shop"
                     android:id="@+id/image_background_shop"
                     app:layout_collapseMode="parallax"
                     android:scaleType="centerCrop"
@@ -43,34 +44,57 @@
                 <LinearLayout
                     android:layout_gravity="bottom"
                     android:layout_margin="5dp"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <Space
-                        android:layout_weight="0.6"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_marginRight="8dp"
+                        android:gravity="end"
+                        android:padding="3dp"
+                        android:layout_gravity="end"
+                        android:textStyle="bold"
+                        android:id="@+id/text_view_view_shop"
+                        android:textColor="@android:color/white"
+                        android:text="[view shop]"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_image_header_shop"
-                        android:layout_weight="1"
-                        android:layout_width="0dp"
-                        android:layout_height="55dp" />
+                    <LinearLayout
+                        android:layout_gravity="bottom"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <Space
+                            android:layout_weight="0.6"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"/>
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_image_header_shop"
+                            android:layout_weight="1"
+                            android:layout_width="0dp"
+                            android:layout_height="55dp" />
+
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 
-                <TextView
-                    android:background="#5affb13d"
-                    android:gravity="end"
-                    android:padding="3dp"
-                    android:layout_gravity="end"
-                    android:textStyle="bold"
-                    android:id="@+id/text_view_view_shop"
-                    android:textColor="@android:color/black"
-                    android:text="[view shop]"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+
+
+                <!--<TextView-->
+                    <!--android:gravity="end"-->
+                    <!--android:padding="3dp"-->
+                    <!--android:layout_gravity="end"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:id="@+id/text_view_view_shop"-->
+                    <!--android:textColor="@android:color/white"-->
+                    <!--android:text="[view shop]"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content" />-->
 
 
             </FrameLayout>
@@ -112,14 +136,14 @@
                     android:textStyle="bold"
                     android:id="@+id/text_view_shop_name"
                     android:textColor="@android:color/white"
-                    android:text="[shop name]"
+                    android:text="@string/shop_text_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 
                 <TextView
                     android:layout_marginTop="2dp"
                     android:gravity="center"
-                    android:background="@drawable/shape_bg_user_id"
+                    android:background="@drawable/bar_shop_number"
                     android:layout_below="@id/text_view_shop_name"
                     android:layout_centerHorizontal="true"
                     android:textSize="13sp"
@@ -127,8 +151,8 @@
                     android:id="@+id/text_view_shop_number"
                     android:textColor="@android:color/black"
                     android:text="[shop number]"
-                    android:layout_width="147dp"
-                    android:layout_height="24dp"/>
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:layout_marginTop="2dp"
@@ -136,9 +160,9 @@
                     android:layout_centerHorizontal="true"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    android:id="@+id/text_view_shop_decription"
+                    android:id="@+id/text_view_shop_description"
                     android:textColor="@android:color/white"
-                    android:text="[description]"
+                    android:text="@string/shop_text_description"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"/>
 

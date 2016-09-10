@@ -27,10 +27,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-/**
- * Created by humnoy on 26/1/59.
- */
-//// TODO: 20/2/59 New Adapter...
+@Deprecated
 public class ConversationAdapter extends BaseAdapter{
 
     private List<MessageDao> mListDao;

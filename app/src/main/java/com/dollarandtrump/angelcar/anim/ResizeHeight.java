@@ -18,9 +18,8 @@ public class ResizeHeight extends Animation {
         this.targetHeight = targetHeight;
         this.view = view;
         this.startHeight = view.getHeight();
-        initialHeight = 1000;//view.getMeasuredHeight();
+        initialHeight = View.MeasureSpec.getSize(view.getMeasuredHeight());
         this.isExpand = isExpand;
-
     }
 
     @Override

@@ -12,6 +12,13 @@
         android:duplicateParentState="true"
         android:orientation="horizontal">
 
+        <CheckBox
+            android:layout_marginLeft="8dp"
+            android:id="@+id/check_box_delete"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <ImageView
             android:id="@+id/avatar"
             android:layout_width="40dp"
@@ -85,4 +92,20 @@
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
+
+    <TextView
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:drawableLeft="@drawable/ic_undo"
+        android:drawablePadding="6dp"
+        android:textStyle="bold"
+        android:layout_marginRight="16dp"
+        android:id="@+id/undo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ยกเลิก"
+        android:textAllCaps="true"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center_vertical|right"
+        />
 </FrameLayout>

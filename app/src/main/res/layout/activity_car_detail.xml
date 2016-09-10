@@ -37,6 +37,7 @@
         android:background="@android:color/white"
         android:id="@+id/recycler_chat"
         tools:listitem="@layout/angelcar_message_item_me"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>

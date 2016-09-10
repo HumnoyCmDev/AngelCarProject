@@ -134,7 +134,7 @@
 #-keep public class * extends java.lang.Exception
 #-printmapping mapping.txt
 
--keepclassmembers class com.dollarandtrump.angelcar.utils.Cache {
+-keepclassmembers class com.dollarandtrump.angelcar.utils.CacheData {
     private <fields>;
 }
 -keepclassmembers class * {

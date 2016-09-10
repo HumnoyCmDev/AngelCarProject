@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
+import com.dollarandtrump.angelcar.utils.ReduceSizeImage;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,13 +108,16 @@ public class RxUploadFile {
                 return Observable.from(mGallery.getListGallery()).map(new Func1<ImageModel, String>() {
                     @Override
                     public String call(final ImageModel imageModel) {
+
+                        File newFile = new ReduceSizeImage(imageModel.convertToFile(mContext)).resizeImageFile(ReduceSizeImage.SIZE_BIG);
+
                         RequestBody requestBody = new MultipartBody.Builder()
                                 .setType(MultipartBody.FORM)
                                 .addFormDataPart("carid", id)
                                 .addFormDataPart(
                                         "userfile",
-                                        imageModel.convertToFile(mContext).getName(),
-                                        RequestBody.create(MediaType.parse("image/png"), imageModel.convertToFile(mContext))).build();
+                                        newFile.getName(),
+                                        RequestBody.create(MediaType.parse("image/png"), newFile)).build();
                         Request request = new Request.Builder()
                                 .url("http://www.angelcar.com/ios/data/gadata/imgupload.php")
                                 .post(requestBody)
@@ -152,13 +156,16 @@ public class RxUploadFile {
             Observable.from(mGallery.getListGallery()).map(new Func1<ImageModel, String>() {
                 @Override
                 public String call(ImageModel file) {
+
+                    File newFile = new ReduceSizeImage(file.convertToFile(mContext)).resizeImageFile(ReduceSizeImage.SIZE_SMALL);
+
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
-                            .addFormDataPart("approve_id", approveId)
+                            .addFormDataPart("approveid", approveId)
                             .addFormDataPart(
                                     "userfile",
-                                    file.convertToFile(mContext).getName(),
-                                    RequestBody.create(MediaType.parse("image/png"), file.convertToFile(mContext))).build();
+                                    newFile.getName(),
+                                    RequestBody.create(MediaType.parse("image/png"), newFile)).build();
                     Request request = new Request.Builder()
                             .url("http://www.angelcar.com/ios/data/gadata/evidenceupload.php")
                             .post(requestBody)

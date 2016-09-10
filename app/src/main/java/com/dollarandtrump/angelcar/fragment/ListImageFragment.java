@@ -1,14 +1,11 @@
 package com.dollarandtrump.angelcar.fragment;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,13 +25,10 @@ import com.dollarandtrump.angelcar.model.ImageModel;
 import com.dollarandtrump.angelcar.model.InfoCarModel;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
-import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.dollarandtrump.angelcar.view.RecyclerGridAutoFit;
 import com.squareup.otto.Produce;
 
 import org.parceler.Parcels;
-
-import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -42,11 +36,7 @@ import butterknife.OnClick;
 import rx.functions.Action1;
 
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย Humnoy Android Developer
- * ลงวันที่ 11/16/2014. เวลา 11:42
- ***************************************/
+
 @SuppressWarnings("unused")
 public class  ListImageFragment extends Fragment {
     private static final String TAG = "ListImageFragment";
@@ -293,7 +283,7 @@ public class  ListImageFragment extends Fragment {
 //            holder.mImageGallery.setMaxWidth(mListImage.getThumbnailSize());
 //            holder.mImageGallery.setMaxHeight(mListImage.getThumbnailSize());
 
-             if (getItemViewType(position) == 0){
+             if (holder.getItemViewType() == 0){
                  Glide.with(mContext)
                          .load(mGallery.getListGallery().get(position).getUri())
 //                         .override(200,200)

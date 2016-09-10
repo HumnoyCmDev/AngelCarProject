@@ -1,12 +1,10 @@
 package com.dollarandtrump.angelcar.dialog;
 
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,20 +13,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.ResponseDao;
-import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
 import com.dollarandtrump.angelcar.utils.FileUtils;
+import com.dollarandtrump.angelcar.utils.Log;
 import com.github.siyamed.shapeimageview.CircularImageView;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -36,7 +30,6 @@ import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.Observable;
 import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -134,7 +127,7 @@ public class ShopEditDialog extends DialogFragment {
         final String shopName = editShopName.getText().toString().trim();
         final String shopDescription = editShopDescription.getText().toString().trim();
         if (shopName.equals("") || shopDescription.equals("")){
-            Snackbar.make(getActivity().getWindow().getDecorView(),"กรุณาใส่ข้อมูลให้ครบ",Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(editShopName,"กรุณาใส่ข้อมูลให้ครบ",Snackbar.LENGTH_SHORT).show();
             return;
         }
         String shopRef = Registration.getInstance().getShopRef();
@@ -156,7 +149,7 @@ public class ShopEditDialog extends DialogFragment {
 
             @Override
             public void onNext(ResponseDao responseDao) {
-
+                Log.d("edit name success ::");
 //                preferencesDefault.edit().putString("pre_shop_name",shopName).apply();
 //                preferencesDefault.edit().putString("pre_description",shopDescription).apply();
 
@@ -168,23 +161,22 @@ public class ShopEditDialog extends DialogFragment {
 
         // upload image profiles
         if (mUri != null) {
-            HttpUploadManager.uploadLogoShop(FileUtils.getFile(getActivity(),mUri), Registration.getInstance().getShopRef(), new Subscriber<String>() {
+            HttpUploadManager.uploadLogoShop(FileUtils.getFile(getActivity(), mUri), Registration.getInstance().getShopRef())
+                    .doOnNext(new Action1<String>() {
                         @Override
-                        public void onCompleted() {
-                            Log.i("ShopEdit", "onCompleted: ");
+                        public void call(String s) {
+                            Log.d("upload image shop success ::"+s);
                         }
-
+                    })
+                    .doOnError(new Action1<Throwable>() {
                         @Override
-                        public void onError(Throwable e) {
-                            Log.e("ShopEdit", "onError: ", e);
+                        public void call(Throwable throwable) {
+                            Log.e("error dialog shop",throwable);
                         }
-
-                        @Override
-                        public void onNext(String s) {
-                            Log.i("ShopEdit", "onNext: "+s);
-                        }
-            });
+                    }).subscribe();
         }
+
+
         dismiss();
     }
 

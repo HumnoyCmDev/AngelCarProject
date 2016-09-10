@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -21,18 +22,24 @@ import rx.subjects.AsyncSubject;
 public class SampleRx {
 
     public static void main(String[] str) {
+        List<Integer> list = new  ArrayList<>();
+        list.add(0);
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+        list.add(5);
 
-        Observable.interval(2000, TimeUnit.MILLISECONDS,Schedulers.io())
-                .distinctUntilChanged()
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<Long>() {
-            @Override
-            public void call(Long aLong) {
-                System.out.print("----------------" + aLong);
-            }
-        });
+        List<Integer> listCopy = new  ArrayList<>();
 
+        for (ListIterator<Integer> iterator = list.listIterator(); iterator.hasNext();){
+            Integer i = iterator.next();
+            listCopy.add(0,i);
+        }
 
+        for (int i : listCopy){
+            System.out.println(i);
+        }
 
     }
 

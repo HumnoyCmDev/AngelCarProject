@@ -76,7 +76,7 @@ public class ShopFragment extends Fragment {
 
     @Bind(R.id.image_button_up_and_down) ImageView mImageUpDown;
     @Bind(R.id.image_background_shop) PhotoBanner mImageBgShop;
-    @Bind(R.id.text_view_shop_decription) TextView mTextShopDescription;
+    @Bind(R.id.text_view_shop_description) TextView mTextShopDescription;
     @Bind(R.id.text_view_shop_number) TextView mTextShopNumber;
     @Bind(R.id.text_view_shop_name) TextView mTextShopName;
     @Bind(R.id.text_view_view_shop) TextView mTextViewShop;
@@ -309,13 +309,24 @@ public class ShopFragment extends Fragment {
 
         Log.d(TAG, ""+profileDao.getShopName() +" , "+profileDao.getShopDescription());
 
-        mTextShopName.setText(profileDao.getShopName());
-        mTextShopDescription.setText(profileDao.getShopDescription());
+        String name = profileDao.getShopName();
+        String description = profileDao.getShopDescription();
+
+        if(name == null || name.equals("")){
+            name = getString(R.string.shop_text_name);
+        }
+        if (description == null || description.equals("")){
+            description = getString(R.string.shop_text_description);
+        }
+
+        mTextShopName.setText(name);
+        mTextShopDescription.setText(description);
         mTextShopNumber.setText(profileDao.getShopNumber());
 
         initProfileShopBg(profileDao, mIdImageBackground);
         mImageHeaderAdapter.setUrlPath(profileDao.getProfilePath());
         mImageHeaderAdapter.notifyDataSetChanged();
+        mListImageHeader.setVisibility(profileDao.getProfilePath().size() <= 0 ? View.GONE : View.VISIBLE);
 
         //Check Shop Name
         if (mProfileDao.getShopName() == null && isShop){
@@ -327,6 +338,8 @@ public class ShopFragment extends Fragment {
     private void initProfileShopBg(ProfileDao dao,int id){
         Glide.with(this)
                 .load(dao.getUrlShopBackground(id))
+                .placeholder(R.drawable.banner_shop)
+                .error(R.drawable.banner_shop)
                 .crossFade()
                 .into(mImageBgShop);
     }

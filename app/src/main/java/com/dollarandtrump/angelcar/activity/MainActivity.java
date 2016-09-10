@@ -1,8 +1,11 @@
 package com.dollarandtrump.angelcar.activity;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -29,16 +32,18 @@ import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.model.ActivityResultEvent;
 import com.dollarandtrump.angelcar.model.ConversationCache;
+import com.dollarandtrump.angelcar.model.realm.GroupMessageReamObject;
+import com.dollarandtrump.angelcar.model.realm.MessageRealmObject;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
 import com.flyco.tablayout.listener.OnTabSelectListener;
-import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,6 +51,10 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -61,6 +70,8 @@ public class MainActivity extends AppCompatActivity{
     @Inject
     @Named("default")
     SharedPreferences preferencesDefault;
+
+//    private Realm realm;
 
     private static final String TAG = "MainActivity";
 
@@ -87,6 +98,47 @@ public class MainActivity extends AppCompatActivity{
         ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
         menuFab.setClosedOnTouchOutside(true);
+
+//        setBadge(this,50);
+
+//        realm = Realm.getDefaultInstance();
+
+//        realm.beginTransaction();
+//        GroupMessageReamObject reamObject = realm.createObject(GroupMessageReamObject.class);
+//        reamObject.setGroup("top");
+//        MessageRealmObject messageRealmObject = realm.createObject(MessageRealmObject.class);
+//        messageRealmObject.setDelete(false);
+//        messageRealmObject.setMessageId(1);
+//        reamObject.getMessage().add(messageRealmObject);
+//        realm.commitTransaction();
+
+//        RealmResults<GroupMessageReamObject> query = realm.where(GroupMessageReamObject.class)
+//                .equalTo("group","top").findAll();
+//
+//        realm.executeTransaction(new Realm.Transaction() {
+//            @Override
+//            public void execute(Realm realm) {
+//                GroupMessageReamObject g = realm.createObject(GroupMessageReamObject.class);
+//                g.setGroup("top");
+//                MessageRealmObject object = new MessageRealmObject();
+//                object.setMessageId(2);
+//                object.setDelete(true);
+//                g.getMessage().add(object);
+//            }
+//        });
+//        query.addChangeListener(new RealmChangeListener<RealmResults<GroupMessageReamObject>>() {
+//            @Override
+//            public void onChange(RealmResults<GroupMessageReamObject> element) {
+//                for (GroupMessageReamObject g : element){
+//                    Log.d(TAG, "onCreate: "+g.getGroup());
+//                    for (MessageRealmObject m : g.getMessage()) {
+//                        Log.d(TAG, "onCreate: " + m.getMessageId());
+//                        Log.d(TAG, "onCreate: " + m.isDelete());
+//                    }
+//                }
+//            }
+//        });
+
 
     }
 
@@ -169,6 +221,14 @@ public class MainActivity extends AppCompatActivity{
         /*RxNotification.with(this).onDestroy();*/
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+//        if (realm != null && realm.isClosed()) {
+//            realm.close();
+//        }
+    }
+
     @Subscribe
     public void scrollingShowAndHide(FeedPostFragment.Scrolling scrolling){
         if (scrolling.getScroll() == FeedPostFragment.Scrolling.SCROLL_UP){
@@ -248,7 +308,7 @@ public class MainActivity extends AppCompatActivity{
         if (menu == null) return;
         if (findMessageNotRead("Topic","officer") != null || findMessageNotRead("Buy","shop") != null ||
                 findMessageNotRead("Sell","user") != null){
-            menu.getItem(0).setIcon(R.drawable.ic_alert_message2);
+            menu.getItem(0).setIcon(R.drawable.ic_alert_message);
         }else {
             menu.getItem(0).setIcon(R.drawable.ic_message);
         }
@@ -336,7 +396,7 @@ public class MainActivity extends AppCompatActivity{
         @Override
         public void onResponse(Call<RegisterResultDao> call, Response<RegisterResultDao> response) {
             if (response.isSuccessful()) {
-                // Save Cache
+                // Save CacheData
                 Registration.getInstance().save(response.body());
                 Toast.makeText(MainActivity.this, "ลงทะเบียนเรียบร้อยแล้ว "+response.body().getUserId() +" "+response.body().getShopId(), Toast.LENGTH_LONG).show();
                 String user = Registration.getInstance().getUserId();
@@ -405,5 +465,37 @@ public class MainActivity extends AppCompatActivity{
 
         }
     };
+
+
+
+    public static void setBadge(Context context, int count) {
+        String launcherClassName = getLauncherClassName(context);
+        if (launcherClassName == null) {
+            return;
+        }
+        Intent intent = new Intent("android.intent.action.BADGE_COUNT_UPDATE");
+        intent.putExtra("badge_count", count);
+        intent.putExtra("badge_count_package_name", context.getPackageName());
+        intent.putExtra("badge_count_class_name", launcherClassName);
+        context.sendBroadcast(intent);
+    }
+
+    public static String getLauncherClassName(Context context) {
+
+        PackageManager pm = context.getPackageManager();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
+        for (ResolveInfo resolveInfo : resolveInfos) {
+            String pkgName = resolveInfo.activityInfo.applicationInfo.packageName;
+            if (pkgName.equalsIgnoreCase(context.getPackageName())) {
+                String className = resolveInfo.activityInfo.name;
+                return className;
+            }
+        }
+        return null;
+    }
 
 }

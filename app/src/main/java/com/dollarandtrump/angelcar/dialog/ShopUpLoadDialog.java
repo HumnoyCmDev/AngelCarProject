@@ -23,6 +23,7 @@ import com.dollarandtrump.angelcar.model.Gallery;
 import com.dollarandtrump.angelcar.model.ImageModel;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
+import com.dollarandtrump.angelcar.view.PhotoThumb;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -246,11 +247,15 @@ public class ShopUpLoadDialog extends DialogFragment {
 
         @Override
         public void onBindViewHolder(ShopUpLoadAdapter.ViewHolder holder, int position) {
-            if (getItemViewType(position) == 1) {
+            if (holder.getItemViewType() == 1) {
                 Glide.with(mContext)
                         .load(mGallery.getListGallery().get(position - 1).getUri())
                         .crossFade()
+                        .centerCrop()
                         .into(holder.imageGallery);
+            }else {
+                holder.imageGallery.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+                holder.imageGallery.setBackgroundResource(android.R.color.darker_gray);
             }
         }
 
@@ -265,7 +270,7 @@ public class ShopUpLoadDialog extends DialogFragment {
 
         public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             @Bind(R.id.imageGallery)
-            ImageView imageGallery;
+            PhotoThumb imageGallery;
 
             public ViewHolder(View itemView) {
                 super(itemView);

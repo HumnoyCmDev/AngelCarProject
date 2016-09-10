@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frame_layout_view_group"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/listConversation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ViewStub
+        android:id="@+id/stub_text_view"
+        android:inflatedId="@+id/text_no_result"
+        android:layout="@layout/inflate_text_view_no_result"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageButton
+        android:id="@+id/imageButton_delete"
+        android:elevation="4dp"
+        android:background="@drawable/selector_conversation_button_delete"
+        android:src="@drawable/ic_bin_delete_black_32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom|center"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
+
+</FrameLayout>
