@@ -105,7 +105,10 @@ public class FeedPostFragment extends Fragment{
     private boolean isFilter = false;
 
     private Subscription subscribeCountCar;
-//    Call<PostCarCollectionDao> callPost;
+
+    Call<PostCarCollectionDao> callReloadDataNewer;
+    Call<PostCarCollectionDao> callReloadData;
+    Call<PostCarCollectionDao> callLoadMoreData;
 
     public FeedPostFragment() {
         super();
@@ -194,9 +197,9 @@ public class FeedPostFragment extends Fragment{
     private void reloadDataNewer() {
         loadCountCar();
         // load post newer
-        Call<PostCarCollectionDao> callPost =
+        callReloadDataNewer =
                 HttpManager.getInstance().getService().loadNewerPostCar(mPostManager.firstDateDao());
-        callPost.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD_NEWER));
+        callReloadDataNewer.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD_NEWER));
     }
 
     private void loadCountCar() {
@@ -223,8 +226,8 @@ public class FeedPostFragment extends Fragment{
     private void reloadData() {
         loadCountCar();
         //load Post
-        Call<PostCarCollectionDao> callPost = HttpManager.getInstance().getService().loadPostCar();
-        callPost.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD));
+        callReloadData = HttpManager.getInstance().getService().loadPostCar();
+        callReloadData.enqueue(new FeedCallback(FeedCallback.MODE_RELOAD));
     }
 
     private void loadMoreData(){
@@ -234,9 +237,9 @@ public class FeedPostFragment extends Fragment{
 
         isLoadingMore = true;
         mAdapter.setLoading(true);
-        Call<PostCarCollectionDao> callPost = HttpManager.getInstance()
+        callLoadMoreData = HttpManager.getInstance()
                 .getService().loadMorePostCar(mPostManager.lastDateDao());
-        callPost.enqueue(new FeedCallback(FeedCallback.MODE_LOAD_MORE));
+        callLoadMoreData.enqueue(new FeedCallback(FeedCallback.MODE_LOAD_MORE));
         Log.d(TAG, "loadMoreData 2: "+isStopLoadingMore +" "+isLoadingMore);
 
     }
@@ -479,12 +482,27 @@ public class FeedPostFragment extends Fragment{
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        cancelCall(callLoadMoreData,callReloadData,callReloadDataNewer);
+        if (subscribeCountCar != null){
+            subscribeCountCar.unsubscribe();
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
 
-        if (subscribeCountCar != null){
-            subscribeCountCar.unsubscribe();
+
+    }
+
+    private void cancelCall(Call<PostCarCollectionDao>...  calls){
+        for (Call<PostCarCollectionDao> c : calls){
+            if (c != null && c.isCanceled()){
+                c.cancel();
+            }
         }
     }
 
