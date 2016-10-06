@@ -27,6 +27,7 @@ public class SearchActivity extends BaseAppCompat {
         setContentView(R.layout.activity_search);
         ButterKnife.bind(this);
 
+
         //toolbar
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
