@@ -12,9 +12,7 @@ import org.parceler.Parcel;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * Created by humnoy on 10/3/59.
- */
+/** Created by Kotlin **/
 @Parcel(value = Parcel.Serialization.FIELD, analyze = PostCarDao.class)
 @Table(name = "PostCar")
 public class PostCarDao extends Model implements Serializable {

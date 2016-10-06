@@ -22,7 +22,7 @@ public class InfoCarModel {
     int category =-1 ;//0 = owner,1 = delegate,2 = dealers
     int resIdLogo; //logo
     int year = 0;//2016
-    String gear = "gear"; // all = 0 , mt = 1 , at = 2
+    String gear = "NULL"; // mt = 1 , at = 2
     String priceStart = "0";
     String priceEnd = "0";
     String dateMore = "dateMore";
@@ -143,7 +143,7 @@ public class InfoCarModel {
     }
 
     public void clear(){
-        gear = "gear";
+        gear = "NULL";
         priceStart = "0";
         priceEnd = "0";
         dateMore = "dateMore";
@@ -175,9 +175,10 @@ public class InfoCarModel {
             map.put("year",String.valueOf(year));
         }
         // check gear
-        if (!gear.contains("gear")){
+        if (!gear.contains("NULL")){
             map.put("gear",gear);
         }
+
         if (!dateMore.contains("dateMore")){
             map.put("datemore",dateMore);
         }

@@ -22,6 +22,16 @@ public class TopicDao {
     @SerializedName("topicstamp")   @Expose Date stamp;
     @SerializedName("topictype")    @Expose String type;
 
+    @SerializedName("topicprofileimage") @Expose String imageProfile;
+
+    public String getImageProfile() {
+        return imageProfile;
+    }
+
+    public void setImageProfile(String imageProfile) {
+        this.imageProfile = imageProfile;
+    }
+
     public int getId() {
         return id;
     }

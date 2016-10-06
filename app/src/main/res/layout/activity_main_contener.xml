@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <include layout="@layout/view_pager_layout"/>
+    <include layout="@layout/pager_layout"/>
 
     <!--<include layout="@layout/menu_bottom_layout"/>-->
 

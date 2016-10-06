@@ -1,18 +1,17 @@
 package com.dollarandtrump.angelcar.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.dollarandtrump.angelcar.Adapter.FollowAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.fragment.ShopFragment;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ShopActivity extends AppCompatActivity {
+public class ShopActivity extends BaseAppCompat {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
 
@@ -48,5 +47,10 @@ public class ShopActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public Snackbar onCreateSnackBar() {
+        return Snackbar.make(mToolbar, R.string.status_network, Snackbar.LENGTH_INDEFINITE);
     }
 }

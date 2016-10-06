@@ -10,11 +10,7 @@ import android.view.ViewGroup;
 import com.dollarandtrump.angelcar.R;
 
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย Humnoy Android Developer
- * ลงวันที่ 11/16/2014. เวลา 11:42
- ***************************************/
+
 @SuppressWarnings("unused")
 public class FragmentTemplateFull extends Fragment {
 

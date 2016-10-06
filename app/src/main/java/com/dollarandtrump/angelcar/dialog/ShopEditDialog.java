@@ -1,6 +1,11 @@
 package com.dollarandtrump.angelcar.dialog;
 
+import android.support.v4.app.NotificationCompat;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -15,19 +20,24 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.ResponseDao;
+import com.dollarandtrump.angelcar.manager.ProgressRequestBody;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.manager.http.HttpUploadManager;
+import com.dollarandtrump.angelcar.model.NotResponse;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
 import com.dollarandtrump.angelcar.utils.FileUtils;
 import com.dollarandtrump.angelcar.utils.Log;
+import com.dollarandtrump.angelcar.utils.ReduceSizeImage;
 import com.github.siyamed.shapeimageview.CircularImageView;
+
+import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import okhttp3.MultipartBody;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -35,8 +45,10 @@ import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
-public class ShopEditDialog extends DialogFragment {
+public class ShopEditDialog extends DialogFragment implements ProgressRequestBody.UploadCallbacks{
     public final static int REQUEST_CODE = 100;
+    private final int NOTIFICATION_ID = 10;
+
     public interface EditShopCallback{
         void onSuccess();
         void onFail();
@@ -47,14 +59,13 @@ public class ShopEditDialog extends DialogFragment {
     @Bind(R.id.text_view_shop_number) TextView tvShopNumber;
     @Bind(R.id.shopProfileImage) CircularImageView profileImage;
 
-    EditShopCallback editShopCallback;
+    private EditShopCallback editShopCallback;
 
-    String shopName, shopDescription,shopNumber , logoShop;
-    Uri mUri = null;
+    private String shopName, shopDescription,shopNumber , logoShop;
+    private Uri mUri = null;
 
-//    @Inject
-//    @Named("default")
-//    SharedPreferences preferencesDefault;
+    private NotificationManager notificationManager;
+    private NotificationCompat.Builder notification;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -99,6 +110,18 @@ public class ShopEditDialog extends DialogFragment {
                 .placeholder(com.hndev.library.R.drawable.icon_logo)
                 .bitmapTransform(new CropCircleTransformation(getActivity()))
                 .into(profileImage);
+
+        notificationManager =
+                (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
+       notification = new NotificationCompat.Builder(getContext())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("อัพโหลดรูปโปรไฟล์")
+                .setContentText("กำลังอัพโหลดรูป")
+                .setLights(Color.RED,3000,3000)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setAutoCancel(true);
 
     }
 
@@ -161,52 +184,64 @@ public class ShopEditDialog extends DialogFragment {
 
         // upload image profiles
         if (mUri != null) {
-            HttpUploadManager.uploadLogoShop(FileUtils.getFile(getActivity(), mUri), Registration.getInstance().getShopRef())
-                    .doOnNext(new Action1<String>() {
-                        @Override
-                        public void call(String s) {
-                            Log.d("upload image shop success ::"+s);
-                        }
-                    })
-                    .doOnError(new Action1<Throwable>() {
-                        @Override
-                        public void call(Throwable throwable) {
-                            Log.e("error dialog shop",throwable);
-                        }
-                    }).subscribe();
+//            HttpUploadManager.uploadLogoShop(FileUtils.getFile(getActivity(), mUri), Registration.getInstance().getShopRef())
+//                    .doOnNext(new Action1<String>() {
+//                        @Override
+//                        public void call(String s) {
+//                            Log.d("upload image shop success ::"+s);
+//                        }
+//                    })
+//                    .doOnError(new Action1<Throwable>() {
+//                        @Override
+//                        public void call(Throwable throwable) {
+//                            Log.e("error dialog shop",throwable);
+//                        }
+//                    }).subscribe();
+
+            File newFile = new ReduceSizeImage(FileUtils.getFile(getActivity(), mUri))
+                    .resizeImageFile(ReduceSizeImage.SIZE_SMALL);
+            ProgressRequestBody fileBody = new ProgressRequestBody(newFile, this);
+            MultipartBody.Part filePart = MultipartBody.Part.createFormData("userfile", newFile.getName(), fileBody);
+            HttpManager.getInstance()
+                    .getService()
+                    .observableUploadLogoShop(Registration.getInstance().getShopRef(),filePart)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnError(new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    Log.e("ERROR Shop Edit",throwable);
+                }
+            })
+            .doOnNext(new Action1<NotResponse>() {
+                @Override
+                public void call(NotResponse s) {
+                    notificationManager.cancel(NOTIFICATION_ID);
+                    notification.setProgress(100,100,false);
+                    notification.setContentText("อัพโหลดรูปโปรไฟล์สำเร็จ")
+                                .setVibrate(new long[]{50,50})
+                                /*.setProgress(0,0,false)*/;
+                    notificationManager.notify(NOTIFICATION_ID,notification.build());
+                }
+            }).subscribe();
         }
 
 
         dismiss();
     }
 
-//    @Subscribe
-//    public void onActivityResultReceived(ActivityResultEvent event) {
-//        int requestCode = event.getRequestCode();
-//        int resultCode = event.getResultCode();
-//        Intent data = event.getData();
-//        onActivityResult(requestCode, resultCode, data);
-//    }
-//
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK && null != data) {
-//            picturePath = AngelCarUtils.getFilesPath(getContext(),data);
-//            Glide.with(this).load(new File(picturePath))
-//                    .placeholder(com.hndev.library.R.drawable.loading)
-//                    .bitmapTransform(new CropCircleTransformation(getActivity()))
-//                    .into(profileImage);
-//        }
-//
-//    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
 //        MainThreadBus.getInstance().unregister(this);
+    }
+
+    @Override
+    public void onProgressUpdate(int percentage) {
+        notification.setProgress(100,percentage,false);
+        notificationManager.notify(NOTIFICATION_ID,notification.build());
     }
 
     /******************

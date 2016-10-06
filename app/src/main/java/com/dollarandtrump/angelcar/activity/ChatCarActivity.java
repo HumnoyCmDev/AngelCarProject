@@ -6,28 +6,24 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.dollarandtrump.angelcar.Adapter.ViewMessageAdapter;
 import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
-import com.dollarandtrump.angelcar.dao.FollowDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
@@ -41,11 +37,13 @@ import com.dollarandtrump.angelcar.manager.WaitMessageObservable;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.manager.http.RxSendMessage;
+import com.dollarandtrump.angelcar.network.Connectivity;
 import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
 import com.dollarandtrump.angelcar.rx_picker.RxLocationPicker;
 import com.dollarandtrump.angelcar.rx_picker.Sources;
 import com.dollarandtrump.angelcar.utils.CacheData;
 import com.dollarandtrump.angelcar.utils.FileUtils;
+import com.dollarandtrump.angelcar.view.BarStatusView;
 import com.dollarandtrump.angelcar.view.ItemCarDetails;
 import com.google.android.gms.location.places.Place;
 import com.google.gson.Gson;
@@ -66,7 +64,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observable;
-import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -74,17 +71,15 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 
-public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails.OnClickItemHeaderChatListener {
+public class ChatCarActivity extends BaseAppCompat implements ItemCarDetails.OnClickItemHeaderChatListener {
     private static final String TAG = "Chat";
 
     @Bind(R.id.linear_layout_group_chat) LinearLayout groupChat;
     @Bind(R.id.edit_text_input_chat) EditText mInputChat;
     @Bind(R.id.toolbar) Toolbar toolbar;
-
-    @Bind(R.id.message_button_send)
-    Button mSend;
-
+    @Bind(R.id.message_button_send) Button mSend;
     @Bind(R.id.recycler_chat) RecyclerView mListChat;
+    @Bind(R.id.bar_status) BarStatusView mBarStatus;
     private ViewMessageAdapter mAdapter;
 
     private PictureCollectionDao mPictureCollectionDao;
@@ -96,7 +91,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
     private WaitMessageObservable mWaitMessage;
     private Subscription mSubscription;
-    private String mKeyMessage;
+//    private String mKeyMessage;
 
     @Inject Gson mGson;
     @Inject CacheData cacheData;
@@ -114,28 +109,20 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         if (savedInstanceState == null) {
             // load message
              /*save message json [message_json_[carId]_[messageFromUser]]*/
-            if (cacheData.isFile(mKeyMessage)) {
-                String json = cacheData.load(mKeyMessage, String.class);
-                MessageCollectionDao messageDao = mGson.fromJson(json, MessageCollectionDao.class);
-                mMessageManager.setMessageDao(messageDao);
-
-                mAdapter.setMessageDao(mMessageManager.getMessageDao());
-                mAdapter.notifyDataSetChanged();
-//                mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
-                loadMoreMessage(mMessageManager.getMaximumId());
-            } else {
+//            if (cacheData.isFile(mKeyMessage)) {
+//                String json = cacheData.load(mKeyMessage, String.class);
+//                MessageCollectionDao messageDao = mGson.fromJson(json, MessageCollectionDao.class);
+//                mMessageManager.setMessageDao(messageDao);
+//
+//                mAdapter.setMessageDao(mMessageManager.getMessageDao());
+//                mAdapter.notifyDataSetChanged();
+////                mLinearLayoutManager.smoothScrollToPosition(mListChat,null,mViewMessageAdapter.getItemCount());
+//                loadMoreMessage(mMessageManager.getMaximumId());
+//            } else {
                 loadMoreMessage(0);
-            }
+//            }
             Log.i(TAG, "loadMessage: :: "+ mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         }
-    }
-
-    private void loadFollow() {
-        //init on//off Button Follow
-        Call<FollowCollectionDao> call =
-                HttpManager.getInstance().getService()
-                        .loadFollow(Registration.getInstance().getShopRef());
-        call.enqueue(followCollectionDaoCallback);
     }
 
     private void initInstance() {
@@ -146,8 +133,8 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         mMessageFromUser = getIntent().getStringExtra("messageFromUser");
         int intentForm = getIntent().getIntExtra("intentForm", 1);
 
-        mKeyMessage = String.format("message_json_%s_%s",
-                mPostCarDao.getCarId(),mMessageFromUser);
+//        mKeyMessage = String.format("message_json_%s_%s",
+//                mPostCarDao.getCarId(),mMessageFromUser);
 
         /**title**/
 //        String carBrand = mPostCarDao.getCarName() + " " +
@@ -169,9 +156,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
         mMessageManager = new MessageManager();
 
-       /* mAdapter = new ChatAdapter(mMessageBy);
-        mListView.setAdapter(mAdapter);
-        mAdapter.setOnClickItemBannerListener(this);*/
 
 
         //TODO-GREEN Test new adapter InitInstance
@@ -371,43 +355,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         dialog.show();
     }
 
-
-    @Deprecated
-    private void loadMessageNewer() {
-
-        HttpManager.getInstance().getService()
-                .observableViewMessage(mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0")
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<MessageCollectionDao>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError: ", e);
-                    }
-
-                    @Override
-                    public void onNext(MessageCollectionDao messageCollectionDao) {
-                        initMessageAdapter(messageCollectionDao);
-
-                        String gson = mGson.toJson(messageCollectionDao);
-                        boolean isSuccess = new CacheData().save(mKeyMessage, gson);
-
-                    /*start Time Out 1000L wait message */
-                        /**observable wait message **/
-                        mWaitMessage = new WaitMessageObservable(WaitMessageObservable.Type.CHAT_CAR,mMessageManager.getMaximumId(),
-                                String.valueOf(mPostCarDao.getCarId()), mMessageFromUser,mMessageManager.getCurrentIdStatus());
-                        mSubscription = Observable.create(mWaitMessage)
-                                .subscribeOn(Schedulers.newThread()).subscribe();
-                    }
-                });
-
-    }
-
     public void loadMoreMessage(int currentMessageId){
 //        Log.d(TAG, "loadMessageNewer: "+mPostCarDao.getCarId()+"||"+ mMessageFromUser +"||0");
         HttpManager.getInstance().getService()
@@ -418,8 +365,9 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     @Override
                     public void call(MessageCollectionDao dao) {
                         initMessageAdapter(dao);
-                        String gson = mGson.toJson(dao);
-                        cacheData.save(mKeyMessage, gson);
+
+//                        String gson = mGson.toJson(dao);
+//                        cacheData.save(mKeyMessage, gson);
 
                     /*start Time Out 1000L wait message */
                         /**observable wait message **/
@@ -509,7 +457,6 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
 
         if (mSubscription != null)
             mSubscription.unsubscribe();
-//            RxMessageObservable.with().onDestroy();
 
     }
 
@@ -529,19 +476,43 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
     DialogInterface.OnClickListener listenerDialogConfirm = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
-                Call<ResponseDao> call =
+            HttpManager.getInstance().getService().observableRegOfficer(mPostCarDao.getCarId()+"||"+mMessageFromUser)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError(new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                            Log.e(TAG,"ERROR CHAT CAR", throwable);
+                        }
+                    })
+                    .doOnNext(new Action1<ResponseDao>() {
+                        @Override
+                        public void call(ResponseDao responseDao) {
+                            RxSendMessage rxSendMessage = new RxSendMessage(String.valueOf(mPostCarDao.getCarId()),
+                                    mMessageFromUser,"กรุณารอสักครู่ ขณะนี้กำลังดำเนินการเรียกพนักงาน", "office");
+                            Observable.create(rxSendMessage)
+                                    .subscribeOn(Schedulers.newThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe();
+                        }
+                    })
+                    .subscribe();
+               /* Call<ResponseDao> call =
                         HttpManager.getInstance().getService().regOfficer(mPostCarDao.getCarId()+"||"+mMessageFromUser);
                 call.enqueue(new Callback<ResponseDao>() {
                     @Override
                     public void onResponse(Call<ResponseDao> call, Response<ResponseDao> response) {
                         if (response.isSuccessful()){
-                            Toast.makeText(ChatCarActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
+
+
+
+//                            Toast.makeText(ChatCarActivity.this,"success ::"+response.body().getResult(),Toast.LENGTH_SHORT).show();
                         }else {
-                            try {
-                                Toast.makeText(ChatCarActivity.this,"success"+response.errorBody().string(),Toast.LENGTH_SHORT).show();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+//                            try {
+//                                Toast.makeText(ChatCarActivity.this,"success"+response.errorBody().string(),Toast.LENGTH_SHORT).show();
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
                         }
                     }
 
@@ -549,7 +520,7 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
                     public void onFailure(Call<ResponseDao> call, Throwable t) {
                         Log.e(TAG, "onFailure: ", t);
                     }
-                });
+                });*/
         }
     };
 
@@ -583,33 +554,31 @@ public class ChatCarActivity extends AppCompatActivity implements ItemCarDetails
         }
     };
 
-    Callback<FollowCollectionDao> followCollectionDaoCallback = new Callback<FollowCollectionDao>() {
-        @Override
-        public void onResponse(Call<FollowCollectionDao> call, Response<FollowCollectionDao> response) {
-            if (response.isSuccessful()) {
-                if (response.body().getRows() != null) {
-                    for (FollowDao dao : response.body().getRows()) {
-                        if (dao.getCarRef().
-                                contains(String.valueOf(mPostCarDao.getCarId()))) {
-                            mAdapter.setFollow(true);
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
 
-            } else {
-                try {
-                    Log.i(TAG, "onResponse: " + response.errorBody().string());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    @Override
+    public void internetConnectivity(Boolean isConnectedToInternet) {
+        super.internetConnectivity(isConnectedToInternet);
+        if (isConnectedToInternet){
+            // hide status bar
+            mBarStatus.setVisibility(View.GONE);
+            groupChat.setVisibility(View.VISIBLE);
+        }else {
+            // Show status bar
+            mBarStatus.setVisibility(View.VISIBLE);
+            groupChat.setVisibility(View.GONE);
         }
+    }
 
-        @Override
-        public void onFailure(Call<FollowCollectionDao> call, Throwable t) {
-            Log.e(TAG, "onFailure: ", t);
-        }
-    };
-
+    @Override
+    public void onNetworkConnectivity(Connectivity connectivity) {
+        super.onNetworkConnectivity(connectivity);
+        final NetworkInfo.State state = connectivity.getState();
+       if (state.equals("CONNECTED") && !isConnectInternet()){
+           // Show status bar
+           mBarStatus.setVisibility(View.VISIBLE);
+       }else {
+           // hide status bar
+           mBarStatus.setVisibility(View.GONE);
+       }
+    }
 }

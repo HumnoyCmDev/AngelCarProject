@@ -6,7 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +33,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class FollowActivity extends AppCompatActivity {
+public class FollowActivity extends BaseAppCompat {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.listView) ListView mListView;
@@ -109,12 +109,14 @@ public class FollowActivity extends AppCompatActivity {
     AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            PostCarDao item = dao.getListCar().get(position);
-            Intent intent = new Intent(FollowActivity.this, ChatCarActivity.class);
-            intent.putExtra("PostCarDao", Parcels.wrap(item));
-            intent.putExtra("intentForm", 0);
-            intent.putExtra("messageFromUser",Registration.getInstance().getUserId());
-            startActivity(intent);
+            if(isConnectInternet()) {
+                PostCarDao item = dao.getListCar().get(position);
+                Intent intent = new Intent(FollowActivity.this, ChatCarActivity.class);
+                intent.putExtra("PostCarDao", Parcels.wrap(item));
+                intent.putExtra("intentForm", 0);
+                intent.putExtra("messageFromUser", Registration.getInstance().getUserId());
+                startActivity(intent);
+            }
         }
     };
 
@@ -163,4 +165,9 @@ public class FollowActivity extends AppCompatActivity {
             if (Log.isLoggable(Log.ERROR)) Log.e("Error",t);
         }
     };
+
+    @Override
+    public Snackbar onCreateSnackBar() {
+        return Snackbar.make(mToolbar, R.string.status_network, Snackbar.LENGTH_INDEFINITE);
+    }
 }

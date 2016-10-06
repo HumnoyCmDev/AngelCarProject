@@ -2,10 +2,13 @@ package com.dollarandtrump.angelcar.fragment.conversation;
 
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
+import com.dollarandtrump.angelcar.sql.QueryMessage;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
-import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
+import com.dollarandtrump.angelcar.sql.MessageSqlTemplate;
 import com.squareup.otto.Subscribe;
+
+import java.util.List;
 
 
 /***************************************
@@ -18,7 +21,14 @@ public class ConversationBuyFragment extends ConversationFactory implements OnCl
 
     @Override
     public MessageCollectionDao getMessageManager(MessageManager manager) {
-        return manager.getConversationBuy();
+//        return manager.getConversationBuy();
+
+        MessageCollectionDao dao = new MessageCollectionDao();
+        MessageSqlTemplate<MessageDao> sqlTemplate = new MessageSqlTemplate<>();
+        QueryMessage queryMessage = new QueryMessage();
+        List<MessageDao> topicList = sqlTemplate.queryMessage("Sell", queryMessage);
+        dao.setListMessage(topicList);
+        return dao;
     }
 
     @Subscribe

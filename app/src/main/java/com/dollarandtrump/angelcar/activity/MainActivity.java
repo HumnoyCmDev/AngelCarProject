@@ -8,13 +8,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,8 +31,7 @@ import com.dollarandtrump.angelcar.fragment.FeedPostFragment;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.model.ActivityResultEvent;
 import com.dollarandtrump.angelcar.model.ConversationCache;
-import com.dollarandtrump.angelcar.model.realm.GroupMessageReamObject;
-import com.dollarandtrump.angelcar.model.realm.MessageRealmObject;
+import com.dollarandtrump.angelcar.utils.Log;
 import com.dollarandtrump.angelcar.utils.TabEntity;
 import com.flyco.tablayout.CommonTabLayout;
 import com.flyco.tablayout.listener.CustomTabEntity;
@@ -51,29 +49,15 @@ import javax.inject.Named;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmList;
-import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity{
-
-    private  final int REQUEST_CODE_ASK_PERMISSIONS = 123;
+public class MainActivity extends BaseAppCompat {
 
     @Bind(R.id.toolbar_top) Toolbar toolbar;
     @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.floating_action_menu_fab) FloatingActionMenu menuFab;
-//    @Bind(R.id.fab_dealers) FloatingActionButton fabAcDeposit;
-//    @Bind(R.id.fab_delegate) FloatingActionButton fabAcDealer;
 
     @Inject SharedPreferences sharedPreferences;
-    @Inject
-    @Named("default")
-    SharedPreferences preferencesDefault;
-
-//    private Realm realm;
-
-    private static final String TAG = "MainActivity";
+    @Inject @Named("default") SharedPreferences preferencesDefault;
 
     @Bind(R.id.tl_1) CommonTabLayout mTabLayout;
     private String[] mTitles = {"Home", "Finance", "Shop", "Menu"};
@@ -101,51 +85,12 @@ public class MainActivity extends AppCompatActivity{
 
 //        setBadge(this,50);
 
-//        realm = Realm.getDefaultInstance();
-
-//        realm.beginTransaction();
-//        GroupMessageReamObject reamObject = realm.createObject(GroupMessageReamObject.class);
-//        reamObject.setGroup("top");
-//        MessageRealmObject messageRealmObject = realm.createObject(MessageRealmObject.class);
-//        messageRealmObject.setDelete(false);
-//        messageRealmObject.setMessageId(1);
-//        reamObject.getMessage().add(messageRealmObject);
-//        realm.commitTransaction();
-
-//        RealmResults<GroupMessageReamObject> query = realm.where(GroupMessageReamObject.class)
-//                .equalTo("group","top").findAll();
-//
-//        realm.executeTransaction(new Realm.Transaction() {
-//            @Override
-//            public void execute(Realm realm) {
-//                GroupMessageReamObject g = realm.createObject(GroupMessageReamObject.class);
-//                g.setGroup("top");
-//                MessageRealmObject object = new MessageRealmObject();
-//                object.setMessageId(2);
-//                object.setDelete(true);
-//                g.getMessage().add(object);
-//            }
-//        });
-//        query.addChangeListener(new RealmChangeListener<RealmResults<GroupMessageReamObject>>() {
-//            @Override
-//            public void onChange(RealmResults<GroupMessageReamObject> element) {
-//                for (GroupMessageReamObject g : element){
-//                    Log.d(TAG, "onCreate: "+g.getGroup());
-//                    for (MessageRealmObject m : g.getMessage()) {
-//                        Log.d(TAG, "onCreate: " + m.getMessageId());
-//                        Log.d(TAG, "onCreate: " + m.isDelete());
-//                    }
-//                }
-//            }
-//        });
-
-
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == ShopUpLoadDialog.REQUEST_CODE && resultCode == RESULT_OK){
-           // requestCode ShopUpLoadDialog
+           // requestCode
             MainThreadBus.getInstance()
                    .post(new ActivityResultEvent(requestCode,resultCode,data));
         }
@@ -153,35 +98,9 @@ public class MainActivity extends AppCompatActivity{
             MainThreadBus.getInstance()
                     .post(new ActivityResultEvent(requestCode,resultCode,data));
         }
+        Log.d(""+requestCode);
     }
 
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_CODE_ASK_PERMISSIONS:
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    // Permission Granted
-////                    dialogConfirmFragment();
-//                } else {
-//                    // Permission Denied
-//                }
-//                break;
-//            default:
-//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        }
-//    }
-
-//    @Subscribe //Produce form RegistrationAlertFragment.java
-//    public void onRegistrationEmail(RegistrationResult result){
-//        if (result.getResult() == RegistrationAlertFragment.REGISTRATION_OK){
-//            // ติดต่อ server
-//            Call<RegisterResultDao> call = HttpManager.getInstance().getService().registrationEmail(result.getEmail());
-//            call.enqueue(callbackRegistrationEmail);
-//
-//
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(final Menu menu) {
@@ -196,38 +115,15 @@ public class MainActivity extends AppCompatActivity{
     protected void onStart() {
         super.onStart();
         MainThreadBus.getInstance().register(this);
-
-        /*RxNotification.with(this)
-                .observableNotification().observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Boolean>() {
-            @Override
-            public void call(Boolean aBoolean) {
-                if (aBoolean) { // new
-                    mMenu.getItem(0).setIcon(R.drawable.ic_alert_message);
-                }else {
-                    mMenu.getItem(0).setIcon(R.drawable.ic_message);
-                    sharedPreferences.edit().putBoolean("notification_chat",false).apply();
-                }
-            }
-        });*/
-
         setIconMessage(mMenu);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        MainThreadBus.getInstance().unregister(this );
-
-        /*RxNotification.with(this).onDestroy();*/
+        MainThreadBus.getInstance().unregister(this);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-//        if (realm != null && realm.isClosed()) {
-//            realm.close();
-//        }
-    }
 
     @Subscribe
     public void scrollingShowAndHide(FeedPostFragment.Scrolling scrolling){
@@ -248,29 +144,31 @@ public class MainActivity extends AppCompatActivity{
 
     @OnClick({R.id.fab_dealers,R.id.fab_delegate,R.id.fab_owner})
     public void fabButtonAction(View v){
-        ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
-        if (mProfile == null || mProfile.getShopName() == null || mProfile.getUrlShopLogo().contains("default.png")){
-            alertDialogEditShop();
-        }else {
-            switch (v.getId()) {
+        if (isConnectInternet()) {
+            ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class, "SELECT * FROM Profile", null);
+            if (mProfile == null || mProfile.getShopName() == null || mProfile.getUrlShopLogo().contains("default.png")) {
+                alertDialogEditShop();
+            } else {
+                switch (v.getId()) {
 
-                case R.id.fab_dealers:
-                    String name = preferencesDefault.getString("pre_name",null);
-                    String tel = preferencesDefault.getString("pre_phone",null);
-                    if (name == null || tel == null || name.trim().equals("") || name.trim().equals("")){
-                        alertDialogInformation();
-                    }else {
-                        startActivity(postCar(2, PostActivity.class));
-                    }
-                    break;
-                case R.id.fab_delegate:
-                    startActivity(postCar(1,PostActivity.class));
-                    break;
-                case R.id.fab_owner:
-                    startActivity(postCar(0,PostActivity.class));
-                    break;
-                default:
-                    break;
+                    case R.id.fab_dealers:
+                        String name = preferencesDefault.getString("pre_name", null);
+                        String tel = preferencesDefault.getString("pre_phone", null);
+                        if (name == null || tel == null || name.trim().equals("") || name.trim().equals("")) {
+                            alertDialogInformation();
+                        } else {
+                            startActivity(postCar(2, PostActivity.class));
+                        }
+                        break;
+                    case R.id.fab_delegate:
+                        startActivity(postCar(1, PostActivity.class));
+                        break;
+                    case R.id.fab_owner:
+                        startActivity(postCar(0, PostActivity.class));
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -330,28 +228,31 @@ public class MainActivity extends AppCompatActivity{
 
     private void initViewPager() {
         viewPager.setAdapter(new MainViewPagerAdapter(getSupportFragmentManager()));
-//        tabLayout.setupWithViewPager(viewPager);
         viewPager.addOnPageChangeListener(onPageChangeListener);
 
         for (int i = 0; i < mTitles.length; i++) {
             mTabEntities.add(new TabEntity(mTitles[i], mIconSelectIds[i],mIconUnSelectIds[i]));
         }
         mTabLayout.setTabData(mTabEntities);
-//        mTabLayout.showDot(2);
-//        mTabLayout.showMsg(0,10);
-//        mTabLayout.setMsgMargin(0,-5,0);
         mTabLayout.setOnTabSelectListener(onTabSelectListener);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_chat) {
-            startActivity(initIntent(ConversationActivity.class));
-            overridePendingTransition(R.anim.activity_slide_left_in,R.anim.activity_out);
-            return true;
-        }else if (id == R.id.action_follow){
-            startActivity(initIntent(FollowActivity.class));
-            overridePendingTransition(R.anim.activity_slide_left_in,R.anim.activity_out);
+        if (isConnectInternet()) {
+            int id = item.getItemId();
+            if (id == R.id.action_chat) {
+                startActivity(initIntent(ConversationActivity.class));
+                overridePendingTransition(R.anim.activity_slide_left_in, R.anim.activity_out);
+                return true;
+            } else if (id == R.id.action_follow) {
+                startActivity(initIntent(FollowActivity.class));
+                overridePendingTransition(R.anim.activity_slide_left_in, R.anim.activity_out);
+                return true;
+            } else if (id == R.id.action_search) {
+                startActivity(new Intent(MainActivity.this, SearchActivity.class));
+                overridePendingTransition(R.anim.activity_slide_left_in, R.anim.activity_out);
+                return true;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -392,43 +293,6 @@ public class MainActivity extends AppCompatActivity{
     /**************
     *Listener Zone*
     ***************/
-   /* Callback<RegisterResultDao> callbackRegistrationEmail = new Callback<RegisterResultDao>() {
-        @Override
-        public void onResponse(Call<RegisterResultDao> call, Response<RegisterResultDao> response) {
-            if (response.isSuccessful()) {
-                // Save CacheData
-                Registration.getInstance().save(response.body());
-                Toast.makeText(MainActivity.this, "ลงทะเบียนเรียบร้อยแล้ว "+response.body().getUserId() +" "+response.body().getShopId(), Toast.LENGTH_LONG).show();
-                String user = Registration.getInstance().getUserId();
-                String shop = Registration.getInstance().getShopRef();
-                HttpManager.getInstance().getService().sendTokenRegistration(user,shop,FirebaseInstanceId.getInstance().getToken())
-                        .subscribeOn(Schedulers.newThread())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Observer<ResponseDao>() {
-                            @Override
-                            public void onCompleted() {
-                            }
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "onError: ",e);
-                            }
-
-                            @Override
-                            public void onNext(ResponseDao responseDao) {
-                                Log.i(TAG, "onNext: "+ responseDao);
-                            }
-                        });
-            } else {
-                Toast.makeText(MainActivity.this, "" + response.errorBody(), Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
-        @Override
-        public void onFailure(Call<RegisterResultDao> call, Throwable t) {
-            Toast.makeText(MainActivity.this, "" + t.toString(), Toast.LENGTH_SHORT).show();
-        }
-    };*/
 
     OnTabSelectListener onTabSelectListener = new OnTabSelectListener() {
         @Override
@@ -497,5 +361,11 @@ public class MainActivity extends AppCompatActivity{
         }
         return null;
     }
+
+    @Override
+    public Snackbar onCreateSnackBar() {
+        return Snackbar.make(toolbar, R.string.status_network, Snackbar.LENGTH_INDEFINITE);
+    }
+
 
 }

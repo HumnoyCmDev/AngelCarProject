@@ -18,20 +18,11 @@
         app:titleTextAppearance="@style/Toolbar.TitleText"
         app:titleTextColor="@android:color/white" />
 
-    <!--<ListView-->
-        <!--android:visibility="gone"-->
-        <!--android:id="@+id/list_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_weight="1"-->
-
-        <!--android:cacheColorHint="@android:color/transparent"-->
-        <!--android:divider="@null"-->
-        <!--android:footerDividersEnabled="true"-->
-        <!--android:headerDividersEnabled="true"-->
-        <!--android:listSelector="@android:color/transparent"-->
-        <!--android:stackFromBottom="false"-->
-        <!--android:transcriptMode="alwaysScroll" />-->
+    <com.dollarandtrump.angelcar.view.BarStatusView
+        android:visibility="gone"
+        android:id="@+id/bar_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
         android:background="@android:color/white"

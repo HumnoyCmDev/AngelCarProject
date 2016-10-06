@@ -2,14 +2,12 @@ package com.dollarandtrump.angelcar.Adapter;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -31,12 +29,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class ConversationRecyclerAdapter extends RecyclerView.Adapter<ConversationRecyclerAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private static final int PENDING_REMOVAL_TIMEOUT = 3000; // 3sec
@@ -156,10 +153,38 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
 
         }
 
-        Glide.with(mContext)
-                .load(message.getUserProfileImage())
-                .bitmapTransform(new CropCircleTransformation(mContext))
-                .into(holder.avatar);
+
+
+       if (message.getTopicType() == null){ //avatar message
+           holder.avatar2.setVisibility(View.VISIBLE);
+           Glide.with(mContext)
+                   .load(message.getCarImage())
+                   .bitmapTransform(new RoundedCornersTransformation(mContext,6,0))
+                   .into(holder.avatar);
+           Glide.with(mContext)
+                   .load(message.getUserProfileImage())
+                   .bitmapTransform(new CropCircleTransformation(mContext))
+                   .into(holder.avatar2);
+
+       }else {// avatar top chat
+           holder.avatar2.setVisibility(View.GONE);
+           int drawableImage;
+           if (message.getTopicType().equals("pawn")){
+                drawableImage = R.drawable.logo_pawn;
+           } else if (message.getTopicType().equals("refinance")){
+               drawableImage = R.drawable.logo_refinance;
+           } else {
+               drawableImage = R.drawable.logo_finance;
+           }
+           Glide.with(mContext)
+                   .load(drawableImage)
+                   .bitmapTransform(new RoundedCornersTransformation(mContext,6,0))
+                   .into(holder.avatar);
+       }
+
+
+
+
 
         String msg = message.getMessageText();
 
@@ -227,9 +252,15 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
     }
 
     private void removeItem(int position){
+        // set true
+        MessageDao message = mListConversation.get(position);
+        message.setDelete(true);
+        message.save();
+
         mListConversation.remove(position);
         notifyItemRemoved(position);
         items.remove(position);
+
     }
 
     public void delete(){
@@ -264,6 +295,7 @@ public class ConversationRecyclerAdapter extends RecyclerView.Adapter<Conversati
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
         @Bind(R.id.avatar) ImageView avatar;
+        @Bind(R.id.avatar_2) ImageView avatar2;
         @Bind(R.id.title) TextView title;
         @Bind(R.id.last_message) TextView lastMessage;
         @Bind(R.id.time) TextView time;

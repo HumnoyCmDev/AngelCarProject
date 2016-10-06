@@ -82,4 +82,26 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <!--Filter-->
+    <style name="group_filter">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/selector_overlay</item>
+        <item name="android:paddingBottom">@dimen/filter_padding</item>
+        <item name="android:paddingTop">@dimen/filter_padding</item>
+    </style>
+
+    <!--Style Menu TextView-->
+    <style name="style_menu_text">
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@drawable/selector_overlay</item>
+    </style>
+
 </resources>

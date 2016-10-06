@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.manager.Contextor;
+import com.dollarandtrump.angelcar.manager.CustomConverterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -46,6 +47,7 @@ public class HttpManager {
        builder = new Retrofit.Builder()
                 .baseUrl("http://angelcar.com/")
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(new CustomConverterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gson));
     }
 

@@ -18,6 +18,16 @@ public class ResponseDao {
 
     @SerializedName("carid") @Expose public String carId;
 
+    @SerializedName("shopid") @Expose String shopId;
+
+    public String getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
+    }
+
     public String getCarId() {
         return carId;
     }

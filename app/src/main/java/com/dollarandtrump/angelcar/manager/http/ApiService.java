@@ -5,24 +5,29 @@ import com.dollarandtrump.angelcar.dao.CarBrandCollectionDao;
 import com.dollarandtrump.angelcar.dao.CarIdDao;
 import com.dollarandtrump.angelcar.dao.CarSubCollectionDao;
 import com.dollarandtrump.angelcar.dao.CountCarCollectionDao;
+import com.dollarandtrump.angelcar.dao.DealerCollection;
 import com.dollarandtrump.angelcar.dao.FollowCollectionDao;
-import com.dollarandtrump.angelcar.dao.ProvinceCollectionDao;
-import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.PictureCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
+import com.dollarandtrump.angelcar.dao.ProvinceCollectionDao;
 import com.dollarandtrump.angelcar.dao.RegisterResultDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
 import com.dollarandtrump.angelcar.dao.TopicCollectionDao;
+import com.dollarandtrump.angelcar.model.NotResponse;
 
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import rx.Observable;
@@ -30,7 +35,7 @@ import rx.Observable;
 
 public interface ApiService {
 
-    // Chat Api
+    //**************************************************Api CHAT Zone**************************************************//
     @GET("ios/api/ga_chatcar.php?operation=view")
     Call<MessageCollectionDao> viewMessage(@Query("message") String message);
     @GET("ios/api/ga_chatcar.php?operation=view")
@@ -41,6 +46,8 @@ public interface ApiService {
 
     @GET("ios/api/ga_chatcar.php?operation=reqofficer")
     Call<ResponseDao> regOfficer(@Query("message") String message);
+    @GET("ios/api/ga_chatcar.php?operation=reqofficer")
+    Observable<ResponseDao> observableRegOfficer(@Query("message") String message);
 
     @GET("ios/api/ga_chatcar.php?operation=viewclient")
     Call<MessageCollectionDao> messageClient(@Query("message") String message);
@@ -80,8 +87,14 @@ public interface ApiService {
     @GET("ios/api/ga_chatadmin.php?operation=deletetopic")
     Observable<ResponseDao> observableDeleteTopic(@Query("message") String topicId);/**1,2,3,4,5**/
 
+    @FormUrlEncoded
+    @POST("ios/api/ga_car.php?operation=new")
+    Observable<ResponseDao> observablePost(@Field("message") String message);
 
-    //Insert Post Car
+
+
+
+    //**************************************************Api CAR Zone**************************************************//
     @FormUrlEncoded
     @POST("android/api/insertpost.php")
     Call<ResponseDao> postCar
@@ -122,9 +135,7 @@ public interface ApiService {
                     @Field("telnumber") String telNumber // ชื่อ นามสกุล
             );
 
-    @FormUrlEncoded
-    @POST("ios/api/ga_car.php?operation=new")
-    Observable<ResponseDao> observablePost(@Query("message") String message);
+
 
     @FormUrlEncoded
     @POST("android/api/updateshop.php")
@@ -143,6 +154,10 @@ public interface ApiService {
                     @Field("name") String name, // ชื่อ นามสกุล
                     @Field("telnumber") String telNumber // ชื่อ นามสกุล
             );
+
+    @Multipart
+    @POST("ios/data/clsdata/clsshopupload.php")
+    Observable<NotResponse> observableUploadLogoShop(@Part("shopid") String shopId, @Part MultipartBody.Part file);
 
     /**delete/update car**/
     @GET("ios/api/ga_car.php?operation=updatestatus")
@@ -260,4 +275,39 @@ public interface ApiService {
     /**จังหวัด**/
     @GET("ios/api/getprovince.php")
     Observable<ProvinceCollectionDao> observableProvince();
+
+    /** View Dealer **/
+    @GET("ios/api/cls_shop.php?operation=viewbyrank&message=dealer")
+    Observable<DealerCollection> observableViewDealer();
+
+    /** check key and create key **/
+    @GET("ios/api/cls_shop.php?operation=checkkey")
+    Observable<ResponseDao> checkkey(@Query("message") String shopNumber);//383-129-683
+
+    @GET("ios/api/cls_shop.php?operation=createkey")
+    Observable<ResponseDao> createKey(@Query("message") String shopNumber);//383-129-683||pass
+
+    /** check old key  **/
+    @GET("ios/api/cls_shop.php?operation=checkoldkey")
+    Observable<ResponseDao> checlKeyOld(@Query("message") String message);//shopnumber||oldpassword
+
+    /** update key  **/
+    @GET("ios/api/cls_shop.php?operation=updatekey")
+    Observable<ResponseDao> updateKey(@Query("message") String message);//shopid||shopnumber||newpassword||oldpassword
+
+    /** delete key  **/
+    @GET("ios/api/cls_shop.php?operation=deletekey")
+    Observable<ResponseDao> deleteKey(@Query("message") String message);//shopid||shopnumber
+
+    /** logout **/
+    @GET("ios/api/cls_shop.php?operation=unkey")
+    Observable<ResponseDao> logout(@Query("message") String message);//userid(เดิม)||token
+
+    /** login key  **/
+    @GET("ios/api/cls_shop.php?operation=usekey")
+    Observable<ResponseDao> login(@Query("message") String message);//userid||shopnumber||password||token
+
+    @GET("ios/api/cls_shop.php?operation=checkdealerkey")
+    Observable<ResponseDao> checkDealerKey(@Query("message") String token);
+
 }

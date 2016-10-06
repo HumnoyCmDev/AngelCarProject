@@ -1,5 +1,6 @@
 package com.dollarandtrump.angelcar.fragment;
 
+import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
@@ -22,31 +23,36 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.dollarandtrump.angelcar.Adapter.ShopAdapter;
 import com.dollarandtrump.angelcar.Adapter.ShopHashTagAdapter;
 import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.activity.MainActivity;
 import com.dollarandtrump.angelcar.activity.PostActivity;
+import com.dollarandtrump.angelcar.activity.FormLogInActivity;
 import com.dollarandtrump.angelcar.activity.SingleViewImageActivity;
+import com.dollarandtrump.angelcar.activity.SplashScreenActivity;
 import com.dollarandtrump.angelcar.activity.ViewCarActivity;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
 import com.dollarandtrump.angelcar.dao.ShopCollectionDao;
 import com.dollarandtrump.angelcar.dialog.ShopEditDialog;
 import com.dollarandtrump.angelcar.dialog.ShopUpLoadDialog;
+import com.dollarandtrump.angelcar.interfaces.InterNetInterface;
 import com.dollarandtrump.angelcar.listener.AppBarStateChangeListener;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
+import com.dollarandtrump.angelcar.utils.AngelCarUtils;
 import com.dollarandtrump.angelcar.view.ImageViewGlide;
 import com.dollarandtrump.angelcar.view.ListHashTag;
 import com.dollarandtrump.angelcar.view.PhotoBanner;
 import com.dollarandtrump.angelcar.view.RecyclerGridAutoFit;
+import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.hndev.library.view.AngelCarHashTag;
 
 import org.parceler.Parcels;
@@ -64,6 +70,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 
@@ -88,6 +95,7 @@ public class ShopFragment extends Fragment {
     @Bind(R.id.app_barLayout) AppBarLayout mAppBarLayout;
     @Bind(R.id.floating_action_menu_fab) FloatingActionMenu mMenuFab;
     @Bind(R.id.list_hash_tag) ListHashTag mListHashTag;
+    @Bind(R.id.shop_login) FloatingActionButton mShopSignIn;
 
 
     private ImageHeaderAdapter mImageHeaderAdapter;
@@ -99,6 +107,7 @@ public class ShopFragment extends Fragment {
     private ShopCollectionDao mShopCollectionDao;
     private ProfileDao mProfileDao;
 
+
     private boolean isControlRecycler = true;
     private boolean isControl = true;
     boolean isShow = false;
@@ -107,6 +116,7 @@ public class ShopFragment extends Fragment {
     private int mIdImageBackground = 0;
     private int mLastRecycler = 0;
     private int mLast = -100;
+
 
     @Inject
     @Named("default")
@@ -204,7 +214,6 @@ public class ShopFragment extends Fragment {
                         if (mListHashTag.getChildAt(i) instanceof AngelCarHashTag) {
                             AngelCarHashTag v = (AngelCarHashTag) mListHashTag.getChildAt(i);
                             v.hideChildSubCar();
-                            Log.d(TAG, "onItemClick: "+i);
                         }
                     }
                 }
@@ -255,15 +264,17 @@ public class ShopFragment extends Fragment {
     }
 
     private void loadData() {
-        viewSubProgressbar(View.VISIBLE);
-        String userRef = getArguments().getString("user");
-        String shopRef = getArguments().getString("shop");
-        Log.d(TAG, userRef + " *** "+shopRef);
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            viewSubProgressbar(View.VISIBLE);
+            String userId = getArguments().getString("user");
+            String shopId = getArguments().getString("shop");
+            Log.d(TAG, userId + " *** " + shopId);
             Observable<ShopCollectionDao> rxCall = HttpManager.getInstance().getService()
-                    .observableLoadShop(userRef, shopRef)
+                    .observableLoadShop(userId, shopId)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread());
-        mSubscription = rxCall.subscribe(shopCollectionDaoObserver);
+            mSubscription = rxCall.subscribe(shopCollectionDaoObserver);
+        }
     }
 
     private void initData(ShopCollectionDao shopCollectionDao){
@@ -279,13 +290,13 @@ public class ShopFragment extends Fragment {
         }
         //
         this.mShopCollectionDao = shopCollectionDao;
+        this.mShopCollectionDao.deleteAll();
+        this.mShopCollectionDao.insertAll();
         if (isShop) {
-            this.mShopCollectionDao.deleteAll();
-            this.mShopCollectionDao.insertAll();
-
             preferencesDefault.edit().putString("pre_user_id",shopCollectionDao.getProfileDao().getShopUserRef()).apply();
             preferencesDefault.edit().putString("pre_shop_name",shopCollectionDao.getProfileDao().getShopName()).apply();
             preferencesDefault.edit().putString("pre_description",shopCollectionDao.getProfileDao().getShopDescription()).apply();
+            preferencesDefault.edit().putString("pre_shop_number",shopCollectionDao.getProfileDao().getShopNumber()).apply();
         }
 
         /*Query PostCar*/
@@ -297,7 +308,7 @@ public class ShopFragment extends Fragment {
         mAdapter.setDao(this.mShopCollectionDao.getPostCarCollection());
         mAdapter.notifyDataSetChanged();
 
-        Log.d(TAG, ""+mShopCollectionDao.getPostCarCollection().getListCar().size());
+
     }
 
 
@@ -320,7 +331,7 @@ public class ShopFragment extends Fragment {
         }
 
         mTextShopName.setText(name);
-        mTextShopDescription.setText(description);
+        mTextShopDescription.setText(AngelCarUtils.convertLineUp(description));
         mTextShopNumber.setText(profileDao.getShopNumber());
 
         initProfileShopBg(profileDao, mIdImageBackground);
@@ -332,6 +343,10 @@ public class ShopFragment extends Fragment {
         if (mProfileDao.getShopName() == null && isShop){
             dialogEditShop(mProfileDao.getShopName(), mProfileDao.getShopDescription(),
                     mProfileDao.getShopNumber(), mProfileDao.getUrlShopLogo());
+        }
+        boolean isSignin = Registration.getInstance().isSignIn();
+        if (isSignin && mProfileDao.getShopRank().equals("dealer")){
+            mShopSignIn.setLabelText("ออกจากระบบ");
         }
     }
 
@@ -394,15 +409,18 @@ public class ShopFragment extends Fragment {
             mImageUpDown.setImageResource(!isShow ? R.drawable.ic_shop_hide_back:R.drawable.ic_shop_show_back);
     }
 
-    @OnClick({R.id.fab_editShop})
+    @OnClick(R.id.fab_editShop)
     public void clickProfile(){
-        dialogEditShop(mProfileDao.getShopName(), mProfileDao.getShopDescription(),
-                mProfileDao.getShopNumber(), mProfileDao.getUrlShopLogo());
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            dialogEditShop(mProfileDao.getShopName(), mProfileDao.getShopDescription(),
+                    mProfileDao.getShopNumber(), mProfileDao.getUrlShopLogo());
 
-        if (mMenuFab.isOpened()){
-            mMenuFab.close(true);
+            if (mMenuFab.isOpened()) {
+                mMenuFab.close(true);
+            }
         }
     }
+
 
     public void dialogEditShop(String shopName,String description,String number,String urlLogo) {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
@@ -434,25 +452,88 @@ public class ShopFragment extends Fragment {
 
     @OnClick(R.id.fab_upLoadCover)
     public void upLoadCover(){
-        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
-        Fragment fragment = getFragmentManager().findFragmentByTag("ShopUpLoadDialog");
-        if (fragment != null){
-            ft.remove(fragment);
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+            Fragment fragment = getFragmentManager().findFragmentByTag("ShopUpLoadDialog");
+            if (fragment != null) {
+                ft.remove(fragment);
+            }
+            ShopUpLoadDialog upLoadDialog = new ShopUpLoadDialog();
+            upLoadDialog.show(getChildFragmentManager(), "ShopUpLoadDialog");
         }
-        ShopUpLoadDialog upLoadDialog = new ShopUpLoadDialog();
-        upLoadDialog.show(getChildFragmentManager(),"ShopUpLoadDialog");
     }
 
     @OnClick(R.id.image_background_shop)
     public void viewPictureShop(View view) {
-        Intent intent = new Intent(getActivity(),
-                SingleViewImageActivity.class);
-        intent.putExtra("url", mProfileDao.getUrlShopBackground(mIdImageBackground));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getActivity().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity(), view, "image").toBundle());
-        }else {
-            getActivity().startActivity(intent);
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            Intent intent = new Intent(getActivity(),
+                    SingleViewImageActivity.class);
+            intent.putExtra("url", mProfileDao.getUrlShopBackground(mIdImageBackground));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getActivity().startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(getActivity(), view, "image").toBundle());
+            } else {
+                getActivity().startActivity(intent);
+            }
         }
+    }
+    @OnClick(R.id.shop_login)
+    public void onSignIn(){
+        boolean isSignin = Registration.getInstance().isSignIn();
+        if (!isSignin) {
+            final Intent i = new Intent(getActivity(), FormLogInActivity.class);
+            i.putExtra("shoprank", mProfileDao.getShopRank());
+            i.putExtra("shopnumber", mProfileDao.getShopNumber());
+
+//        startActivity(i);
+            if (mProfileDao.getShopRank().equals("dealer")) {
+                HttpManager.getInstance().getService().checkkey(mProfileDao.getShopNumber())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .doOnError(new Action1<Throwable>() {
+                            @Override
+                            public void call(Throwable throwable) {
+
+                            }
+                        })
+                        .doOnNext(new Action1<ResponseDao>() {
+                            @Override
+                            public void call(ResponseDao responseDao) {
+                                if (responseDao.getResult().equals("1")) {
+                                    i.putExtra("checkkeyshop", true);
+                                } else {
+                                    i.putExtra("checkkeyshop", false);
+                                }
+                               startActivity(i);
+                            }
+                        }).subscribe();
+            } else {
+                startActivity(i);
+            }
+        }else {
+            //logout
+            String userOld = Registration.getInstance().getUserOld();
+            String token = FirebaseInstanceId.getInstance().getToken() ;//TODO Token Registration.getInstance().getToken();
+            HttpManager.getInstance().getService().logout(userOld+"||"+token)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError(new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+
+                        }
+                    })
+                    .doOnNext(new Action1<ResponseDao>() {
+                        @Override
+                        public void call(ResponseDao responseDao) {
+                            Registration.getInstance().clear();
+                            getActivity().finish();
+                            startActivity(new Intent(getActivity(), SplashScreenActivity.class));
+                        }
+                    })
+                    .subscribe();
+        }
+
+
     }
 
     @Override

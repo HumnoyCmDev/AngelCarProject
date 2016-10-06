@@ -21,10 +21,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.dollarandtrump.angelcar.Adapter.ConversationAdapter;
 import com.dollarandtrump.angelcar.Adapter.ConversationRecyclerAdapter;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
@@ -34,7 +32,6 @@ import com.dollarandtrump.angelcar.listener.ItemTouchHelperCallback;
 import com.dollarandtrump.angelcar.manager.Contextor;
 import com.dollarandtrump.angelcar.manager.MessageManager;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
-import com.dollarandtrump.angelcar.utils.Log;
 
 import org.parceler.Parcels;
 
@@ -43,25 +40,17 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-/***************************************
- * สร้างสรรค์ผลงานดีๆ
- * โดย Humnoy Android Developer
- * ลงวันที่ 11/16/2014. เวลา 11:42
- ***************************************/
+
 @SuppressWarnings("unused")
 public abstract class ConversationFactory extends Fragment implements ConversationRecyclerAdapter.OnClickItemConversationListener{
+    private static final String TAG = ConversationFactory.class.getSimpleName();
 
-//    @Bind(R.id.list_view) ListView mListView;
     @Bind(R.id.stub_text_view) ViewStub mStubTextNoResult;
-
     @Bind(R.id.listConversation) RecyclerView list;
+    @Bind(R.id.imageButton_delete) ImageButton mDeleteMessage;
     ConversationRecyclerAdapter conversationAdapter;
-    @Bind(R.id.imageButton_delete)
-    ImageButton mDeleteMessage;
 
-    private static final String TAG = "ChatAllFragment";
     private MessageManager mManager;
-//    private ConversationAdapter mAdapter;
     private boolean isTopic = false;
 
     public ConversationFactory(){}
@@ -90,12 +79,7 @@ public abstract class ConversationFactory extends Fragment implements Conversati
     }
     private void initInstances(View rootView, Bundle savedInstanceState) {
         ButterKnife.bind(this,rootView);
-       /* mAdapter = new ConversationAdapter(isTopic);
-        if (mManager.getMessageDao() != null)
-            mAdapter.setDao(mManager.getMessageDao().getListMessage());
-        mListView.setAdapter(mAdapter);
-        mListView.setOnItemLongClickListener(onItemLongClickListener);
-        mListView.setOnItemClickListener(onItemClickListener);*/
+
         mDeleteMessage.setVisibility(View.GONE);
         list.setHasFixedSize(true);
         list.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -114,10 +98,6 @@ public abstract class ConversationFactory extends Fragment implements Conversati
         mManager.setMessageDao(getMessageManager(msgManager));
         mManager.setProductIds(msgManager.getProductIds());
         if (mManager.getCount() > 0) {
-            /*mAdapter.setDao(mManager.getMessageDao().getListMessage());
-            mAdapter.setProduct(mManager.getProductIds());
-            mAdapter.notifyDataSetChanged();
-//            mListView.setVisibility(View.VISIBLE);*/
 
             list.setVisibility(View.VISIBLE);
             mStubTextNoResult.setVisibility(View.GONE);
@@ -151,7 +131,7 @@ public abstract class ConversationFactory extends Fragment implements Conversati
 
     @Override
     public void onLongClickItemChat() {
-//        clearDeleteFlagIfCapable(true);
+        clearDeleteFlagIfCapable(true);
 
     }
 
@@ -165,7 +145,7 @@ public abstract class ConversationFactory extends Fragment implements Conversati
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-//        inflater.inflate(R.menu.menu_conversation,menu);
+        inflater.inflate(R.menu.menu_conversation,menu);
     }
 
     @Override

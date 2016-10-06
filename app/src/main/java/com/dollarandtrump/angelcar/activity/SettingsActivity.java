@@ -169,6 +169,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("pre_shop_name"));
             bindPreferenceSummaryToValue(findPreference("pre_description"));
             bindPreferenceSummaryToValue(findPreference("pre_user_id"));
+            bindPreferenceSummaryToValue(findPreference("pre_shop_number"));
         }
 
         @Override

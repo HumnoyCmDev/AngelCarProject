@@ -1,59 +1,37 @@
 package com.dollarandtrump.angelcar.fragment;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.activeandroid.Model;
-import com.activeandroid.query.Select;
 import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.InfoActivity;
+import com.dollarandtrump.angelcar.activity.ListDealerActivity;
 import com.dollarandtrump.angelcar.activity.SettingsActivity;
 import com.dollarandtrump.angelcar.activity.ShopActivity;
+import com.dollarandtrump.angelcar.activity.SplashScreenActivity;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
+import com.dollarandtrump.angelcar.dao.ResponseDao;
+import com.dollarandtrump.angelcar.interfaces.InterNetInterface;
 import com.dollarandtrump.angelcar.manager.Registration;
-import com.dollarandtrump.angelcar.manager.http.RxUploadFile;
-import com.dollarandtrump.angelcar.model.CacheShop;
-import com.dollarandtrump.angelcar.model.Gallery;
-import com.dollarandtrump.angelcar.model.ImageModel;
-import com.dollarandtrump.angelcar.rx_picker.RxImagePicker;
-import com.dollarandtrump.angelcar.rx_picker.Sources;
-import com.dollarandtrump.angelcar.utils.FileUtils;
-import com.dollarandtrump.angelcar.utils.Log;
+import com.dollarandtrump.angelcar.manager.http.HttpManager;
 import com.dollarandtrump.angelcar.view.ImageViewGlide;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-
 
 
 @SuppressWarnings("unused")
@@ -120,10 +98,12 @@ public class MenuFragment extends Fragment {
 
     @OnClick(R.id.menu_button_profile)
     public void showProfileActivity(){
-        Intent i = new Intent(getActivity(), ShopActivity.class);
-        i.putExtra("user", Registration.getInstance().getUserId());
-        i.putExtra("shop", Registration.getInstance().getShopRef());
-        startActivity(i);
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            Intent i = new Intent(getActivity(), ShopActivity.class);
+            i.putExtra("user", Registration.getInstance().getUserId());
+            i.putExtra("shop", Registration.getInstance().getShopRef());
+            startActivity(i);
+        }
     }
 
     @OnClick(R.id.text_button_info)
@@ -136,6 +116,45 @@ public class MenuFragment extends Fragment {
     public void onClickSetting(){
         Intent intent = new Intent(getActivity(), SettingsActivity.class);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.text_button_view_dealer)
+    public void onClickViewDealer(){
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            startActivity(new Intent(getActivity(), ListDealerActivity.class));
+        }
+    }
+
+    @OnClick(R.id.text_shop_login)
+    public void onClickLogout(){
+//        clearApplicationData();
+        if(!Registration.getInstance().isSignIn()) {
+            ClearApp();
+        }else {
+            String userOld = Registration.getInstance().getUserOld();
+            String token = FirebaseInstanceId.getInstance().getToken();
+            HttpManager.getInstance().getService().logout(userOld + "||" + token)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnError(new Action1<Throwable>() {
+                        @Override
+                        public void call(Throwable throwable) {
+                        }
+                    })
+                    .doOnNext(new Action1<ResponseDao>() {
+                        @Override
+                        public void call(ResponseDao responseDao) {
+                            ClearApp();
+                        }
+                    })
+                    .subscribe();
+        }
+    }
+
+    private void ClearApp() {
+        Registration.getInstance().clear();
+        getActivity().finish();
+        startActivity(new Intent(getActivity(), SplashScreenActivity.class));
     }
 
     @Override

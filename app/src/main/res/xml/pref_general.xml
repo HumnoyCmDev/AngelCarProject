@@ -15,7 +15,13 @@
         android:selectable="false"
         android:enabled="true"
         android:key="pre_user_id"
-        android:title="สมาชิกเลข" />
+        android:title="เลขสมาชิก" />
+
+    <Preference
+        android:selectable="false"
+        android:enabled="true"
+        android:key="pre_shop_number"
+        android:title="เลขร้าน"/>
 
 
     <EditTextPreference

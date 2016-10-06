@@ -61,7 +61,6 @@ public class WaitMessageObservable implements Observable.OnSubscribe<String> {
                         if (result.isSuccessful()) {
                             MessageCollectionDao dao = result.body();
                             if (dao != null && dao.getListMessage().size() > 0) {
-//                            RxMessageObservable.with().onInitMessage(dao);
                                 mManager.setMessageDao(dao);
                                 MainThreadBus.getInstance().post(mManager.getMessageDao());
                                 mCurrentIdMessage = mManager.getMaximumId();
@@ -79,7 +78,6 @@ public class WaitMessageObservable implements Observable.OnSubscribe<String> {
                         if (response.isSuccessful()){
                             MessageCollectionDao dao = response.body();
                             if (dao != null && dao.getListMessage().size() > 0) {
-//                            RxMessageObservable.with().onInitMessage(dao);
                                 mManager.setMessageDao(dao);
                                 MainThreadBus.getInstance().post(mManager.getMessageDao());
                                 mCurrentIdMessage = mManager.getMaximumId();

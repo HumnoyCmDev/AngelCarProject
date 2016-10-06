@@ -18,12 +18,15 @@
     <color name="colorButtonEvidenceSuccessNormal">#26ff00</color>
     <color name="colorButtonEvidenceSuccessPress">#19ab00</color>
 
-    <color name="overlay_color">#80000000</color>
+    <color name="overlay_color">#32000000</color>
     <color name="colorSelectorNormal">@color/colorAccent</color>
     <color name="colorSelectorPress">#adffc11e</color>
     <color name="colorHint">#f7f7f7</color>
     <color name="colorHintDark">#bebebe</color>
     <color name="colorHint2">#DADADA</color>
+
+    <color name="colorHintSearch">#64bebebe</color>
+
     <color name="colorTextCount">#3F51B5</color>
 
     <color name="colorIconMenu">#ffffff</color>

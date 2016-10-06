@@ -34,7 +34,7 @@ import rx.functions.Action1;
 
 
 public class ShopUpLoadDialog extends DialogFragment {
-    private static final String TAG = "ShopUpLoad";
+    private static final String TAG = ShopUpLoadDialog.class.getSimpleName();
 
     public final static int REQUEST_CODE = 899;
     @Bind(R.id.recyclerShopAllPicture)

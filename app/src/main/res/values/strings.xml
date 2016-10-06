@@ -206,5 +206,9 @@
     <string name="post_owner">เจ้าของรถ(ลงประกาศขายเอง)</string>
     <string name="shop_text_name">ชื่อของคุณหรือชื่อร้าน</string>
     <string name="shop_text_description">รายละเอียดเกี่ยวกับคุณ</string>
+    <string name="wait_wifi">กำหลังรอเครือข่าย</string>
+    <string name="filter_all">ทั้งหมด</string>
+    <string name="why_must_login"><u>why? must login</u>.</string>
+    <string name="why_must_register"><u>why? must register</u>.</string>
 
 </resources>

@@ -31,9 +31,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by humnoy on 24/2/59.
- */
+/**-Created by Kotlin-**/
 public class FilterBrandDialog extends DialogFragment {
     private static final String TAG = "FilterBrandDialog";
 
@@ -54,7 +52,7 @@ public class FilterBrandDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_layout,container,false);
+        View view = inflater.inflate(R.layout.dialog_filter_list_view,container,false);
         initInstance(view,savedInstanceState);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         return view;
@@ -104,6 +102,7 @@ public class FilterBrandDialog extends DialogFragment {
                 dao = response.body();
                 adapter.setData(dao);
                 adapter.notifyDataSetChanged();
+                Log.d(TAG, "onResponse: "+response.body().getBrandDao().size());
             } else {
                 Log.e(TAG, "onResponse: " + response.errorBody().toString());
             }

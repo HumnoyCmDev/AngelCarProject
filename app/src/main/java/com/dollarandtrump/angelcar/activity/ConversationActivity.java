@@ -3,25 +3,18 @@ package com.dollarandtrump.angelcar.activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import com.activeandroid.ActiveAndroid;
-import com.activeandroid.query.Delete;
 import com.activeandroid.util.SQLiteUtils;
 import com.dollarandtrump.angelcar.MainApplication;
 import com.dollarandtrump.angelcar.R;
-import com.dollarandtrump.angelcar.dao.CarIdDao;
-import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
-import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
 import com.dollarandtrump.angelcar.dao.PostCarCollectionDao;
 import com.dollarandtrump.angelcar.dao.PostCarDao;
@@ -31,10 +24,9 @@ import com.dollarandtrump.angelcar.fragment.conversation.ConversationBuyFragment
 import com.dollarandtrump.angelcar.fragment.conversation.ConversationSellFragment;
 import com.dollarandtrump.angelcar.interfaces.OnClickItemMessageListener;
 import com.dollarandtrump.angelcar.manager.MessageManager;
-import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.manager.http.HttpManager;
-import com.dollarandtrump.angelcar.model.ConversationCache;
+import com.dollarandtrump.angelcar.manager.LoadConversation;
 import com.flyco.tablayout.SlidingTabLayout;
 import com.google.firebase.messaging.RemoteMessage;
 import com.squareup.otto.Produce;
@@ -51,23 +43,16 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.Subscriber;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func3;
-import rx.schedulers.Schedulers;
 
-public class ConversationActivity extends AppCompatActivity implements OnClickItemMessageListener {
+public class ConversationActivity extends BaseAppCompat implements OnClickItemMessageListener {
     @Bind(R.id.viewpager) ViewPager viewPager;
     @Bind(R.id.tl_8) SlidingTabLayout slidingTabLayout;
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    private Subscription subscriptionMessage;
-    private Subscription subscriptionCarId;
-    private MessageManager mgsManager;
-    @Inject
-    SharedPreferences sharedPreferences;
+    private MessageManager mManager;
+
+    @Inject SharedPreferences sharedPreferences;
+
+    LoadConversation loadConversation;
     private final String[] mTitles = {"คุยกับเจ้าหน้าที่", "คุยกับคนซื้อ", "คุยกับคนขาย"};
 
     @Override
@@ -85,13 +70,6 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         initViewPager();
         ((MainApplication) getApplication()).getApplicationComponent().inject(this);
 
-//        if (savedInstanceState == null) {
-//            loadAllCarId();
-//        }
-
-        /*RxNotification.with(getBaseContext())
-                .isNotification(false);*/
-
 
         Bundle intentNotification = getIntent().getExtras();
         if(intentNotification != null) {
@@ -99,129 +77,23 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
             String messageFromUser = intentNotification.getString("roomid");
             findPostCar(carId,messageFromUser);
         }
-    }
 
-    private void loadAllCarId() {
-        //Rx android
-        subscriptionCarId = HttpManager.getInstance().getService()
-                .observableLoadCarId(Registration.getInstance().getShopRef())
-                .subscribeOn(Schedulers.newThread())
-       .subscribe(new Action1<CarIdDao>() {
-           @Override
-           public void call(CarIdDao carIdDao) {
-               loadAllMessage(carIdDao);
-           }
-       });
+        loadConversation = new LoadConversation();
 
     }
 
-    private void loadAllMessage(final CarIdDao carIdDao) {
-        Log.d("view", "all car: "+carIdDao.getAllCarId());
-        Log.d("view", "Topic id: "+carIdDao.getTopicId());
-        //topic
-        Observable<MessageAdminCollectionDao> rxCallLoadTopic =
-                HttpManager.getInstance().getService().observableConversationTopic(carIdDao.getTopicId());
-
-        Observable<MessageAdminCollectionDao> rxCallLoadMessageSell =
-                HttpManager.getInstance().getService()
-                        .observableMessageAdmin(carIdDao.getAllCarId());
-
-        Observable<MessageCollectionDao> rxCallLoadMessageBuy = HttpManager.getInstance()
-                .getService().observableMessageClient(Registration.getInstance().getUserId());
-
-        Observable<MessageManager> observableManager =
-                Observable.zip(rxCallLoadMessageSell, rxCallLoadMessageBuy, rxCallLoadTopic, new Func3<MessageAdminCollectionDao,
-                        MessageCollectionDao, MessageAdminCollectionDao, MessageManager>() {
-                    @Override
-                    public MessageManager call(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao dao, MessageAdminCollectionDao messageAdminCollectionDao2) {
-                        MessageManager manager = new MessageManager();
-                        manager.setConversationSell(messageAdminCollectionDao.convertToMessageCollectionDao());
-                        manager.setConversationBuy(dao);
-                        manager.setConversationTopic(messageAdminCollectionDao2.convertToMessageCollectionDao());
-                        manager.setProductIds(carIdDao);
-
-                        insertConversation(messageAdminCollectionDao, dao, messageAdminCollectionDao2);
-
-                        return manager;
-                    }
-                });
-
-        subscriptionMessage = observableManager
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MessageManager>() {
-                    @Override
-                    public void onCompleted() {
-                        Log.d("load conversation", "onCompleted: ");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onNext(MessageManager messageManager) {
-                        Log.d("load conversation", "next");
-                         mgsManager = messageManager;
-                        MainThreadBus.getInstance().post(produceMsgManager());
-                    }
-                });
-    }
-
-    private void insertConversation(MessageAdminCollectionDao messageAdminCollectionDao, MessageCollectionDao dao, MessageAdminCollectionDao messageAdminCollectionDao2) {
-        new Delete().from(ConversationCache.class).execute();
-        new Delete().from(MessageDao.class).execute();
-
-        // topic
-        insertMessage("Topic",messageAdminCollectionDao2.convertToMessageCollectionDao());
-        // buy
-        insertMessage("Buy",dao);
-        // sell
-        insertMessage("Sell",messageAdminCollectionDao.convertToMessageCollectionDao());
-
-        /*MessageManager managerSqlite = new MessageManager();
-        managerSqlite.setMessageDao(messageAdminCollectionDao2.convertToMessageCollectionDao());
-        managerSqlite.appendDataToBottomPosition(messageAdminCollectionDao.convertToMessageCollectionDao());
-        managerSqlite.appendDataToBottomPosition(dao);
-
-        //test insert to db
-        ActiveAndroid.beginTransaction();
-        try {
-            for( MessageDao m :managerSqlite.getMessageDao().getListMessage()){
-                m.save();
-                new ConversationCache(m.getMessageCarId(),m,m.getMessageFromUser()).save();
-            }
-            ActiveAndroid.setTransactionSuccessful();
-        } finally {
-            ActiveAndroid.endTransaction();
-        }*/
-    }
-
-    private void insertMessage(String type, MessageCollectionDao dao){
-        ActiveAndroid.beginTransaction();
-        try {
-            for( MessageDao m : dao.getListMessage()){
-                m.save();
-                new ConversationCache(type,m).save();
-            }
-            ActiveAndroid.setTransactionSuccessful();
-        } finally {
-            ActiveAndroid.endTransaction();
-        }
-    }
 
     @Subscribe
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String type = remoteMessage.getData().get("type");
         if (type.equals("chatfinance") || type.equals("chatrefinance") || type.equals("chatpawn") || type.equals("chatcar")){
-            loadAllCarId();
+            loadConversation.load(callBackManager);
         }
     }
 
     @Produce
     public MessageManager produceMsgManager(){
-        return mgsManager;
+        return mManager;
     }
 
     private void initViewPager() {
@@ -233,34 +105,31 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (subscriptionMessage != null)
-            subscriptionMessage.unsubscribe();
-        if (subscriptionCarId != null)
-            subscriptionCarId.unsubscribe();
+        loadConversation.unSubscribe();
     }
 
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         MainThreadBus.getInstance().register(this);
-//        if (getWindow().getDecorView() != null){
-            loadAllCarId();
+//        if (isConnectInternet()) {
+            loadConversation.load(callBackManager);
 //        }
 
         //show dot
         /**Topic**/
-        List<MessageDao> topic =findMessageNotRead("Topic","officer");
+        List<MessageDao> topic = findMessageNotRead("Topic","officer");
         if (topic != null && topic.size() > 0){
             slidingTabLayout.showMsg(0,topic.size());
             slidingTabLayout.setMsgMargin(0,19,15);
         }
-        List<MessageDao> buy =findMessageNotRead("Buy","shop");
+        List<MessageDao> buy = findMessageNotRead("Buy","shop");
         if (buy != null && buy.size() > 0){
             slidingTabLayout.showMsg(2,buy.size());
             slidingTabLayout.setMsgMargin(1,25,15);
         }
-        List<MessageDao> sell =findMessageNotRead("Sell","user");
+        List<MessageDao> sell = findMessageNotRead("Sell","user");
         if (sell != null && sell.size() > 0){
             slidingTabLayout.showMsg(1,sell.size());
             slidingTabLayout.setMsgMargin(2,22,15);
@@ -278,14 +147,19 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         MainThreadBus.getInstance().unregister(this);
     }
 
     private List<MessageDao> findMessageNotRead(String type,String messageBy) {
-        List<MessageDao> cache = SQLiteUtils.rawQuery(MessageDao.class, "SELECT * FROM Conversation INNER JOIN MessageDao ON Conversation.Message = MessageDao.Id WHERE Conversation.ConversationType = '" + type + "' And MessageDao.MessageBy = '" + messageBy + "'  AND MessageDao.MessageStatus = 0", null);
-        return cache;
+        return SQLiteUtils.rawQuery(MessageDao.class, "SELECT * FROM Conversation " +
+                "INNER JOIN MessageDao " +
+                "ON Conversation.Message = MessageDao.Id " +
+                "WHERE Conversation.ConversationType = '" + type + "' " +
+                "And MessageDao.MessageBy = '" + messageBy + "'  " +
+                "AND MessageDao.MessageStatus = 0", null);
+
     }
 
     private void findPostCar(String carId, final String messageFromUser){
@@ -319,6 +193,10 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
         });
     }
 
+    @Override
+    public Snackbar onCreateSnackBar() {
+        return Snackbar.make(mToolbar, R.string.status_network, Snackbar.LENGTH_INDEFINITE);
+    }
 
     /**************
     *Listener Zone*
@@ -326,48 +204,28 @@ public class ConversationActivity extends AppCompatActivity implements OnClickIt
 
     @Override
     public void onClickItemMessage(final MessageDao messageDao) {
-        if (!messageDao.isTopic()) {
-            findPostCar(messageDao.getMessageCarId(), messageDao.getMessageFromUser());
-        }else {
-            TopicDao topic = new TopicDao();
-            topic.setId(Integer.valueOf(messageDao.getMessageCarId()));
-            topic.setUserId(messageDao.getMessageFromUser());
-            Intent intent = new Intent(ConversationActivity.this, TopicChatActivity.class);
-            intent.putExtra("topic",Parcels.wrap(topic));
-            intent.putExtra("room","");
-            startActivity(intent);
+        if (isConnectInternet()) {
+            if (!messageDao.isTopic()) {
+                findPostCar(messageDao.getMessageCarId(), messageDao.getMessageFromUser());
+            } else {
+                TopicDao topic = new TopicDao();
+                topic.setId(Integer.valueOf(messageDao.getMessageCarId()));
+                topic.setUserId(messageDao.getMessageFromUser());
+                Intent intent = new Intent(ConversationActivity.this, TopicChatActivity.class);
+                intent.putExtra("topic", Parcels.wrap(topic));
+                intent.putExtra("room", "");
+                startActivity(intent);
+            }
         }
-
-
-//        Call<PostCarCollectionDao> call =
-//            HttpManager.getInstance().getService().loadCarModel(messageDao.getMessageCarId());
-//        call.enqueue(new Callback<PostCarCollectionDao>() {
-//            @Override
-//            public void onResponse(Call<PostCarCollectionDao> call, Response<PostCarCollectionDao> response) {
-//                if (response.isSuccessful()) {
-//                    if (response.body().getListCar() != null) {
-//                        PostCarDao item = response.body().getListCar().get(0);
-//                        Intent intent = new Intent(ConversationActivity.this, ChatCarActivity.class);
-//                        intent.putExtra("PostCarDao", Parcels.wrap(item));
-//                        intent.putExtra("intentForm", 1);
-//                        intent.putExtra("messageFromUser", messageDao.getMessageFromUser());
-//                        startActivity(intent);
-//                    }else {
-//                        //TODO Check Null กรณีไม่มี รถอยู่หรือลบออกไปแล้ว
-//                        Log.i("ViewChat", "ไม่มีข้อมูลรถ หรือรถถูกลบไปแล้ว");
-//                    }
-//                } else {
-//                    Log.e("ViewChatAll", "onResponse: "+response.errorBody().toString());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<PostCarCollectionDao> call, Throwable t) {
-//                   t.printStackTrace();
-//            }
-//        });
-
     }
+
+    LoadConversation.CallBack callBackManager = new LoadConversation.CallBack() {
+        @Override
+        public void call(MessageManager manager) {
+            mManager = manager;
+            MainThreadBus.getInstance().post(produceMsgManager());
+        }
+    };
 
     /************
     *Inner Class*

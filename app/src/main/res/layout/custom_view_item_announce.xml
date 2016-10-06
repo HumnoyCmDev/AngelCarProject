@@ -31,6 +31,6 @@
         android:layout_height="32dp"
         android:layout_gravity="bottom"
         android:layout_marginLeft="8dp"
-        android:src="@drawable/ic_hndeveloper" />
+        android:src="@drawable/icon_logo" />
 
 </LinearLayout>

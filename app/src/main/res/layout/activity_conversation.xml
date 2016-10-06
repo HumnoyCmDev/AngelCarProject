@@ -46,7 +46,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/view_pager_layout"/>
+    <include layout="@layout/pager_layout"/>
 
 
 </LinearLayout>

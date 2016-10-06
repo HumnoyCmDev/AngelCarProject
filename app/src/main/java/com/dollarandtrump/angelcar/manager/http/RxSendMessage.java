@@ -67,6 +67,18 @@ public class RxSendMessage implements Observable.OnSubscribe<String> {
         mBastUrl = String.format(mBastUrl,mId,mMessageFromUser,mMessage,mMessageBy,mUser);
     }
 
+    /**Constructor Send Message status wait**/
+    public RxSendMessage(String id,String messageFromUser,String message,String messageBy) {
+        this.type = SendMessageType.SEND;
+        mId = id;
+        mMessage = message;
+        mMessageFromUser = messageFromUser;
+        mMessageBy = messageBy;
+        mClient = new OkHttpClient();
+        mBastUrl = String.format("http://angelcar.com/ios/api/ga_chatcar.php?operation=new&message=%s||%s||%s||%s",
+                mId,mMessageFromUser,mMessage,mMessageBy);
+    }
+
     @Override
     public void call(Subscriber<? super String> subscriber) {
         switch (type){

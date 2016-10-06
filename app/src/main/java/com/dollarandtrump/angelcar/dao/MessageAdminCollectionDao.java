@@ -25,15 +25,12 @@ public class MessageAdminCollectionDao {
     // Convert MessageAdmin To MessageCollectionDao
     public MessageCollectionDao convertToMessageCollectionDao() {
         List<MessageDao> listMessage = new ArrayList<>();
-//        if (messageAdmin.size() > 0){
            for (MessageAdminDao ado : messageAdmin){
                for (MessageDao mDao : ado.getMessage())
-               listMessage.add(listMessage.size(),mDao);
+               listMessage.add(mDao);
            }
         MessageCollectionDao gao = new MessageCollectionDao();
         gao.setListMessage(listMessage);
             return gao;
-//        }
-//        return null;
     }
 }

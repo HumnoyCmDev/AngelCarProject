@@ -19,6 +19,7 @@ import com.dollarandtrump.angelcar.R;
 import com.dollarandtrump.angelcar.activity.TopicChatActivity;
 import com.dollarandtrump.angelcar.dao.ProfileDao;
 import com.dollarandtrump.angelcar.dao.TopicDao;
+import com.dollarandtrump.angelcar.interfaces.InterNetInterface;
 import com.dollarandtrump.angelcar.manager.Registration;
 import com.dollarandtrump.angelcar.manager.bus.MainThreadBus;
 import com.dollarandtrump.angelcar.utils.Log;
@@ -89,37 +90,39 @@ public class TabTopicFragment extends Fragment{
      @OnClick({R.id.fab_finance,R.id.fab_refinance,R.id.fab_pawn})
      public void onClickFabButton(View v){
 
-         ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class,"SELECT * FROM Profile",null);
-         if (mProfile == null || mProfile.getShopName() == null || mProfile.getUrlShopLogo().contains("default.png")){
-             new AlertDialog.Builder(getActivity())
-                     .setCancelable(false)
-                     .setTitle(R.string.alert)
-                     .setMessage(R.string.alert_edit_shop)
-                     .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
-                         public void onClick(DialogInterface dialog, int which) {
+         if (((InterNetInterface) getActivity()).isConnectInternet()) {
 
-                         }
-                     })
-                     .setIcon(android.R.drawable.ic_dialog_alert)
-                     .show();
+             ProfileDao mProfile = SQLiteUtils.rawQuerySingle(ProfileDao.class, "SELECT * FROM Profile", null);
+             if (mProfile == null || mProfile.getShopName() == null || mProfile.getUrlShopLogo().contains("default.png")) {
+                 new AlertDialog.Builder(getActivity())
+                         .setCancelable(false)
+                         .setTitle(R.string.alert)
+                         .setMessage(R.string.alert_edit_shop)
+                         .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                             public void onClick(DialogInterface dialog, int which) {
 
-         }else {
+                             }
+                         })
+                         .setIcon(android.R.drawable.ic_dialog_alert)
+                         .show();
+             } else {
 
-             if (mMenuFab.isOpened())
-                 mMenuFab.close(true);
-             switch (v.getId()) {
-                 case R.id.fab_finance:
-                     if (Log.isLoggable(Log.DEBUG)) Log.d("Finance");
-                     newTopic(TopicFragment.Type.FINANCE.toString(), 0);
-                     break;
-                 case R.id.fab_refinance:
-                     if (Log.isLoggable(Log.DEBUG)) Log.d("ReFinance");
-                     newTopic(TopicFragment.Type.REFINANCE.toString(), 1);
-                     break;
-                 default:
-                     if (Log.isLoggable(Log.DEBUG)) Log.d("Pawn");
-                     newTopic(TopicFragment.Type.PAWN.toString(), 2);
-                     break;
+                 if (mMenuFab.isOpened())
+                     mMenuFab.close(true);
+                 switch (v.getId()) {
+                     case R.id.fab_finance:
+                         if (Log.isLoggable(Log.DEBUG)) Log.d("Finance");
+                         newTopic(TopicFragment.Type.FINANCE.toString(), 0);
+                         break;
+                     case R.id.fab_refinance:
+                         if (Log.isLoggable(Log.DEBUG)) Log.d("ReFinance");
+                         newTopic(TopicFragment.Type.REFINANCE.toString(), 1);
+                         break;
+                     default:
+                         if (Log.isLoggable(Log.DEBUG)) Log.d("Pawn");
+                         newTopic(TopicFragment.Type.PAWN.toString(), 2);
+                         break;
+                 }
              }
          }
      }
@@ -138,13 +141,15 @@ public class TabTopicFragment extends Fragment{
 
     @Subscribe
     public void onSubscribeTopic(TopicDao topic){
-        if (topic.getUserId().equals(Registration.getInstance().getUserId())) {
-            Intent intent = new Intent(getActivity(), TopicChatActivity.class);
-            intent.putExtra("topic", Parcels.wrap(topic));
-            intent.putExtra("room",title[segmentTabLayout.getCurrentTab()]);
-            startActivity(intent);
-        }else {
-            alertMessage();
+        if (((InterNetInterface) getActivity()).isConnectInternet()) {
+            if (topic.getUserId().equals(Registration.getInstance().getUserId())) {
+                Intent intent = new Intent(getActivity(), TopicChatActivity.class);
+                intent.putExtra("topic", Parcels.wrap(topic));
+                intent.putExtra("room", title[segmentTabLayout.getCurrentTab()]);
+                startActivity(intent);
+            } else {
+                alertMessage();
+            }
         }
     }
 

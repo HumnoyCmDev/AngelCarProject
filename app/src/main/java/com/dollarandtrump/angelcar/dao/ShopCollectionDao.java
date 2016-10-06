@@ -12,9 +12,7 @@ import org.parceler.Parcel;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by humnoyDeveloper on 28/3/59. 15:19
- */
+
 @Parcel
 public class ShopCollectionDao /*implements Serializable*/ {
     @SerializedName("profile")  @Expose ProfileDao profileDao;

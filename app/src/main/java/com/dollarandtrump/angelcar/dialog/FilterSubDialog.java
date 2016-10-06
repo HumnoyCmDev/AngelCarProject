@@ -69,7 +69,7 @@ public class FilterSubDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_layout,container,false);
+        View view = inflater.inflate(R.layout.dialog_filter_list_view,container,false);
         ButterKnife.bind(this,view);
         initInstance(savedInstanceState);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);

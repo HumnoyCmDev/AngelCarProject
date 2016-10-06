@@ -155,7 +155,7 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ViewHolder> 
                 // Last message in cluster
                 viewHolder.mAvatar.setVisibility(View.VISIBLE);
                 Glide.with(mContext)
-                        .load(R.drawable.icon_logo)
+                        .load(mTopicDao.getTopic().get(position).getImageProfile())
                         .placeholder(R.drawable.icon_logo)
                         .bitmapTransform(new CropCircleTransformation(mContext))
                         .into(viewHolder.mAvatar);
@@ -271,30 +271,30 @@ public class TopicAdapter extends RecyclerView.Adapter<TopicAdapter.ViewHolder> 
     }
 
     private static class Cluster {
-        public boolean mDateBoundaryWithPrevious;
-        public ClusterType mClusterWithPrevious;
+         boolean mDateBoundaryWithPrevious;
+         ClusterType mClusterWithPrevious;
 
-        public boolean mDateBoundaryWithNext;
-        public ClusterType mClusterWithNext;
+         boolean mDateBoundaryWithNext;
+         ClusterType mClusterWithNext;
     }
 
     class CellViewHolder extends ViewHolder {
-        public final static int RESOURCE_ID_ME = R.layout.angelcar_topic_item_me;
-        public final static int RESOURCE_ID_THEM = R.layout.angelcar_topic_item_them;
+        private final static int RESOURCE_ID_ME = R.layout.angelcar_topic_item_me;
+        private final static int RESOURCE_ID_THEM = R.layout.angelcar_topic_item_them;
 
         // View cache
-        protected TextView mUserName;
-        protected View mTimeGroup;
-        protected TextView mTimeGroupDay;
-        protected TextView mTimeGroupTime;
-        protected Space mClusterSpaceGap;
-        protected ImageView mAvatar;
+        private TextView mUserName;
+        private View mTimeGroup;
+        private TextView mTimeGroupDay;
+        private TextView mTimeGroupTime;
+        private Space mClusterSpaceGap;
+        private ImageView mAvatar;
 //        protected TextView mCell;
 //        protected FrameLayout mCell;
 
-        protected TextView mCallText;
+        private TextView mCallText;
 
-        public CellViewHolder(View itemView) {
+        private CellViewHolder(View itemView) {
             super(itemView);
             mUserName = (TextView) itemView.findViewById(R.id.sender);
             mTimeGroup = itemView.findViewById(R.id.time_group);

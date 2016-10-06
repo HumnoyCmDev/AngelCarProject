@@ -26,8 +26,7 @@
         <com.github.siyamed.shapeimageview.CircularImageView
             android:id="@+id/custom_view_ui_angelcar_icon_profile"
             android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_hndeveloper" />
+            android:layout_height="32dp" />
 
         <LinearLayout
             android:id="@+id/custom_view_ui_angelcar_background"
@@ -56,7 +55,6 @@
             android:id="@+id/custom_view_ui_angelcar_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/simple_product"
             app:siRadius="4dp"/>
 
     </LinearLayout>

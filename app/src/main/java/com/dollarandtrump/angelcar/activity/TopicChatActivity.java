@@ -1,11 +1,11 @@
 package com.dollarandtrump.angelcar.activity;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -54,8 +53,6 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
-import xyz.kotlindev.lib.network.ReactiveNetwork;
-import xyz.kotlindev.lib.view.BarStatusView;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -85,8 +82,7 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
     private LinearLayoutManager linearManager;
 
     private boolean isLoadingMessageOld = false;
-    private Subscription internetConnectivitySubscription;
-    InputMethodManager imm;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +90,7 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
         ButterKnife.bind(this);
         initToolbar();
 
-        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
         mUserId = Registration.getInstance().getUserId();
         TopicDao mTopic = null;
@@ -112,6 +108,7 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
         messageManager = new MessageManager();
         mAdapter = new TopicViewMessageAdapter(TopicChatActivity.this, "user");
         mAdapter.setMessageDao(messageManager.getMessageDao());
+        mAdapter.setOnItemChatClickListener(this);
         linearManager = new LinearLayoutManager(this);
         linearManager.setStackFromEnd(true);
         list.setLayoutManager(linearManager);
@@ -142,14 +139,11 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
             Log.d(message);
             loadMessage(message);
 
-//            getWindow().setSoftInputMode(
-//                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-            View v = getCurrentFocus();
-            if (v != null)
-            imm.hideSoftInputFromWindow(v.getWindowToken(),InputMethodManager.HIDE_IMPLICIT_ONLY);
+            getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         }else {
-            // create toppic set max line 1
+            // create topic set max line 1
             messageText.setSingleLine(true);
 
             mStatus.setVisibility(View.VISIBLE);
@@ -185,9 +179,6 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
             }
         });
 
-//        mBarStatus.start();
-//        connectivity();
-
     }
 
     private void initToolbar() {
@@ -196,23 +187,6 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    private void connectivity() {
-        internetConnectivitySubscription = ReactiveNetwork.observeInternetConnectivity()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Boolean>() {
-                    @Override
-                    public void call(Boolean isConnectedToInternet) {
-                        if (isConnectedToInternet){
-//                            mBarStatus.hide();
-                        }else{
-//                            mBarStatus.show();
-//                            mBarStatus.setTitle(R.string.status_network);
-                        }
-                    }
-                });
     }
 
     private void loadMessage(String message) {
@@ -257,11 +231,32 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
     public void buttonSendMessage(){
         if (mTopicMessage != null){ // Create Topic
             messageText.setSingleLine(false);
-            createTopic(messageText.getText().toString());
+            //Dialog confirm create room
+            dialogConfirmCreateRoom(messageText.getText().toString());
         }else { // Send message Room
             sendMessageRoom(messageText.getText().toString());
         }
         addMessageToAdapter(messageText.getText().toString());
+    }
+
+    private void dialogConfirmCreateRoom(String message) {
+            new AlertDialog.Builder(this)
+                    .setCancelable(false)
+                    .setTitle("ยืนยันการสร้างห้อง/ตั้งคำถาม/สอบถามพนักงาน")
+                    .setMessage("สอบถามในหัวข้อ :"+message)
+                    .setPositiveButton("ยืนยัน", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            /*create room*/
+                            createTopic(messageText.getText().toString());
+                        }
+                    })
+                    .setNegativeButton("ยกเลิก", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
     }
 
     private void addMessageToAdapter(String message) {
@@ -331,17 +326,6 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
         }
     }
 
-//    @OnClick({R.id.button_test_anim})
-//    public void onTestingAnim(){
-//        if (mBarStatus.isOpened()) {
-//            mBarStatus.hide();
-//            Log.d("hide");
-//        }else {
-//            mBarStatus.show();
-//            Log.d("show");
-//        }
-//    }
-
     private void onImagePicker(Sources sources){
         RxImagePicker.with(this).requestImage(sources).subscribe(new Action1<Uri>() {
             @Override
@@ -372,10 +356,6 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
     public void onPause() {
         super.onPause();
         MainThreadBus.getInstance().unregister(this);
-
-        if (internetConnectivitySubscription != null && internetConnectivitySubscription.isUnsubscribed()){
-            internetConnectivitySubscription.unsubscribe();
-        }
     }
 
     @Override
@@ -392,7 +372,10 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
         if (messageDao.getListMessage().size() > 0) {
 
             for (int countMessage = 0; countMessage < messageDao.getListMessage().size(); countMessage++) {
-                MessageDao message = messageDao.getListMessage().get((messageDao.getListMessage().size()-1) - countMessage);
+
+                int index = (messageDao.getListMessage().size()-1) - countMessage;
+
+                MessageDao message = messageDao.getListMessage().get(index);
                 if (message.getMessageStatus() == 0 ){ // ข้อความใหม่
                     if (message.getMessageBy().equals("user")){ //Chat me แชทเก่าออกก่อน
                         messageManager.updateMessageMe(countMessage,message);
@@ -407,8 +390,6 @@ public class TopicChatActivity extends AppCompatActivity implements OnItemChatCl
                     mAdapter.notifyDataSetChanged();
                 }
             }
-
-
 
             // scroll to bottom
             int lastPosition = linearManager.findLastVisibleItemPosition();

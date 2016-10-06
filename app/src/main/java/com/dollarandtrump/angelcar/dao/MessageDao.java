@@ -1,6 +1,8 @@
 
 package com.dollarandtrump.angelcar.dao;
 
+import android.support.annotation.Nullable;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -24,8 +26,23 @@ public class MessageDao extends Model{
     @SerializedName("userprofileimage") @Expose @Column(name = "UserProfileImage") String userProfileImage;
     @SerializedName("messagestamp")     @Expose @Column(name = "MessageStamp") Date messageStamp;
     @SerializedName("messagestatus")    @Expose @Column(name = "MessageStatus") int messageStatus;
+    @SerializedName("carimage")         @Expose @Column(name = "CarImage") String carImage;
 
     @Column(name = "isSent") boolean isSent = true;
+    @Column(name = "isDelete") boolean isDelete = false;
+
+    //TOPIC
+    @SerializedName("topictype") @Expose @Column(name = "TopicType") String topicType;
+    @SerializedName("topicstatus") @Expose @Column(name = "TopicStatus") String topicStatus;
+
+
+    public boolean isDelete() {
+        return isDelete;
+    }
+
+    public void setDelete(boolean delete) {
+        isDelete = delete;
+    }
 
     public boolean isTopic = false;
 
@@ -52,17 +69,6 @@ public class MessageDao extends Model{
     public void setMessageStatus(int messageStatus) {
         this.messageStatus = messageStatus;
     }
-
-    /*// Topic
-    @SerializedName("messagetopicid") @Expose String messageTopId;
-
-    public String getMessageTopId() {
-        return messageTopId;
-    }
-
-    public void setMessageTopId(String messageTopId) {
-        this.messageTopId = messageTopId;
-    }*/
 
     public int getMessageId() {
         return messageId;
@@ -126,5 +132,30 @@ public class MessageDao extends Model{
 
     public void setMessageStamp(Date messageStamp) {
         this.messageStamp = messageStamp;
+    }
+
+    /**TOPIC อาจจะมีค่า Null**/
+    public String  getTopicStatus() {
+        return topicStatus;
+    }
+
+    public void setTopicStatus(String topicStatus) {
+        this.topicStatus = topicStatus;
+    }
+
+    public String getTopicType() {
+        return topicType;
+    }
+
+    public void setTopicType(String topicType) {
+        this.topicType = topicType;
+    }
+
+    public String getCarImage() {
+        return carImage;
+    }
+
+    public void setCarImage(String carImage) {
+        this.carImage = carImage;
     }
 }

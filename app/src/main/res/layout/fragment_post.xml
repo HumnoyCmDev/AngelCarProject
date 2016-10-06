@@ -1,162 +1,363 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#EEEEEE"
-    android:fillViewport="true"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/mainLayout"
-        android:orientation="vertical"
+         android:gravity="center"
+        android:layout_margin="4dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:freezesText="true"
-            android:textColor="@android:color/holo_red_light"
-            android:background="@drawable/shape_rectangle_bg_topic"
-            android:id="@+id/text_view_topic_car"
-            android:padding="10dp"
-            android:gravity="center"
-            android:text="Toyota fortuner 1.2v ปี 2016"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:layout_width="match_parent"
-            android:layout_height="70dp" />
-
-        <android.support.v7.widget.CardView
-            app:cardCornerRadius="5dp"
-            app:contentPadding="10dp"
-            app:cardElevation="4dp"
-            android:layout_margin="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/image_icon_profile"
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-
-
-
-
-            <LinearLayout
-                android:layout_marginTop="3dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!--<LinearLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:orientation="horizontal">-->
-
-
-                    <ToggleButton
-                        android:layout_gravity="center"
-                        android:checked="false"
-                        android:text=""
-                        android:textOff=""
-                        android:textOn=""
-                        android:id="@+id/toggle_buuton_gear"
-                        android:background="@drawable/selector_gear_toggle_button"
-                        android:layout_width="74dp"
-                        android:layout_height="36dp" />
-
-                        <!--<EditText-->
-                            <!--android:hint="เลขทะเบียน"-->
-                            <!--android:inputType="text"-->
-                            <!--android:id="@+id/edit_text_register"-->
-                            <!--android:background="@drawable/background_edit_register"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="45dp"-->
-                            <!--android:textColorHint="#BDBDBD"-->
-                            <!--/>-->
-
-                <!--</LinearLayout>-->
-
-
-                    <EditText
-                        android:hint="เบอร์โทร..."
-                        android:background="@drawable/background_edit_phone"
-                        android:inputType="phone|text"
-                        android:maxLength="14"
-                        android:id="@+id/edit_text_telephone"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:textColorHint="#BDBDBD"/>
-
-                    <Spinner
-                        android:background="@drawable/background_province"
-                        android:id="@+id/spinner_province"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"/>
-
-                    <EditText
-                        android:id="@+id/edit_text_Name"
-                        android:background="@drawable/background_edit_name"
-                        android:hint="ชื่อ-นามสกุล"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:textColorHint="#BDBDBD"/>
-
-                    <EditText
-                        android:inputType="numberDecimal"
-                        android:digits="0123456789.,"
-                        android:id="@+id/edit_text_price"
-                        android:background="@drawable/background_edit_price"
-                        android:hint="กรุณาระบุราคา"
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:textColorHint="#BDBDBD" />
-
-                    <EditText
-                        android:id="@+id/edit_text_topic"
-                        android:background="@drawable/background_edit_topic"
-                        android:hint="ระบุข้อความ สั้นๆ..."
-                        android:layout_width="match_parent"
-                        android:layout_height="45dp"
-                        android:textColorHint="#BDBDBD"/>
-
-                <EditText
-                    android:scrollbars="vertical"
-                    android:textSize="18sp"
-                    android:id="@+id/edit_text_description"
-                    android:layout_width="match_parent"
-                    android:layout_height="135dp"
-                    android:background="@drawable/background_edit_detail"
-                    android:gravity="left"
-                    android:hint="ระบุข้อความทั้งหมด..."
-                    android:textColorHint="#BDBDBD" />
-
-
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-        </android.support.v7.widget.CardView>
-
-        <Button
-            android:layout_gravity="bottom"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:textColor="@android:color/white"
-            android:id="@+id/button_post"
+            android:layout_marginLeft="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_menu_bottom"
-            android:text="ลงประกาศขาย" />
-        <View
-            android:background="#FFE0E0E0"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"/>
+            android:orientation="vertical">
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/text_shop_name"
+                android:text="[Shop Name]"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/text_status"
+                android:text="[status]"
+                android:gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <View
+                android:layout_marginTop="4dp"
+                android:background="#FFE0E0E0"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 
-</ScrollView>
+    
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll_view"
+        android:fillViewport="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:textColor="@android:color/black"
+                android:id="@+id/text_brand"
+                android:padding="8dp"
+                android:freezesText="true"
+                android:textStyle="bold"
+                android:text="#[Brand]"
+                android:textSize="16sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.dollarandtrump.angelcar.view.PhotoCollectionView
+                android:id="@+id/photo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:textStyle="bold"
+                android:id="@+id/text_evidence"
+                android:gravity="center"
+                android:clickable="true"
+                android:padding="8dp"
+                android:textColor="@android:color/white"
+                android:text="@string/evidence"
+                android:textSize="18sp"
+                android:background="@drawable/selector_menu_bottom_evidence_unsuccess"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:textSize="15sp"
+                    android:gravity="end"
+                    android:textStyle="bold"
+                    android:padding="8dp"
+                    android:text="@string/gear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <!--<ToggleButton
+                    android:layout_gravity="center"
+                    android:checked="false"
+                    android:text=""
+                    android:textOff=""
+                    android:textOn=""
+                    android:id="@+id/toggle_button_gear"
+                    android:background="@drawable/selector_gear_toggle_button"
+                    android:layout_width="80dp"
+                    android:layout_height="40dp" />-->
+
+                <ToggleButton
+                    android:id="@+id/toggle_button_gear"
+                    android:textStyle="bold"
+                    android:checked="false"
+                    android:textOff="ธรรมดา"
+                    android:textOn="อัตโนมัติ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:padding="8dp"
+                    android:text="@string/province"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <Spinner
+                    android:id="@+id/spinner_province"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+            </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="15sp"
+                android:gravity="end"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:text="@string/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <EditText
+                android:selectAllOnFocus="true"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:id="@+id/edit_text_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </LinearLayout>
+
+
+                <!--<android.support.design.widget.TextInputLayout-->
+                    <!--android:id="@+id/input_layout_name"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content">-->
+                    <!--<EditText-->
+                        <!--android:textSize="16sp"-->
+                        <!--android:layout_marginLeft="8dp"-->
+                        <!--android:layout_marginRight="8dp"-->
+                        <!--android:inputType="text"-->
+                        <!--android:maxLines="1"-->
+                        <!--android:textStyle="bold"-->
+                        <!--android:id="@+id/edit_text_name"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:hint="@string/name" />-->
+                <!--</android.support.design.widget.TextInputLayout>-->
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_price"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:selectAllOnFocus="true"
+                        android:inputType="number|text"
+                        android:maxLines="1"
+                        android:textSize="15sp"
+                        android:id="@+id/edit_text_price"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/price"/>
+                </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_tel"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+                    <EditText
+                        android:selectAllOnFocus="true"
+                        android:textSize="15sp"
+                        android:inputType="phone|text"
+                        android:maxLength="10"
+                        android:id="@+id/edit_text_telephone"
+                        android:textStyle="bold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/tel"/>
+                </android.support.design.widget.TextInputLayout>
+
+
+                <!--<TextView-->
+                    <!--android:gravity="end"-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:padding="8dp"-->
+                    <!--android:text="@string/gear"-->
+                    <!--android:textSize="16sp"-->
+
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+
+                <!--<ToggleButton-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:checked="false"-->
+                    <!--android:text=""-->
+                    <!--android:textOff=""-->
+                    <!--android:textOn=""-->
+                    <!--android:id="@+id/toggle_button_gear"-->
+                    <!--android:background="@drawable/selector_gear_toggle_button"-->
+                    <!--android:layout_width="80dp"-->
+                    <!--android:layout_height="40dp" />-->
+
+            </LinearLayout>
+
+            <!--<LinearLayout-->
+                <!--android:layout_marginLeft="6dp"-->
+                <!--android:layout_marginRight="6dp"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal">-->
+
+                <!--<android.support.design.widget.TextInputLayout-->
+                    <!--android:id="@+id/input_layout_tel"-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content">-->
+                    <!--<EditText-->
+                        <!--android:inputType="phone|text"-->
+                        <!--android:maxLength="14"-->
+                        <!--android:id="@+id/edit_text_telephone"-->
+                        <!--android:textStyle="bold"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:hint="@string/tel"/>-->
+                <!--</android.support.design.widget.TextInputLayout>-->
+
+                <!--<TextView-->
+                    <!--android:textStyle="bold"-->
+                    <!--android:padding="8dp"-->
+                    <!--android:text="@string/province"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content" />-->
+
+                <!--<Spinner-->
+                    <!--android:layout_weight="1"-->
+                    <!--android:id="@+id/spinner_province"-->
+                    <!--android:layout_width="0dp"-->
+                    <!--android:layout_height="wrap_content"/>-->
+            <!--</LinearLayout>-->
+
+            <TextView
+                android:textColor="@color/colorHintDark"
+                android:layout_gravity="center"
+                android:padding="4dp"
+                android:text="คำโฆษณาไม่เกิน 40 ตัวอักษร"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:id="@+id/input_layout_topic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:selectAllOnFocus="true"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:inputType="text"
+                    android:maxLength="40"
+                    android:textSize="15sp"
+                    android:id="@+id/edit_text_topic"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/topic_post" />
+            </android.support.design.widget.TextInputLayout>
+
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:id="@+id/input_layout_details"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <EditText
+                    android:selectAllOnFocus="true"
+                    android:textStyle="bold"
+                    android:scrollbars="vertical"
+                    android:textSize="15sp"
+                    android:id="@+id/edit_text_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/car_details" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/button_post"
+                android:layout_gravity="bottom"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_menu_bottom"
+                android:text="ลงประกาศขาย" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+
+
+
+
+</LinearLayout>

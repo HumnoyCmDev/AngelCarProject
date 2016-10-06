@@ -30,7 +30,7 @@
                     android:id="@+id/shopProfileImage"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:src="@drawable/ic_hndeveloper"
+                    android:src="@drawable/icon_logo"
                     app:siBorderWidth="1dp" />
 
 

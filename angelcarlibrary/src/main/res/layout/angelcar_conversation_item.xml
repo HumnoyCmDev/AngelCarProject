@@ -19,11 +19,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_margin="16dp"/>
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_margin="16dp">
+
+            <ImageView
+                android:src="#000000"
+                android:id="@+id/avatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"/>
+
+            <ImageView
+                android:src="#ffffff"
+                android:id="@+id/avatar_2"
+                android:layout_gravity="bottom|end"
+                android:layout_width="24dp"
+                android:layout_height="24dp" />
+
+        </FrameLayout>
+
 
         <!-- right content part -->
         <FrameLayout

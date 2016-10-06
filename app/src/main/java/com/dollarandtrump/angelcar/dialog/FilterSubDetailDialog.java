@@ -32,9 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Created by humnoy on 24/2/59.
- */
+/**-Created by Kotlin-**/
 public class FilterSubDetailDialog extends DialogFragment {
     private static final String ARGS_BRAND = "ARGS_BRAND";
     private static final String TAG = "FilterSubDialogFragment";
@@ -62,7 +60,7 @@ public class FilterSubDetailDialog extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.list_view_layout,container,false);
+        View view = inflater.inflate(R.layout.dialog_filter_list_view,container,false);
         ButterKnife.bind(this,view);
         initInstance(savedInstanceState);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);

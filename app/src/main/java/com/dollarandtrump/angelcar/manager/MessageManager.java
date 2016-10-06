@@ -5,10 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.dollarandtrump.angelcar.dao.CarIdDao;
-import com.dollarandtrump.angelcar.dao.MessageAdminCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageCollectionDao;
 import com.dollarandtrump.angelcar.dao.MessageDao;
-import com.dollarandtrump.angelcar.utils.Log;
+import com.dollarandtrump.angelcar.utils.CacheData;
 import com.google.gson.Gson;
 
 import org.parceler.Parcels;
@@ -17,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 
 /***************************************
  * สร้างสรรค์ผลงานดีๆ
@@ -114,21 +112,6 @@ public class MessageManager {
     public void setConversationSell(MessageCollectionDao conversationSell) {
         this.mConversationBuy = conversationSell;
     }
-
-    /*public void unifyDao(MessageAdminCollectionDao mConversationSell, MessageCollectionDao mConversationBuy){
-        this.mConversationSell = mConversationSell.convertToMessageCollectionDao();
-        this.mConversationBuy = mConversationBuy;
-        if (messageDao == null){
-            messageDao = new MessageCollectionDao();
-        }
-        if (messageDao.getListMessage() == null){
-            messageDao.setListMessage(new ArrayList<MessageDao>());
-        }
-        messageDao.getListMessage().addAll(getCount(),this.mConversationBuy.getListMessage());
-        messageDao.getListMessage().addAll(getCount(),mConversationBuy.getListMessage());
-
-//        saveCache();
-    }*/
 
     public void appendDataToBottomPosition(MessageCollectionDao dao){
         if (messageDao == null){
@@ -237,20 +220,21 @@ public class MessageManager {
     }
 
     private void saveCache(){
-
-        MessageCollectionDao cacheDao =
+        /*MessageCollectionDao cacheDao =
                 new MessageCollectionDao();
         if (messageDao != null && messageDao.getListMessage() != null)
             cacheDao.setListMessage(messageDao.getListMessage().subList(0,
                     Math.min(20,messageDao.getListMessage().size())));
-
         String json = new Gson().toJson(cacheDao);
-
         SharedPreferences prefs =
                 mContext.getSharedPreferences("message", Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = prefs.edit();
         edit.putString("json",json);
-        edit.apply();
+        edit.apply();*/
+//        String mKeyMessage = String.format("message_json_%s_%s",
+//                messageDao.getCarId(),mMessageFromUser);
+//        String gson = new Gson().toJson(messageDao);
+//        new CacheData().save(mKeyMessage, gson);
 
     }
 

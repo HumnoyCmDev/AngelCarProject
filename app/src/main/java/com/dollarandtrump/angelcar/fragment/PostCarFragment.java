@@ -127,7 +127,7 @@ public class PostCarFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_post_new, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_post, container, false);
         initInstances(rootView, savedInstanceState);
         return rootView;
     }

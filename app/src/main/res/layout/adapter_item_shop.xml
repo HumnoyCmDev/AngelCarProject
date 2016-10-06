@@ -23,8 +23,7 @@
                 android:id="@+id/itemShopImage"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/simple_product" />
+                android:scaleType="centerCrop" />
 
             <TextView
                 android:textSize="12sp"
@@ -50,7 +49,7 @@
                     android:layout_marginLeft="2dp"
                     android:drawablePadding="4dp"
                     android:gravity="center"
-                    android:drawableLeft="@drawable/ic_calendar_black"
+                    android:drawableLeft="@drawable/ic_calendar_black_12dp"
                     android:text="[Year]"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -61,7 +60,7 @@
                     android:layout_marginLeft="6dp"
                     android:drawablePadding="4dp"
                     android:gravity="center"
-                    android:drawableLeft="@drawable/ic_price_black"
+                    android:drawableLeft="@drawable/ic_price_black_12dp"
                     android:text="[Price]"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />

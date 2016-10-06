@@ -46,28 +46,28 @@ public class NetworkModule {
                 .create();
     }
 
-    @Provides
-    @Singleton
-    Retrofit.Builder providesRetrofit(Gson gson){
-        return new Retrofit.Builder()
-                .baseUrl("http://angelcar.com/")
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(gson));
-    }
-
-    @Provides
-    @Singleton
-    @Named("apitimeout")
-    ApiService providesApiServiceTimeout(OkHttpClient.Builder okHttpBuilder, Retrofit.Builder retrofitBuilder) {
-        OkHttpClient client = okHttpBuilder.readTimeout(60*1000, TimeUnit.MILLISECONDS).build();
-        return retrofitBuilder.client(client).build().create(ApiService.class);
-    }
-
-    @Provides
-    @Singleton
-    ApiService providesApiService(OkHttpClient client, Retrofit.Builder retrofitBuilder) {
-        return retrofitBuilder.client(client).build().create(ApiService.class);
-    }
+//    @Provides
+//    @Singleton
+//    Retrofit.Builder providesRetrofit(Gson gson){
+//        return new Retrofit.Builder()
+//                .baseUrl("http://angelcar.com/")
+//                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+//                .addConverterFactory(GsonConverterFactory.create(gson));
+//    }
+//
+//    @Provides
+//    @Singleton
+//    @Named("apitimeout")
+//    ApiService providesApiServiceTimeout(OkHttpClient.Builder okHttpBuilder, Retrofit.Builder retrofitBuilder) {
+//        OkHttpClient client = okHttpBuilder.readTimeout(60*1000, TimeUnit.MILLISECONDS).build();
+//        return retrofitBuilder.client(client).build().create(ApiService.class);
+//    }
+//
+//    @Provides
+//    @Singleton
+//    ApiService providesApiService(OkHttpClient client, Retrofit.Builder retrofitBuilder) {
+//        return retrofitBuilder.client(client).build().create(ApiService.class);
+//    }
 
     @Provides
     @Singleton

@@ -41,6 +41,48 @@ public class Registration {
         }
     }
 
+    public void setUserShop(String user,String shop){
+        preferences.edit().putString(REGISTRATION_USER_ID, user).apply();
+        preferences.edit().putString(REGISTRATION_SHOP_ID, shop).apply();
+    }
+
+    public void setUserOld(){
+        String userOld = getUserId();
+        preferences.edit().putString("userold",userOld).apply();
+    }
+
+    public String getUserOld(){
+      return preferences.getString("userold",null);
+    }
+
+    public void firstApp(boolean b){
+        preferences.edit().putBoolean(REGISTRATION_FIRST_APP, b).apply();
+    }
+
+//    public void saveToken(String token){
+//        preferences.edit().putString("token", token).apply();
+//    }
+
+    public void setIsSignIn(boolean isSignIn){
+        preferences.edit().putBoolean("signin", isSignIn).apply();
+    }
+    public boolean isSignIn(){
+        return preferences.getBoolean("signin",false);
+    }
+
+//    public String getToken(){
+//        return preferences.getString("token",null);
+//    }
+
+    public void clear(){
+//        preferences.edit().clear().apply();
+        preferences.edit().remove(REGISTRATION_USER_ID).apply();
+        preferences.edit().remove(REGISTRATION_SHOP_ID).apply();
+        preferences.edit().remove(REGISTRATION_FIRST_APP).apply();
+        preferences.edit().remove("signin").apply();
+        preferences.edit().remove("userold").apply();
+    }
+
     public String getUserId(){
         return preferences.getString(REGISTRATION_USER_ID,null);
     }
